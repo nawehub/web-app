@@ -1,7 +1,7 @@
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import React from "react";
-import { FaFacebook } from "react-icons/fa";
+import { FaFacebook, FaTwitter } from "react-icons/fa";
 
 export const Footer = () => {
     return (
@@ -71,13 +71,13 @@ export const Footer = () => {
                         <h4 className="font-semibold mb-4">Connect</h4>
                         <p className="text-gray-400 mb-2">Follow us for updates and success stories</p>
                         <div className="flex space-x-4">
-                            <Button size="sm" variant="outline"
+                            <Button size="sm" variant={"default"}
                                     className="text-white border-gray-600 hover:bg-gray-800">
                                 <FaFacebook className={"h-5 w-5"} />
                             </Button>
-                            <Button size="sm" variant="outline"
+                            <Button size="sm" variant="default"
                                     className="text-white border-gray-600 hover:bg-gray-800">
-                                Twitter
+                                <FaTwitter className={"h-5 w-5"} />
                             </Button>
                         </div>
                     </div>

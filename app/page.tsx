@@ -8,7 +8,7 @@ import Link from "next/link"
 import React from "react";
 import dynamic from "next/dynamic";
 import Navbar from "@/components/public/navbar";
-import {Footer} from "react-day-picker";
+import {Footer} from "@/components/public/footer";
 
 // Dynamically import motion and AnimatePresence
 const MotionDiv = dynamic(() => import('framer-motion').then(mod => mod.motion.div), { ssr: false });
