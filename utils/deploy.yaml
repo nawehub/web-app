@@ -1,0 +1,51 @@
+name: CI - Production Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deployment:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        name: Checkout Code
+
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'  # Update to your version
+          cache: true
+
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/go/pkg/mod
+            ./.go-cache
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Get build-then-deploy-with-kustomize
+        uses: actions/checkout@v4
+        with:
+          repository: monime-lab/build-then-deploy-with-kustomize
+          token: ${{ secrets.ACCESS_TOKEN_GITHUB }}
+          path: .github/build-then-deploy-with-kustomize
+          # Add sparse checkout if possible
+          sparse-checkout: |
+            *.yaml
+            *.sh
+
+      - name: build-then-deploy-with-kustomize
+        uses: ./.github/build-then-deploy-with-kustomize
+        with:
+          cache_docker: "true"  # Enable if possible
+          gcp_cluster: "pieh-prod-1"
+          cache_hash_files_pattern: "**/go.sum"
+          gcp_sa_key: ${{ secrets.GCP_SA_KEY }}
+          buf_token: ${{ secrets.ACCESS_TOKEN_BUF }}
+          github_token: ${{ secrets.ACCESS_TOKEN_GITHUB }}
+          kustomize_overlay_paths: "k8s-deployment/kustomize/overlays/prod"

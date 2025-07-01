@@ -432,7 +432,7 @@ export default function NetworkPage() {
 
                     <div className="flex gap-2 mt-4">
                       <Button size="sm" className="flex-1" asChild>
-                        <Link href="/messages/new">
+                        <Link href="/dashboard/messages/new">
                           <Send className="w-4 h-4 mr-2" />
                           Connect
                         </Link>
@@ -511,7 +511,7 @@ export default function NetworkPage() {
 
                 {/* Create Post Button */}
                 <Button className="w-full mt-4" asChild>
-                  <Link href="/network/forum/create">
+                  <Link href="/dashboard/network/forum/create">
                     <Plus className="w-4 h-4 mr-2" />
                     New Post
                   </Link>
@@ -599,7 +599,7 @@ export default function NetworkPage() {
                           </span>
                         </div>
                         <Button size="sm" variant="outline" asChild>
-                          <Link href={`/network/forum/${post.id}`}>
+                          <Link href={`/app/dashboard/network/forum/${post.id}`}>
                             View Discussion
                             <ArrowRight className="w-4 h-4 ml-2" />
                           </Link>
