@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import Navbar from "@/components/public/navbar";
 import dynamic from "next/dynamic";
 import {Footer} from "@/components/public/footer";
+import AppHeader from "@/components/public/app-header";
 
 // Dynamically import motion and AnimatePresence
 const MotionDiv = dynamic(() => import('framer-motion').then(mod => mod.motion.div), { ssr: false });
@@ -13,7 +14,7 @@ export default function Services() {
     return (
         <div className="min-h-screen bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-800">
             {/* Navigation */}
-            <Navbar />
+            <AppHeader isVisible={true} />
 
             {/* Hero Section */}
             <section className="pt-32 pb-20 px-4">
@@ -94,7 +95,7 @@ export default function Services() {
                 </div>
             </section>
 
-        {/*  footer  */}
+            {/*  footer  */}
             <Footer />
         </div>
     );

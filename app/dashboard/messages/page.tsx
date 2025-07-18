@@ -520,7 +520,7 @@ export default function MessagesPage() {
                       placeholder="Type your message..."
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
-                      onKeyPress={handleKeyPress}
+                      onKeyUp={handleKeyPress}
                       className="min-h-[40px] max-h-[120px] resize-none"
                       rows={1}
                     />
