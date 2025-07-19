@@ -26,7 +26,7 @@ export default function ContactUsSection() {
 
     return (
         <section className="w-full bg-white dark:bg-gray-950 py-24 border-t border-gray-200 dark:border-gray-800">
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-8">
                 <motion.p
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -105,8 +105,8 @@ export default function ContactUsSection() {
                         <div className="bg-white dark:bg-gray-900/80 rounded-2xl shadow-xl px-8 pb-3 pt-8 border border-gray-200 dark:border-gray-800 mb-2">
                             <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Prefer a Direct Approach?</h4>
                             <ul className="space-y-3 text-gray-700 dark:text-gray-200">
-                                <li className="flex items-center gap-2"><span role="img" aria-label="phone">📞</span> +62-8234-5674-8901</li>
-                                <li className="flex items-center gap-2"><span role="img" aria-label="email">✉️</span> contact@landingplay.com</li>
+                                <li className="flex items-center gap-2"><span role="img" aria-label="phone">📞</span> +232 76293389</li>
+                                <li className="flex items-center gap-2"><span role="img" aria-label="email">✉️</span> contact@nawehub.com</li>
                                 <li className="flex items-center gap-2"><span role="img" aria-label="clock">🕒</span> Monday to Friday, 9 AM – 6 PM (GMT)</li>
                             </ul>
                         </div>
@@ -127,7 +127,7 @@ export default function ContactUsSection() {
                             />
                             <div className="absolute bottom-4 left-4 bg-white/90 dark:bg-gray-900/90 rounded-xl p-4 shadow flex flex-col gap-2 max-w-[80%]">
                                 <div className="font-semibold text-gray-900 dark:text-white text-base">Visit Our Office</div>
-                                <div className="text-gray-700 dark:text-gray-200 text-sm">123 SaaS Street, Innovation City, Techland 56789</div>
+                                <div className="text-gray-700 dark:text-gray-200 text-sm">123 Rogbaneh Road, Makeni, Sierra Leone</div>
                                 <button className="mt-2 px-4 py-2 rounded-lg bg-primary text-white font-medium text-sm shadow hover:bg-primary/90 transition w-max flex items-center gap-2">
                                     Get a Direction <span aria-hidden>→</span>
                                 </button>
