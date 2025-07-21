@@ -204,7 +204,7 @@ export default function Home() {
                                 ))}
                             </div>
 
-                            <Link href="/dashboard/lyd/donate">
+                            <Link href="/lyd">
                                 <Button variant="outline"
                                         className="w-full group/btn border-2 border-emerald-200 hover:bg-emerald-50 hover:border-emerald-300 shadow-lg hover:shadow-xl transition-all duration-300"
                                         size="lg">

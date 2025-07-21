@@ -22,6 +22,7 @@ import {
   Smartphone,
   CreditCard,
 } from "lucide-react"
+  import AppHeader from "@/components/public/app-header";
 
 const districts = [
   { name: "Bo", total: 2450000, contributors: 1250, rank: 1, change: 5 },
@@ -79,7 +80,9 @@ export default function LYDPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50">
       {/* Header */}
-      <header className="bg-white border-b">
+      <AppHeader isVisible={true}/>
+
+      <header className="bg-white border-b mt-8">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
@@ -87,8 +90,8 @@ export default function LYDPage() {
             </div>
             <span className="text-xl font-bold text-gray-900">Love Your District</span>
           </div>
-          <Button variant="outline" asChild>
-            <a href="/dashboard">Back to Dashboard</a>
+          <Button variant="outline" asChild className={'bg-blue-600 hover:bg-blue-300 text-white hover:text-white'}>
+            <a href="/lyd/history">Donation History</a>
           </Button>
         </div>
       </header>

@@ -294,7 +294,7 @@ export default function ResourcesPage() {
         <Tabs defaultValue="resources" className="space-y-6">
           <TabsList>
             <TabsTrigger value="resources">Resources</TabsTrigger>
-            <TabsTrigger value="funding">Funding</TabsTrigger>
+            {/*<TabsTrigger value="funding">Funding</TabsTrigger>*/}
             <TabsTrigger value="bookmarks">Bookmarks</TabsTrigger>
           </TabsList>
 
@@ -410,61 +410,6 @@ export default function ResourcesPage() {
                             Download
                           </Button>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          </TabsContent>
-
-          {/* Funding Tab */}
-          <TabsContent value="funding" className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Current Funding Opportunities</h2>
-              <div className="grid gap-6">
-                {fundingOpportunities.map((opportunity, index) => (
-                  <Card key={index}>
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <CardTitle>{opportunity.title}</CardTitle>
-                          <CardDescription className="mt-2">{opportunity.eligibility}</CardDescription>
-                        </div>
-                        <Badge
-                          variant={
-                            opportunity.status === "Open"
-                              ? "default"
-                              : opportunity.status === "Closing Soon"
-                                ? "destructive"
-                                : "secondary"
-                          }
-                        >
-                          {opportunity.status}
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid md:grid-cols-3 gap-4 mb-4">
-                        <div>
-                          <div className="text-sm text-gray-600">Amount</div>
-                          <div className="font-semibold">{opportunity.amount}</div>
-                        </div>
-                        <div>
-                          <div className="text-sm text-gray-600">Type</div>
-                          <div className="font-semibold">{opportunity.type}</div>
-                        </div>
-                        <div>
-                          <div className="text-sm text-gray-600">Deadline</div>
-                          <div className="font-semibold flex items-center">
-                            <Clock className="w-4 h-4 mr-1" />
-                            {opportunity.deadline}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex gap-3">
-                        <Button>Learn More</Button>
-                        <Button variant="outline">Apply Now</Button>
                       </div>
                     </CardContent>
                   </Card>
