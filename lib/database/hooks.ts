@@ -282,7 +282,7 @@ export function useConversations(userId: string) {
 
 // Utility hooks for common operations
 export function useCurrentUser() {
-  // In a real app, this would get the current user from auth context
+  // In a real app, this would get the current user from services context
   // For demo purposes, we'll use a mock user
   const [currentUser] = useState<User>({
     isActive: false,

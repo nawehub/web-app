@@ -3,8 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import AppleProvider from "next-auth/providers/apple";
 import GithubProvider from "next-auth/providers/github";
-import bcrypt, { compare } from "bcryptjs";
-import { users } from "@/lib/users";
+import {refreshAccessToken} from "@/lib/auth";
 
 const handler = NextAuth({
     providers: [
@@ -27,76 +26,81 @@ const handler = NextAuth({
                 password: { label: "Password", type: "password" },
             },
             async authorize(credentials) {
-                if (!credentials?.email || !credentials?.password) {
+                try {
+                    const res = await fetch(`${process.env.API_BASE_URL}/auth/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            email: credentials?.email,
+                            password: credentials?.password,
+                        }),
+                    });
+
+                    const data = await res.json();
+
+                    if (res.ok && data.accessToken) {
+                        return {
+                            id: data.user.id,
+                            email: data.user.email,
+                            name: `${data.user.firstName} ${data.user.lastName}`,
+                            firstName: data.user.firstName,
+                            lastName: data.user.lastName,
+                            phone: data.user.phone,
+                            gender: data.user.gender,
+                            status: data.user.status,
+                            roles: data.user.roles,
+                            accessToken: data.accessToken,
+                            refreshToken: data.refreshToken,
+                            expiresIn: data.expiresIn,
+                        };
+                    }
+
+                    return null;
+                } catch (error) {
                     return null;
                 }
-
-                const user = users.find((user) => user.email === credentials.email);
-
-                if (!user) {
-                    return null;
-                }
-
-                const isPasswordValid = await compare(credentials.password, user.password);
-
-                if (!isPasswordValid) {
-                    console.log("Invalid password: ", credentials.password);
-                    const hashedPassword = await bcrypt.hash(credentials.password, 10);
-                    console.log("Hashed password: ", hashedPassword);
-                    return null;
-                }
-
-                return {
-                    id: user.id,
-                    name: user.name,
-                    email: user.email,
-                    role: user.role,
-                };
             },
         }),
     ],
     pages: {
         signIn: "/login",
-        error: "/auth/error",
+        newUser: "/register",
+        error: '/auth/error'
     },
     callbacks: {
         async signIn({ user, account, profile }) {
             if (account?.provider === "credentials") {
                 return true;
             }
-
-            // For OAuth providers, check if user exists
-            const existingUser = users.find((u) => u.email === user.email);
-
-            if (!existingUser) {
-                // Create new user from OAuth profile
-                const newUser = {
-                    id: (users.length + 1).toString(),
-                    name: user.name || profile?.name || "User",
-                    email: user.email!,
-                    password: "", // OAuth users don't need a password
-                    role: "user",
-                };
-                users.push(newUser);
-            }
-
             return true;
         },
-        async jwt({ token, user }) {
+        jwt: async function ({token, user}) {
             if (user) {
-                token.role = user.role;
+                token.accessToken = `Bearer ${user.accessToken}`
+                token.refreshToken = user.refreshToken
+                token.expiresIn = Date.now() + user.expiresIn * 1000;
+                token.user = user
             }
-            return token;
+
+            // Return the previous token if the access token has not expired
+            if (token.expiresIn && Date.now() < token.expiresIn) {
+                return token;
+            }
+
+            // Access token expired, try to refresh it
+            return refreshAccessToken(token);
         },
         async session({ session, token }) {
-            if (session?.user) {
-                (session.user as any).role = token.role;
-            }
+            session.accessToken = token.accessToken as string;
+            session.refreshToken = token.refreshToken as string
+            session.expiresIn = token.expiresIn as number
+            session.user = token.user
             return session;
         },
     },
     session: {
         strategy: "jwt",
+        maxAge: 30 * 24 * 60 * 60, // 30 days
     },
 });
 

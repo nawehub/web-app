@@ -13,6 +13,10 @@ interface AuthContextType {
   logout: () => void
   loading: boolean
   isAuthenticated: boolean
+  token: string | null;
+  setToken: (token: string | null) => void;
+  refreshToken: string | null;
+  setRefreshToken: (token: string | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -21,11 +25,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<AuthSession | null>(null)
   const [loading, setLoading] = useState(true)
+  const [token, setToken] = useState<string | null>(null);
+  const [refreshToken, setRefreshToken] = useState<string | null>(null);
+
 
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        // Check for existing session
+        // Check for the existing session
         const sessionToken = localStorage.getItem("session_token")
         console.log("Checking session token:", sessionToken ? "exists" : "not found")
 
@@ -124,6 +131,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         logout,
         loading,
         isAuthenticated,
+        token,
+        setToken,
+        refreshToken,
+        setRefreshToken,
       }}
     >
       {children}

@@ -1,5 +1,6 @@
 import "next-auth";
 import { JWT } from "next-auth/jwt";
+import {Role} from "@/types/api-types";
 
 declare module "next-auth" {
     interface User {
@@ -15,6 +16,6 @@ declare module "next-auth" {
 
 declare module "next-auth/jwt" {
     interface JWT {
-        role?: string;
+        role?: Role[];
     }
 }

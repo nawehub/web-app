@@ -1,11 +1,11 @@
 import {NextResponse} from "next/server";
-import { z } from "zod";
-import {registerForm} from "@/lib/services/use-auth";
+import {z} from "zod";
+import {verifyForm} from "@/lib/services/use-auth";
 
 export async function POST(request: Request) {
     try {
-        const body: z.infer<typeof registerForm> = await request.json();
-        const response = await fetch(`${process.env.API_BASE_URL}/auth/register`, {
+        const body: z.infer<typeof verifyForm> = await request.json();
+        const response = await fetch(`${process.env.API_BASE_URL}/auth/verify-otp`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body),

@@ -10,6 +10,7 @@ import Link from "next/link";
 import {FcGoogle} from "react-icons/fc";
 import {FaGithub, FaApple} from "react-icons/fa";
 import {Eye, EyeOff} from "lucide-react";
+import Loading from "@/components/loading";
 
 export default function Login() {
     const {status} = useSession();
@@ -18,9 +19,10 @@ export default function Login() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-    const registered = searchParams.get("registered");
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+
+    const callbackUrl = searchParams.get('from') || '/dashboard';
 
     useEffect(() => {
         if (status === "authenticated") {
@@ -29,11 +31,7 @@ export default function Login() {
     }, [status, router]);
 
     if (status === "loading") {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-primary"></div>
-            </div>
-        );
+        return <Loading />
     }
     if (status === "authenticated") {
         return null;
@@ -48,10 +46,6 @@ export default function Login() {
         setError("");
         setLoading(true);
 
-        const formData = new FormData(event.currentTarget);
-        const email = formData.get("email") as string;
-        const password = formData.get("password") as string;
-
         try {
             const result = await signIn("credentials", {
                 email,
@@ -60,7 +54,7 @@ export default function Login() {
             });
 
             if (result?.error) {
-                setError("Invalid email or password");
+                setError(result.error || "Invalid email or password");
                 return;
             }
 
@@ -72,6 +66,11 @@ export default function Login() {
             setLoading(false);
         }
     }
+
+    const handleSocialLogin = (provider: string) => {
+        signIn(provider, { callbackUrl }).then();
+    };
+
 
     return (
         <div className="min-h-screen flex flex-col md:flex-row">
@@ -148,7 +147,7 @@ export default function Login() {
                         <Button
                             variant="outline"
                             className="w-full flex items-center justify-center gap-2 bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-lg py-2.5 text-base font-normal"
-                            onClick={() => signIn("google", {callbackUrl: "/dashboard"})}
+                            onClick={() => handleSocialLogin("google")}
                         >
                             <FcGoogle className="h-5 w-5"/>
                             Continue with Google
@@ -156,7 +155,7 @@ export default function Login() {
                         <Button
                             variant="outline"
                             className="w-full flex items-center justify-center gap-2 bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-lg py-2.5 text-base font-normal"
-                            onClick={() => signIn("github", {callbackUrl: "/dashboard"})}
+                            onClick={() => handleSocialLogin("github")}
                         >
                             <FaGithub className="h-5 w-5"/>
                             Continue with GitHub
@@ -164,7 +163,7 @@ export default function Login() {
                         <Button
                             variant="outline"
                             className="w-full flex items-center justify-center gap-2 bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-lg py-2.5 text-base font-normal"
-                            onClick={() => signIn("apple", {callbackUrl: "/dashboard"})}
+                            onClick={() => handleSocialLogin("apple")}
                         >
                             <FaApple className="h-5 w-5"/>
                             Continue with Apple
