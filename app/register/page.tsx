@@ -254,7 +254,7 @@ export default function Register() {
                                     name={"username"}
                                     render={({ field }) => (
                                         <div>
-                                            <Label htmlFor="username" className="text-xs font-medium text-zinc-700 dark:text-zinc-200">Username</Label>
+                                            <Label htmlFor="username" className="text-sm font-medium text-zinc-700 dark:text-zinc-200">Username</Label>
                                             <Input
                                                 id="username"
                                                 {...field}
