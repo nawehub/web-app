@@ -37,6 +37,7 @@ const handler = NextAuth({
                     });
 
                     const data = await res.json();
+                    console.log({data})
 
                     if (res.ok && data.accessToken) {
                         return {
@@ -94,6 +95,7 @@ const handler = NextAuth({
             session.accessToken = token.accessToken as string;
             session.refreshToken = token.refreshToken as string
             session.expiresIn = token.expiresIn as number
+            // @ts-ignore
             session.user = token.user
             return session;
         },
