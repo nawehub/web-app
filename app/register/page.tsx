@@ -272,7 +272,7 @@ export default function Register() {
                                     name={"role"}
                                     render={({ field }) => (
                                         <div>
-                                            <Label htmlFor="role" className="text-sm font-medium text-zinc-700 dark:text-zinc-200">Gender</Label>
+                                            <Label htmlFor="role" className="text-sm font-medium text-zinc-700 dark:text-zinc-200">Your Role</Label>
                                             <Select onValueChange={(value) => field.onChange(value)}>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Select Role" />
