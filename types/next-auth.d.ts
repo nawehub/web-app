@@ -4,11 +4,30 @@ import {User} from "@/types/api-types";
 
 declare module "next-auth" {
     interface Session {
-        accessToken?: string
-        refreshToken?: string
-        expiresIn?: number
-        error?: 'RefreshAccessTokenError';
-        user: User & DefaultSession["user"];
+        accessToken: string;
+        refreshToken: string;
+        expiresIn: number;
+        error?: string;
+        user: {
+            id: string
+            email: string
+            name: string
+            firstName: string
+            lastName: string
+            phone: string
+            gender: string
+            status: string
+            roles: Array<{
+                id: string
+                name: string
+                description: string
+                permissions: Array<{
+                    id: string
+                    name: string
+                    description: string
+                }>
+            }>
+        } & DefaultSession["user"];
     }
 
     interface User {
@@ -41,7 +60,26 @@ declare module "next-auth/jwt" {
         accessToken: string
         refreshToken: string
         expiresIn: number
-        error?: 'RefreshAccessTokenError';
-        user: User;
+        error?: string;
+        user: {
+            id: string
+            email: string
+            name: string
+            firstName: string
+            lastName: string
+            phone: string
+            gender: string
+            status: string
+            roles: Array<{
+                id: string
+                name: string
+                description: string
+                permissions: Array<{
+                    id: string
+                    name: string
+                    description: string
+                }>
+            }>
+        };
     }
 }

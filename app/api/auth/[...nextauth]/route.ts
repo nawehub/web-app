@@ -1,15 +1,22 @@
-import NextAuth from "next-auth";
+import NextAuth, {NextAuthOptions} from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import AppleProvider from "next-auth/providers/apple";
 import GithubProvider from "next-auth/providers/github";
 import {refreshAccessToken} from "@/lib/auth";
 
-const handler = NextAuth({
+export const authOptions: NextAuthOptions = {
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+            authorization: {
+                params: {
+                    prompt: "consent",
+                    access_type: "offline",
+                    response_type: "code"
+                }
+            }
         }),
         AppleProvider({
             clientId: process.env.APPLE_ID!,
@@ -39,20 +46,20 @@ const handler = NextAuth({
                     const data = await res.json();
                     console.log({data})
 
-                    if (res.ok && data.accessToken) {
+                    if (res.ok && data?.accessToken) {
                         return {
-                            id: data.user.id,
-                            email: data.user.email,
+                            id: data.user.id as string,
+                            email: data.user.email as string,
                             name: `${data.user.firstName} ${data.user.lastName}`,
-                            firstName: data.user.firstName,
-                            lastName: data.user.lastName,
-                            phone: data.user.phone,
-                            gender: data.user.gender,
-                            status: data.user.status,
-                            roles: data.user.roles,
-                            accessToken: data.accessToken,
-                            refreshToken: data.refreshToken,
-                            expiresIn: data.expiresIn,
+                            firstName: data.user.firstName as string,
+                            lastName: data.user.lastName as string,
+                            phone: data.user.phone as string,
+                            gender: data.user.gender as string,
+                            status: data.user.status as string,
+                            roles: data.user.roles as [],
+                            accessToken: data.accessToken as string,
+                            refreshToken: data.refreshToken as string,
+                            expiresIn: data.expiresIn as number,
                         };
                     }
 
@@ -70,7 +77,7 @@ const handler = NextAuth({
     },
     callbacks: {
         async signIn({ user, account, profile }) {
-            if (account?.provider === "credentials") {
+            if (account?.provider === "google") {
                 return true;
             }
             return true;
@@ -92,10 +99,9 @@ const handler = NextAuth({
             return refreshAccessToken(token);
         },
         async session({ session, token }) {
-            session.accessToken = token.accessToken as string;
-            session.refreshToken = token.refreshToken as string
-            session.expiresIn = token.expiresIn as number
-            // @ts-ignore
+            session.accessToken = token.accessToken;
+            session.refreshToken = token.refreshToken
+            session.expiresIn = token.expiresIn
             session.user = token.user
             return session;
         },
@@ -104,6 +110,8 @@ const handler = NextAuth({
         strategy: "jwt",
         maxAge: 30 * 24 * 60 * 60, // 30 days
     },
-});
+};
 
-export { handler as GET, handler as POST }; 
+
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };

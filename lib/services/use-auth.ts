@@ -1,4 +1,5 @@
 import {z} from "zod";
+import {api4app} from "@/lib/api";
 
 export const registerForm = z.object({
     firstName: z.string().min(2, {message: 'firstName is required'}),
@@ -26,41 +27,25 @@ export const setPasswordForm = z.object({
     confirmPassword: z.string({message: 'password is required'}),
 });
 
-const API_BASE = '/api';
-
 interface ApiClientConfig {
     token?: string | null;
 }
 
 export const authService = () => {
-    const fetchApi = async (endpoint: string, options: RequestInit = {}) => {
-        const headers: HeadersInit = {
-            'Content-Type': 'application/json',
-            ...options.headers,
-        };
-        const response = await fetch(`${API_BASE}${endpoint}`, {
-            ...options,
-            headers,
-        });
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message || 'API request failed');
-        return data;
-    };
-
     return {
         auth: {
             register: async (req: z.infer<typeof registerForm>) =>
-                fetchApi('/auth/register', {
+                api4app('/auth/register', {
                     method: 'POST',
                     body: JSON.stringify(req),
                 }),
             verifyOtp: async (req: z.infer<typeof verifyForm>) =>
-                fetchApi('/auth/verify-otp', {
+                api4app('/auth/verify-otp', {
                     method: 'POST',
                     body: JSON.stringify(req),
                 }),
             setPassword: async (req: z.infer<typeof setPasswordForm>) =>
-                fetchApi('/auth/set-password', {
+                api4app('/auth/set-password', {
                     method: 'POST',
                     body: JSON.stringify(req),
                 }),

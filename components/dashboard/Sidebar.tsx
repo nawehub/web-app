@@ -14,6 +14,7 @@ interface SidebarProps {
 
 export function Sidebar({isSidebarOpen, toggleSidebar, pathname}: SidebarProps) {
     const {data: session} = useSession();
+    
     return (
         <div
             className={`fixed top-0 left-0 h-full w-64 transform transition-transform duration-300 ease-in-out z-50 lg:translate-x-0 ${

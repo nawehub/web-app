@@ -12,18 +12,14 @@ import {
     X,
     Zap
 } from "lucide-react";
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
-import {bottomMenuItems, documentMenuItems, exploreMenuItems} from "@/components/MenuItems";
 import {useSession} from "next-auth/react";
 import Loading from "@/components/loading";
 import {UserNav} from "@/components/dashboard/user-nav";
 import {ThemeToggle} from "@/components/theme-toggle";
-import {SidebarItem} from "@/components/dashboard/SidebarItem";
 import {Sidebar} from "@/components/dashboard/Sidebar";
 
 export default function DashboardLayout({children}: { children: ReactNode }) {
     const pathname = usePathname();
-    const [isDark, setIsDark] = useState(false)
     const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
     const {data: session, status} = useSession({
@@ -42,14 +38,14 @@ export default function DashboardLayout({children}: { children: ReactNode }) {
     }
 
     return (
-        <div className={`min-h-screen ${isDark ? "dark bg-[#0a0a0a]" : "bg-gray-50"}`}>
+        <div className={`min-h-screen bg-gray-50`}>
             {/* Side nav */}
             <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} pathname={pathname} />
             {/* Main Content */}
             <div className="lg:ml-64">
                 {/* Fixed Top Navigation */}
                 <div
-                    className={`fixed top-0 right-0 left-0 lg:left-64 z-30 ${isDark ? "bg-[#1a1a1a] border-gray-800" : "bg-white border-gray-200"} border-b`}
+                    className={`fixed top-0 right-0 left-0 lg:left-64 z-30 bg-white border-gray-200 border-b`}
                 >
                     <div className="px-4 lg:px-6 py-3">
                         <div className="flex items-center justify-between">
@@ -59,7 +55,7 @@ export default function DashboardLayout({children}: { children: ReactNode }) {
                                     variant="ghost"
                                     size="sm"
                                     onClick={toggleSidebar}
-                                    className={`lg:hidden ${isDark ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-gray-900"}`}
+                                    className={`lg:hidden text-gray-600 hover:text-gray-900`}
                                 >
                                     <Menu className="w-5 h-5"/>
                                 </Button>
@@ -67,7 +63,7 @@ export default function DashboardLayout({children}: { children: ReactNode }) {
                                 {/* Desktop Navigation */}
                                 <nav className="hidden md:flex items-center gap-4 lg:gap-14">
                                     <a href="#"
-                                       className={`text-sm font-medium ${isDark ? "text-white" : "text-gray-900"}`}>
+                                       className={`text-sm font-medium text-gray-900`}>
                                         Hello {session?.user?.firstName}!
                                     </a>
                                     <div className="relative flex md:max-w-sm items-center justify-center text-center">
@@ -80,9 +76,6 @@ export default function DashboardLayout({children}: { children: ReactNode }) {
 
                             <div className="flex items-center gap-2">
                                 <div className="hidden md:flex md:gap-2">
-                                    <Button variant="outline" size="sm">
-                                        Business Support
-                                    </Button>
                                     <Button variant="outline" size="sm" onClick={() => redirect("/lyd")}>
                                         Contribute to Your Community
                                     </Button>
