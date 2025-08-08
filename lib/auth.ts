@@ -20,10 +20,12 @@ export async function refreshAccessToken(token: any) {
             ...token,
             accessToken: refreshedTokens.accessToken,
             refreshToken: refreshedTokens.refreshToken,
-            expiresIn: Date.now() + refreshedTokens.expiresIn * 1000,
+            // Fix the expiration calculation - expiresIn is already a timestamp
+            expiresIn: refreshedTokens.expiresIn,
             error: undefined
         };
     } catch (error) {
+        console.error('Error refreshing token:', error);
         return {
             ...token,
             error: 'RefreshAccessTokenError',
@@ -31,8 +33,9 @@ export async function refreshAccessToken(token: any) {
     }
 }
 
-type RefreshTokenResponse = {
+interface RefreshTokenResponse {
     accessToken: string;
     refreshToken: string;
     expiresIn: number;
 }
+

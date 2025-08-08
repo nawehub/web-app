@@ -8,21 +8,8 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
 import { Download, FileText, Star, ExternalLink, X } from "lucide-react"
-import {Resource} from "@/lib/database";
-import {FileFormat} from "@/lib/enums/db-enums";
+import {Resource, FileFormat} from "@/types/files";
 import PdfViewer from "@/components/resources/pdf-viewer";
-
-// interface Resource {
-//   id: number
-//   title: string
-//   category: string
-//   type: string
-//   description: string
-//   downloads: number
-//   rating: number
-//   featured: boolean
-//   tags: string[]
-// }
 
 interface ResourcePreviewProps {
   resource: Resource
@@ -117,7 +104,7 @@ export function ResourcePreview({ resource, isOpen, onCloseAction, onDownloadAct
           </div>
           <Button variant="outline" className="w-full" onClick={(): void => setRead(true)}>Click To Read Content</Button>
           {read && (
-              <DynamicPdfViewer isOpen={read} onToggle={handleCloseRead} fileUrl={resource.fileUrl} />
+              <DynamicPdfViewer isOpen={read} onToggle={handleCloseRead} fileUrl={resource.url} />
           )}        </div>
       )
     }
@@ -144,7 +131,7 @@ export function ResourcePreview({ resource, isOpen, onCloseAction, onDownloadAct
           </div>
           <Button variant="outline" className="w-full" onClick={(): void => setRead(true)}>Click To Read Content</Button>
           {read && (
-              <DynamicPdfViewer isOpen={read} onToggle={handleCloseRead} fileUrl={resource.fileUrl} />
+              <DynamicPdfViewer isOpen={read} onToggle={handleCloseRead} fileUrl={resource.url} />
           )}
         </div>
       )
@@ -172,7 +159,7 @@ export function ResourcePreview({ resource, isOpen, onCloseAction, onDownloadAct
               <DialogTitle className="text-xl font-bold mb-2">{resource.title}</DialogTitle>
               <div className="flex items-center gap-2 mb-4">
                 <Badge variant="secondary">{resource.type}</Badge>
-                {resource.featured && <Badge variant="default">Featured</Badge>}
+                {resource.isFeatured && <Badge variant="default">Featured</Badge>}
                 <div className="flex items-center text-sm text-gray-600">
                   <Star className="w-4 h-4 mr-1 text-yellow-500" />
                   {resource.rating}
@@ -211,7 +198,7 @@ export function ResourcePreview({ resource, isOpen, onCloseAction, onDownloadAct
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600">Category</span>
-                    <Badge variant="outline">{resource.category}</Badge>
+                    <Badge variant="outline">{resource.category?.name}</Badge>
                   </div>
                 </div>
               </CardContent>
@@ -225,8 +212,8 @@ export function ResourcePreview({ resource, isOpen, onCloseAction, onDownloadAct
                 <h4 className="font-semibold mb-2">Tags</h4>
                 <div className="flex flex-wrap gap-1">
                   {resource.tags.map((tag) => (
-                    <Badge key={tag} variant="outline" className="text-xs">
-                      {tag}
+                    <Badge key={tag.id} variant="outline" className="text-xs">
+                      {tag.name}
                     </Badge>
                   ))}
                 </div>

@@ -1,6 +1,6 @@
 import {
     BarChart3,
-    BookOpen, BriefcaseBusiness,
+    BookOpen, Briefcase, BriefcaseBusiness, Building2,
     Copy,
     DollarSign,
     Folder, Heart,
@@ -15,15 +15,15 @@ export const exploreMenuItems = [
     { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
     { name: "Funding Opportunities", href: "/dashboard/funding-opportunities", icon: DollarSign },
     { name: "Events", href: "/dashboard/events", icon: PartyPopper },
-    { name: "My Business", href: "/dashboard/my-businesses", icon: BriefcaseBusiness },
+    { name: "My Business", href: "/dashboard/my-businesses", icon: Building2 },
     // { name: "Network", href: "/dashboard/network", icon: Network },
     { name: "Discussion Forums", href: "/dashboard/forums", icon: Network },
-    // { name: "Projects", href: "/dashboard/projects", icon: Rocket },
+    { name: "Funding Providers", href: "/dashboard/funding-providers", icon: Briefcase },
 ];
 
 export const documentMenuItems = [
     { name: "Resource Library", href: "/dashboard/resources", icon: BookOpen },
-    { name: "File Manager", href: "/dashboard/file-manager", icon: Folder },
+    { name: "File Manager", href: "/dashboard/files", icon: Folder },
     { name: "Users", href: "/dashboard/users", icon: Users },
     { name: "App Settings", href: "/dashboard/settings", icon: Settings },
     // { name: "Reports", href: "/dashboard/reports", icon: Copy },

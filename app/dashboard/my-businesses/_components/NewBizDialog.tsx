@@ -7,7 +7,7 @@ import {
     DialogTrigger
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
-import {CalendarIcon, Plus} from "lucide-react";
+import {Plus, PlusCircleIcon} from "lucide-react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
@@ -21,13 +21,14 @@ import {z} from "zod";
 import {registerBizForm} from "@/lib/services/business";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {RegisterResponse} from "@/store/auth";
-import {CustomCombobox} from "../../../../components/ui/combobox";
+import {CustomCombobox} from "@/components/ui/combobox";
 import {countries} from "@/utils/countries";
 import {categories} from "@/utils/business-categories";
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
 
 import "react-datepicker/dist/react-datepicker.css";
 import {CustomDatePicker} from "@/components/ui/date-picker";
+import { Icons } from "@/components/ui/icon";
 
 export const NewBizDialog = () => {
     const {toast} = useToast();
@@ -51,6 +52,7 @@ export const NewBizDialog = () => {
                     variant: 'default',
                 });
                 form.reset();
+                setIsDialogOpen(false);
             } catch (error) {
                 console.log({error})
                 toast({
@@ -59,7 +61,6 @@ export const NewBizDialog = () => {
                     variant: 'destructive',
                 });
             } finally {
-                setIsDialogOpen(false);
                 setLoading(false);
             }
         });
@@ -226,26 +227,8 @@ export const NewBizDialog = () => {
                                                         />
                                                     </div>
                                                 </FormControl>
+                                                <FormMessage />
                                             </FormItem>
-                                            // <div className="space-y-2">
-                                            //     <Label htmlFor="dateOfBirth">Place of Birth *</Label>
-                                            //     <DatePicker
-                                            //         selected={field.value}
-                                            //         onChange={(date) => {
-                                            //             // @ts-ignore
-                                            //             field.value = date
-                                            //         }}
-                                            //     />
-                                            //     {/*<Input*/}
-                                            //     {/*    id="dateOfBirth"*/}
-                                            //     {/*    required*/}
-                                            //     {/*    type={'date'}*/}
-                                            //     {/*    onChange={(e) => {*/}
-                                            //     {/*        field.value = new Date(e.target.value)*/}
-                                            //     {/*    }}*/}
-                                            //     {/*    placeholder="Enter place of birth"*/}
-                                            //     {/*/>*/}
-                                            // </div>
                                         )}
                                     />
 
@@ -405,6 +388,11 @@ export const NewBizDialog = () => {
                                 type={"submit"}
                                 disabled={loading || isPending}
                                 className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700">
+                                {isPending || loading ? (
+                                    <Icons.spinner className={'h-4 w-4 mr-2 animate-spin'} />
+                                ) : (
+                                    <PlusCircleIcon className={'h-4 w-4 mr-2'} />
+                                )}
                                 Register Business
                             </Button>
                         </div>

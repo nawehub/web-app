@@ -1,7 +1,6 @@
 export type ActivityType = "forum" | "chat" | "dashboard"
 export type UserRole = "entrepreneur" | "mentor" | "investor" | "admin"
 export type UserType = "entrepreneur" | "supporter" | "official"
-export type FileFormat = "pdf" | "doc" | "docx"
 export type AccessLevel = "public" | "members" | "premium"
 export type MimeType =
     | "application/pdf"

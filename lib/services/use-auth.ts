@@ -1,5 +1,6 @@
 import {z} from "zod";
-import {api4app} from "@/lib/api";
+
+import {api4app} from "@/lib/api4app";
 
 export const registerForm = z.object({
     firstName: z.string().min(2, {message: 'firstName is required'}),

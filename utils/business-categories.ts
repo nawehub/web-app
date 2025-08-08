@@ -14,3 +14,4 @@ export const categories = [
     {name: "Mining"},
     {name: "Energy"}
 ];
+

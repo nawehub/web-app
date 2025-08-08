@@ -33,7 +33,6 @@ export default function AllBusinesses() {
     const [sortBy, setSortBy] = useState<string>("registerDate");
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
     const [viewBusiness, setViewBusiness] = useState<BusinessData | null>(null);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const filteredAndSortedBusinesses = useMemo(() => {
         let filtered = data?.businesses.filter(business => {

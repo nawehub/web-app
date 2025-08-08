@@ -44,7 +44,6 @@ export const authOptions: NextAuthOptions = {
                     });
 
                     const data = await res.json();
-                    console.log({data})
 
                     if (res.ok && data?.accessToken) {
                         return {
@@ -84,14 +83,17 @@ export const authOptions: NextAuthOptions = {
         },
         jwt: async function ({token, user}) {
             if (user) {
-                token.accessToken = `Bearer ${user.accessToken}`
-                token.refreshToken = user.refreshToken
-                token.expiresIn = Date.now() + user.expiresIn * 1000;
-                token.user = user
+                return {
+                    ...token,
+                    accessToken: user.accessToken,
+                    refreshToken: user.refreshToken,
+                    expiresIn: user.expiresIn,
+                    user: user,
+                }
             }
 
             // Return the previous token if the access token has not expired
-            if (token.expiresIn && Date.now() < token.expiresIn) {
+            if (Date.now() < token.expiresIn) {
                 return token;
             }
 
@@ -103,6 +105,7 @@ export const authOptions: NextAuthOptions = {
             session.refreshToken = token.refreshToken
             session.expiresIn = token.expiresIn
             session.user = token.user
+            session.error = token.error
             return session;
         },
     },

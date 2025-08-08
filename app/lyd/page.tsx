@@ -1,547 +1,354 @@
-  "use client"
+"use client"
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {useState} from "react"
+import {motion} from "framer-motion"
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
+import {Button} from "@/components/ui/button"
+import {Badge} from "@/components/ui/badge"
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
 import {
-  Heart,
-  Trophy,
-  TrendingUp,
-  Users,
-  ArrowUp,
-  ArrowDown,
-  Crown,
-  Medal,
-  Award,
-  Smartphone,
-  CreditCard,
+    Heart,
+    Plus,
+    Calendar,
+    TrendingUp,
+    Users,
+    MapPin,
+    Trophy,
+    Star,
+    ArrowUpRight,
+    DollarSign,
+    Building2,
 } from "lucide-react"
-  import AppHeader from "@/components/public/app-header";
-
-const districts = [
-  { name: "Bo", total: 2450000, contributors: 1250, rank: 1, change: 5 },
-  { name: "Western Area Urban", total: 2100000, contributors: 2100, rank: 2, change: 2 },
-  { name: "Kenema", total: 1850000, contributors: 980, rank: 3, change: -1 },
-  { name: "Kailahun", total: 1650000, contributors: 850, rank: 4, change: 3 },
-  { name: "Port Loko", total: 1400000, contributors: 720, rank: 5, change: -2 },
-  { name: "Bombali", total: 1250000, contributors: 650, rank: 6, change: 1 },
-  { name: "Tonkolili", total: 1100000, contributors: 580, rank: 7, change: -1 },
-  { name: "Moyamba", total: 950000, contributors: 490, rank: 8, change: 2 },
-]
-
-const topContributors = [
-  { name: "Aminata K.", district: "Bo", amount: 125000, rank: 1 },
-  { name: "Mohamed S.", district: "Western Area Urban", amount: 98000, rank: 2 },
-  { name: "Fatima B.", district: "Kenema", amount: 87000, rank: 3 },
-  { name: "Ibrahim T.", district: "Bo", amount: 76000, rank: 4 },
-  { name: "Mariama J.", district: "Kailahun", amount: 65000, rank: 5 },
-]
-
-const fundedProjects = [
-  {
-    title: "Bo District Youth Tech Hub",
-    district: "Bo",
-    category: "Technology",
-    funded: 850000,
-    goal: 1000000,
-    status: "Active",
-  },
-  {
-    title: "Kenema Agricultural Processing Center",
-    district: "Kenema",
-    category: "Agriculture",
-    funded: 1200000,
-    goal: 1200000,
-    status: "Completed",
-  },
-  {
-    title: "Port Loko Women's Cooperative",
-    district: "Port Loko",
-    category: "Business",
-    funded: 450000,
-    goal: 800000,
-    status: "Funding",
-  },
-]
+import {DonationForm} from "@/app/lyd/_components/donation-form"
+import {DonationHistoryComponent} from "@/app/lyd/_components/donation-history"
+import {currencies} from "@/lib/lyd-data"
+import type {LYDDonation} from "@/types/lyd"
+import AppHeader from "@/components/public/app-header";
+import {useListDistrictRankingsQuery, useListTopContributorsQuery} from "@/hooks/repository/use-lyd";
+import {allDistricts} from "@/types/demographs";
+import {formatCurrency} from "@/utils/formatters";
 
 export default function LYDPage() {
-  const [donationAmount, setDonationAmount] = useState("")
-  const [paymentMethod, setPaymentMethod] = useState("")
-  const [selectedDistrict, setSelectedDistrict] = useState("Bo")
+    const [showDonationForm, setShowDonationForm] = useState(false)
+    const [showDonationHistory, setShowDonationHistory] = useState(false)
+    const [selectedYear, setSelectedYear] = useState("2024")
+    const { data: topContributors, refetch: refetchContributors } = useListTopContributorsQuery()
+    const { data: districtRankings, refetch: refetchRankings } = useListDistrictRankingsQuery()
 
-  const quickAmounts = [1, 5, 10, 25, 50, 100]
+    const handleDonationSubmit = (donationData: Partial<LYDDonation>) => {
+        refetchContributors().then()
+        refetchRankings().then()
+        setShowDonationForm(false)
+    }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50">
-      {/* Header */}
-      <AppHeader isVisible={true}/>
+    const totalStats = {
+        totalContributions: districtRankings?.reduce((sum, district) => sum + district.totalContributions, 0),
+        totalContributors: districtRankings?.reduce((sum, district) => sum + district.totalContributors, 0),
+        activeDistricts: allDistricts.length,
+        fundedProjects: 127,
+    }
 
-      <header className="bg-white border-b mt-8">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <Heart className="w-5 h-5 text-white" />
+    if (showDonationForm) {
+        return (
+            <div className="min-h-screen bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-800">
+                {/* Navigation */}
+                <AppHeader isVisible={true}/>
+                <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
+                    <DonationForm onSubmitAction={handleDonationSubmit} onCancelAction={() => setShowDonationForm(false)}/>
+                </div>
             </div>
-            <span className="text-xl font-bold text-gray-900">Love Your District</span>
-          </div>
-          <Button variant="outline" asChild className={'bg-blue-600 hover:bg-blue-300 text-white hover:text-white'}>
-            <a href="/lyd/history">Donation History</a>
-          </Button>
-        </div>
-      </header>
+        )
+    }
 
-      <div className="container mx-auto px-4 py-8">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Love Your District</h1>
-          <p className="text-xl text-gray-600 mb-6 max-w-3xl mx-auto">
-            Build your community through voluntary micro-contributions. Every Leone counts towards district development
-            projects that create lasting impact.
-          </p>
-          <div className="flex justify-center space-x-8 text-center">
-            <div>
-              <div className="text-3xl font-bold text-blue-600">Le 15.2M</div>
-              <div className="text-gray-600">Total Raised</div>
+    if (showDonationHistory) {
+        return (
+            <div className="min-h-screen bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-800">
+                {/* Navigation */}
+                <AppHeader isVisible={true}/>
+                <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
+                    <DonationHistoryComponent onCloseAction={() => setShowDonationHistory(false)}/>
+                </div>
             </div>
-            <div>
-              <div className="text-3xl font-bold text-emerald-600">8,450</div>
-              <div className="text-gray-600">Contributors</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-purple-600">16</div>
-              <div className="text-gray-600">Districts</div>
-            </div>
-          </div>
-        </div>
+        )
+    }
 
-        <Tabs defaultValue="donate" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="donate">Make Donation</TabsTrigger>
-            <TabsTrigger value="leaderboard">Leaderboard</TabsTrigger>
-            <TabsTrigger value="projects">Projects</TabsTrigger>
-            <TabsTrigger value="impact">Impact</TabsTrigger>
-          </TabsList>
-
-          {/* Donation Tab */}
-          <TabsContent value="donate" className="space-y-6">
-            <div className="grid lg:grid-cols-2 gap-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Heart className="w-5 h-5 text-blue-600" />
-                    Make a Contribution
-                  </CardTitle>
-                  <CardDescription>Support your district with a micro-donation starting from Le 1</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div>
-                    <Label htmlFor="district">Select District</Label>
-                    <Select value={selectedDistrict} onValueChange={setSelectedDistrict}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {districts.map((district) => (
-                          <SelectItem key={district.name} value={district.name}>
-                            {district.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="amount">Donation Amount (Le)</Label>
-                    <Input
-                      id="amount"
-                      type="number"
-                      value={donationAmount}
-                      onChange={(e) => setDonationAmount(e.target.value)}
-                      placeholder="Enter amount"
-                      min="1"
-                    />
-                    <div className="grid grid-cols-3 gap-2 mt-3">
-                      {quickAmounts.map((amount) => (
+    return (
+        <div className="min-h-screen bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-800">
+            {/* Navigation */}
+            <AppHeader isVisible={true}/>
+            <div className="flex-1 space-y-6 p-4 md:p-8 pt-6">
+                {/* Hero Section */}
+                <motion.div initial={{opacity: 0, y: -20}} animate={{opacity: 1, y: 0}}
+                            className="text-center space-y-4">
+                    <div className="flex items-center justify-center space-x-3 mb-4">
+                        <div className="p-3 bg-gradient-to-br from-red-500 to-pink-600 rounded-full">
+                            <Heart className="h-8 w-8 text-white"/>
+                        </div>
+                        <h1 className="text-4xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
+                            Love Your District
+                        </h1>
+                    </div>
+                    <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+                        Build a community through voluntary micro-contributions. Every Leone counts towards district
+                        development
+                        projects that create lasting impact.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mt-8">
                         <Button
-                          key={amount}
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setDonationAmount(amount.toString())}
+                            size="lg"
+                            onClick={() => setShowDonationForm(true)}
+                            className="bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white px-8 py-3"
                         >
-                          Le {amount}
+                            <Plus className="mr-2 h-5 w-5"/>
+                            Make a Donation
                         </Button>
-                      ))}
+                        <Button size="lg" variant="outline" onClick={() => setShowDonationHistory(true)}>
+                            <Calendar className="mr-2 h-5 w-5"/>
+                            View Donation History
+                        </Button>
                     </div>
-                  </div>
+                </motion.div>
 
-                  <div>
-                    <Label htmlFor="payment">Payment Method</Label>
-                    <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Choose payment method" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="orange">
-                          <div className="flex items-center gap-2">
-                            <Smartphone className="w-4 h-4" />
-                            Orange Money
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="africell">
-                          <div className="flex items-center gap-2">
-                            <Smartphone className="w-4 h-4" />
-                            Africell Money
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="bank">
-                          <div className="flex items-center gap-2">
-                            <CreditCard className="w-4 h-4" />
-                            Bank Transfer
-                          </div>
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                {/* Stats Cards */}
+                <motion.div
+                    initial={{opacity: 0, y: 20}}
+                    animate={{opacity: 1, y: 0}}
+                    transition={{delay: 0.1}}
+                    className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
+                >
+                    <Card
+                        className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 border-blue-200 dark:border-blue-800">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium text-blue-700 dark:text-blue-300">Total
+                                Contributions</CardTitle>
+                            <DollarSign className="h-4 w-4 text-blue-600 dark:text-blue-400"/>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold text-blue-900 dark:text-blue-100">
+                                {formatCurrency(totalStats.totalContributions!)}
+                            </div>
+                            <p className="text-xs text-blue-600 dark:text-blue-400">
+                                <span className="text-green-600">+12.5%</span> from last month
+                            </p>
+                        </CardContent>
+                    </Card>
 
-                  <Button className="w-full" size="lg" disabled={!donationAmount || !paymentMethod}>
-                    Donate Le {donationAmount || "0"}
-                  </Button>
+                    <Card
+                        className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 border-green-200 dark:border-green-800">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium text-green-700 dark:text-green-300">Total
+                                Contributors</CardTitle>
+                            <Users className="h-4 w-4 text-green-600 dark:text-green-400"/>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold text-green-900 dark:text-green-100">
+                                {totalStats.totalContributors?.toLocaleString()}
+                            </div>
+                            <p className="text-xs text-green-600 dark:text-green-400">
+                                <span className="text-green-600">+8.2%</span> from last month
+                            </p>
+                        </CardContent>
+                    </Card>
 
-                  <div className="text-center text-sm text-gray-600">
-                    <p>🔒 Secure payment processing</p>
-                    <p>📧 Instant receipt via email/SMS</p>
-                  </div>
-                </CardContent>
-              </Card>
+                    <Card
+                        className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900 border-purple-200 dark:border-purple-800">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium text-purple-700 dark:text-purple-300">Active
+                                Districts</CardTitle>
+                            <MapPin className="h-4 w-4 text-purple-600 dark:text-purple-400"/>
+                        </CardHeader>
+                        <CardContent>
+                            <div
+                                className="text-2xl font-bold text-purple-900 dark:text-purple-100">{totalStats.activeDistricts}</div>
+                            <p className="text-xs text-purple-600 dark:text-purple-400">All 16 districts
+                                participating</p>
+                        </CardContent>
+                    </Card>
 
-              <div className="space-y-6">
-                {/* Current Month Challenge */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Trophy className="w-5 h-5 text-yellow-600" />
-                      December Challenge
-                    </CardTitle>
-                    <CardDescription>"Boost Bo District" - Help Bo reach Le 3M this month!</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div>
-                        <div className="flex justify-between text-sm mb-2">
-                          <span>Progress</span>
-                          <span>Le 2.45M / Le 3M</span>
-                        </div>
-                        <Progress value={81.7} className="h-3" />
-                      </div>
-                      <div className="grid grid-cols-2 gap-4 text-center">
-                        <div>
-                          <div className="text-2xl font-bold text-blue-600">18.3%</div>
-                          <div className="text-xs text-gray-600">Remaining</div>
-                        </div>
-                        <div>
-                          <div className="text-2xl font-bold text-emerald-600">9</div>
-                          <div className="text-xs text-gray-600">Days Left</div>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    <Card
+                        className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900 border-orange-200 dark:border-orange-800">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium text-orange-700 dark:text-orange-300">Funded
+                                Projects</CardTitle>
+                            <Building2 className="h-4 w-4 text-orange-600 dark:text-orange-400"/>
+                        </CardHeader>
+                        <CardContent>
+                            <div
+                                className="text-2xl font-bold text-orange-900 dark:text-orange-100">{totalStats.fundedProjects}</div>
+                            <p className="text-xs text-orange-600 dark:text-orange-400">
+                                <span className="text-green-600">+15.3%</span> from last month
+                            </p>
+                        </CardContent>
+                    </Card>
+                </motion.div>
 
-                {/* Your Impact */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Your Impact</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Total Contributed</span>
-                        <span className="font-semibold">Le 25,000</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">District Rank</span>
-                        <span className="font-semibold">#3 in Bo</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Projects Supported</span>
-                        <span className="font-semibold">2</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Monthly Streak</span>
-                        <span className="font-semibold">6 months</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-          </TabsContent>
-
-          {/* Leaderboard Tab */}
-          <TabsContent value="leaderboard" className="space-y-6">
-            <div className="grid lg:grid-cols-2 gap-8">
-              {/* District Leaderboard */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Trophy className="w-5 h-5 text-yellow-600" />
-                    District Rankings
-                  </CardTitle>
-                  <CardDescription>Total contributions by district this month</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {districts.slice(0, 8).map((district, index) => (
-                      <div key={district.name} className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
-                        <div className="flex items-center space-x-3">
-                          <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                              index === 0
-                                ? "bg-yellow-100"
-                                : index === 1
-                                  ? "bg-gray-100"
-                                  : index === 2
-                                    ? "bg-orange-100"
-                                    : "bg-blue-50"
-                            }`}
-                          >
-                            {index === 0 ? (
-                              <Crown className="w-4 h-4 text-yellow-600" />
-                            ) : index === 1 ? (
-                              <Medal className="w-4 h-4 text-gray-600" />
-                            ) : index === 2 ? (
-                              <Award className="w-4 h-4 text-orange-600" />
-                            ) : (
-                              <span className="text-sm font-medium text-gray-600">#{district.rank}</span>
-                            )}
-                          </div>
-                          <div>
-                            <div className="font-medium">{district.name}</div>
-                            <div className="text-sm text-gray-600">{district.contributors} contributors</div>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-semibold">Le {district.total.toLocaleString()}</div>
-                          <div
-                            className={`text-sm flex items-center ${
-                              district.change > 0 ? "text-green-600" : "text-red-600"
-                            }`}
-                          >
-                            {district.change > 0 ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
-                            {Math.abs(district.change)}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Top Contributors */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Users className="w-5 h-5 text-emerald-600" />
-                    Top Contributors
-                  </CardTitle>
-                  <CardDescription>Individual leaders this month</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {topContributors.map((contributor, index) => (
-                      <div
-                        key={contributor.name}
-                        className="flex items-center justify-between p-3 rounded-lg bg-gray-50"
-                      >
-                        <div className="flex items-center space-x-3">
-                          <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                              index === 0
-                                ? "bg-yellow-100"
-                                : index === 1
-                                  ? "bg-gray-100"
-                                  : index === 2
-                                    ? "bg-orange-100"
-                                    : "bg-emerald-50"
-                            }`}
-                          >
-                            {index === 0 ? (
-                              <Crown className="w-4 h-4 text-yellow-600" />
-                            ) : index === 1 ? (
-                              <Medal className="w-4 h-4 text-gray-600" />
-                            ) : index === 2 ? (
-                              <Award className="w-4 h-4 text-orange-600" />
-                            ) : (
-                              <span className="text-sm font-medium text-emerald-600">#{contributor.rank}</span>
-                            )}
-                          </div>
-                          <div>
-                            <div className="font-medium">{contributor.name}</div>
-                            <div className="text-sm text-gray-600">{contributor.district}</div>
-                          </div>
-                        </div>
-                        <div className="font-semibold">Le {contributor.amount.toLocaleString()}</div>
-                      </div>
-                    ))}
-                  </div>
-                  <Button variant="outline" className="w-full mt-4">
-                    View Full Leaderboard
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* Projects Tab */}
-          <TabsContent value="projects" className="space-y-6">
-            <div className="grid gap-6">
-              {fundedProjects.map((project, index) => (
-                <Card key={index}>
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle>{project.title}</CardTitle>
-                        <CardDescription className="flex items-center gap-4 mt-2">
-                          <span>{project.district}</span>
-                          <Badge variant="secondary">{project.category}</Badge>
-                          <Badge
-                            variant={
-                              project.status === "Completed"
-                                ? "default"
-                                : project.status === "Active"
-                                  ? "secondary"
-                                  : "outline"
-                            }
-                          >
-                            {project.status}
-                          </Badge>
-                        </CardDescription>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-2xl font-bold text-emerald-600">
-                          {Math.round((project.funded / project.goal) * 100)}%
-                        </div>
-                        <div className="text-sm text-gray-600">Funded</div>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div>
-                        <div className="flex justify-between text-sm mb-2">
-                          <span>Progress</span>
-                          <span>
-                            Le {project.funded.toLocaleString()} / Le {project.goal.toLocaleString()}
+                <div className="grid gap-6 lg:grid-cols-2">
+                    {/* District Rankings */}
+                    <motion.div initial={{opacity: 0, x: -20}} animate={{opacity: 1, x: 0}} transition={{delay: 0.2}}>
+                        <Card>
+                            <CardHeader>
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <CardTitle className="flex items-center space-x-2">
+                                            <Trophy className="h-5 w-5 text-yellow-600"/>
+                                            <span>District Rankings</span>
+                                        </CardTitle>
+                                        <CardDescription>Top performing districts by total
+                                            contributions</CardDescription>
+                                    </div>
+                                    <Button variant="outline" size="sm">
+                                        <ArrowUpRight className="h-4 w-4"/>
+                                    </Button>
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-4">
+                                    {districtRankings?.map((district, index) => {
+                                        const percentage = (district.totalContributions / totalStats.totalContributions!) * 100
+                                        return (
+                                            <motion.div
+                                                key={index}
+                                                initial={{opacity: 0, x: -20}}
+                                                animate={{opacity: 1, x: 0}}
+                                                transition={{delay: 0.3 + index * 0.1}}
+                                                className="flex items-center space-x-4"
+                                            >
+                                                <div
+                                                    className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 text-white font-bold text-sm">
+                                                    {index + 1}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center justify-between mb-1">
+                                                        <p className="font-medium truncate">{district.district}</p>
+                                                        <p className="text-sm font-semibold">{formatCurrency(district.totalContributions)}</p>
+                                                    </div>
+                                                    <div className="flex items-center space-x-2">
+                                                        <div
+                                                            className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                                            <motion.div
+                                                                className="bg-gradient-to-r from-yellow-400 to-yellow-600 h-2 rounded-full"
+                                                                initial={{width: 0}}
+                                                                animate={{width: `${percentage}%`}}
+                                                                transition={{delay: 0.5 + index * 0.1, duration: 0.8}}
+                                                            />
+                                                        </div>
+                                                        <span className="text-xs text-muted-foreground w-12 text-right">
+                            {percentage.toFixed(1)}%
                           </span>
-                        </div>
-                        <Progress value={(project.funded / project.goal) * 100} />
-                      </div>
-                      {project.status === "Funding" && <Button className="w-full">Support This Project</Button>}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                                                    </div>
+                                                    <p className="text-xs text-muted-foreground mt-1">
+                                                        {district.totalContributors.toLocaleString()} {district.totalContributors === 1 ? "contributor" : "contributors"}
+                                                    </p>
+                                                </div>
+                                            </motion.div>
+                                        )
+                                    })}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </motion.div>
+
+                    {/* Top Contributors */}
+                    <motion.div initial={{opacity: 0, x: 20}} animate={{opacity: 1, x: 0}} transition={{delay: 0.2}}>
+                        <Card>
+                            <CardHeader>
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <CardTitle className="flex items-center space-x-2">
+                                            <Star className="h-5 w-5 text-blue-600"/>
+                                            <span>Top Contributors</span>
+                                        </CardTitle>
+                                        <CardDescription>Leading donors making the biggest impact</CardDescription>
+                                    </div>
+                                    <Select value={selectedYear} onValueChange={setSelectedYear}>
+                                        <SelectTrigger className="w-[100px]">
+                                            <SelectValue/>
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="2024">2024</SelectItem>
+                                            <SelectItem value="2023">2023</SelectItem>
+                                            <SelectItem value="2022">2022</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-4">
+                                    {topContributors?.map((contributor, index) => (
+                                        <motion.div
+                                            key={index}
+                                            initial={{opacity: 0, y: 20}}
+                                            animate={{opacity: 1, y: 0}}
+                                            transition={{delay: 0.3 + index * 0.1}}
+                                            className="flex items-center space-x-4 p-3 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 border border-blue-100 dark:border-blue-800"
+                                        >
+                                            <div
+                                                className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-bold">
+                                                {index + 1}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center justify-between">
+                                                    <p className="font-medium truncate">
+                                                        {contributor.anonymous ? "Anonymous Donor" : `${contributor.firstName} ${contributor.lastName}`}
+                                                    </p>
+                                                    <Badge variant="secondary" className="ml-2">
+                                                        {contributor.totalContributionsCount} {contributor.totalContributionsCount === 1 ? "contribution" : "contributions"}
+                                                    </Badge>
+                                                </div>
+                                                <div className="flex items-center justify-between mt-1">
+                                                    <p className="text-sm text-muted-foreground">
+                                                        {contributor.anonymous ? "Private contributor" : contributor.nationality}
+                                                    </p>
+                                                    <p className="text-sm font-semibold text-blue-600 dark:text-blue-400">
+                                                        {formatCurrency(contributor.totalContributions)}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </motion.div>
+                </div>
+
+                {/* Call to Action */}
+                <motion.div
+                    initial={{opacity: 0, y: 20}}
+                    animate={{opacity: 1, y: 0}}
+                    transition={{delay: 0.4}}
+                    className="text-center"
+                >
+                    <Card
+                        className="bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-950 dark:to-pink-950 border-red-200 dark:border-red-800">
+                        <CardContent className="pt-6">
+                            <div className="max-w-2xl mx-auto space-y-4">
+                                <Heart className="h-12 w-12 text-red-500 mx-auto"/>
+                                <h3 className="text-2xl font-bold text-red-900 dark:text-red-100">Join the Movement</h3>
+                                <p className="text-red-700 dark:text-red-300">
+                                    Your contribution, no matter how small, helps build schools, hospitals, roads, and
+                                    other vital
+                                    infrastructure that transforms communities across Sierra Leone.
+                                </p>
+                                <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
+                                    <Button
+                                        size="lg"
+                                        onClick={() => setShowDonationForm(true)}
+                                        className="bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white"
+                                    >
+                                        <Heart className="mr-2 h-5 w-5"/>
+                                        Start Contributing Today
+                                    </Button>
+                                    <Button size="lg" variant="outline" onClick={() => setShowDonationHistory(true)}>
+                                        <TrendingUp className="mr-2 h-5 w-5"/>
+                                        Track Your Impact
+                                    </Button>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </motion.div>
             </div>
-          </TabsContent>
-
-          {/* Impact Tab */}
-          <TabsContent value="impact" className="space-y-6">
-            <div className="grid lg:grid-cols-2 gap-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-emerald-600" />
-                    Overall Impact
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    <div className="text-center">
-                      <div className="text-4xl font-bold text-emerald-600 mb-2">Le 15.2M</div>
-                      <div className="text-gray-600">Total Funds Raised</div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4 text-center">
-                      <div>
-                        <div className="text-2xl font-bold text-blue-600">23</div>
-                        <div className="text-sm text-gray-600">Projects Funded</div>
-                      </div>
-                      <div>
-                        <div className="text-2xl font-bold text-purple-600">8,450</div>
-                        <div className="text-sm text-gray-600">Total Contributors</div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Agriculture Projects</span>
-                        <span className="font-semibold">8</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Technology Initiatives</span>
-                        <span className="font-semibold">6</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Youth Programs</span>
-                        <span className="font-semibold">5</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Infrastructure</span>
-                        <span className="font-semibold">4</span>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Success Stories</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="border-l-4 border-emerald-500 pl-4">
-                      <h4 className="font-semibold">Kenema Agricultural Center</h4>
-                      <p className="text-sm text-gray-600 mt-1">
-                        Fully funded processing center now serves 200+ farmers, increasing income by 40% on average.
-                      </p>
-                      <Badge variant="secondary" className="mt-2">
-                        Completed
-                      </Badge>
-                    </div>
-
-                    <div className="border-l-4 border-blue-500 pl-4">
-                      <h4 className="font-semibold">Bo Youth Tech Hub</h4>
-                      <p className="text-sm text-gray-600 mt-1">
-                        85% funded. Training 50 young people in digital skills and entrepreneurship.
-                      </p>
-                      <Badge variant="outline" className="mt-2">
-                        Active
-                      </Badge>
-                    </div>
-
-                    <div className="border-l-4 border-purple-500 pl-4">
-                      <h4 className="font-semibold">Port Loko Women's Cooperative</h4>
-                      <p className="text-sm text-gray-600 mt-1">
-                        56% funded. Supporting 30 women entrepreneurs with microfinance and business training.
-                      </p>
-                      <Badge variant="outline" className="mt-2">
-                        Funding
-                      </Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
-      </div>
-    </div>
-  )
+        </div>
+    )
 }

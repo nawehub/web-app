@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import {registerForm} from "@/lib/services/use-auth";
-import {api4app} from "@/lib/api";
 import {ApiErrorResponse} from "@/lib/auth-response";
+import {api4app} from "@/lib/api4app";
 
 export const registerBizForm = z.object({
     businessName: z.string({message: "business name is required"}).min(3, {message: "business name must be at least 3 chars long"})
@@ -80,7 +80,7 @@ export const businessService = () => {
                     body: JSON.stringify(req),
                 }),
             listAll: async (type: string) => {
-                const response = await api4app('/businesses/discover/list?type=' + type, {
+                const response = await api4app('/businesses/discover?type=' + type, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
@@ -90,7 +90,7 @@ export const businessService = () => {
                 return response as Promise<BusinessListResponse>
             },
             getOne: async (id: string) =>
-                api4app('/businesses/discover/one' + id, {
+                api4app('/businesses/discover/' + id, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
