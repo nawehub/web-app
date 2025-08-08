@@ -27,6 +27,7 @@ import {
 import {FundingApplication, FundingOpportunity, formatDate} from "@/types/funding"
 import {useChangeApplicationStatusMutation} from "@/hooks/repository/use-funding";
 import {useToast} from "@/hooks/use-toast";
+import {IfAllowed} from "@/components/auth/IfAllowed";
 
 interface ApplicantsListProps {
     opportunity: FundingOpportunity
@@ -345,32 +346,34 @@ export function ApplicantsList({opportunity, applications}: ApplicantsListProps)
                                             </Button>
                                         )}
                                         {selectedApplication.applicationStatus === "Under_Review" && (
-                                            <>
-                                                <Button
-                                                    size="sm"
-                                                    variant="outline"
-                                                    className="text-green-600 hover:text-green-700 bg-transparent"
-                                                    onClick={(e) => {
-                                                        e.preventDefault()
-                                                        handleStatusUpdate(selectedApplication.id, "Approve")
-                                                    }}
-                                                >
-                                                    <CheckCircle className="h-4 w-4 mr-1"/>
-                                                    Approve
-                                                </Button>
-                                                <Button
-                                                    size="sm"
-                                                    variant="outline"
-                                                    className="text-red-600 hover:text-red-700 bg-transparent"
-                                                    onClick={(e) => {
-                                                        e.preventDefault()
-                                                        updateSelectedApplicationStatusToRejected()
-                                                    }}
-                                                >
-                                                    <XCircle className="h-4 w-4 mr-1"/>
-                                                    Reject
-                                                </Button>
-                                            </>
+                                            <IfAllowed permission={"funding:create"}>
+                                                <>
+                                                    <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        className="text-green-600 hover:text-green-700 bg-transparent"
+                                                        onClick={(e) => {
+                                                            e.preventDefault()
+                                                            handleStatusUpdate(selectedApplication.id, "Approve")
+                                                        }}
+                                                    >
+                                                        <CheckCircle className="h-4 w-4 mr-1"/>
+                                                        Approve
+                                                    </Button>
+                                                    <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        className="text-red-600 hover:text-red-700 bg-transparent"
+                                                        onClick={(e) => {
+                                                            e.preventDefault()
+                                                            updateSelectedApplicationStatusToRejected()
+                                                        }}
+                                                    >
+                                                        <XCircle className="h-4 w-4 mr-1"/>
+                                                        Reject
+                                                    </Button>
+                                                </>
+                                            </IfAllowed>
                                         )}
                                     </div>
                                 </div>
@@ -453,29 +456,31 @@ export function ApplicantsList({opportunity, applications}: ApplicantsListProps)
 
                                 {/* Rejection Notes */}
                                 {rejectStatus && (
-                                    <Card>
-                                        <CardHeader>
-                                            <CardTitle className="text-lg">Rejection Reason</CardTitle>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <div className="space-y-3">
-                                                <Textarea
-                                                    placeholder="Add your rejection reason here..."
-                                                    value={rejectionReason}
-                                                    onChange={(e) => setRejectionReason(e.target.value)}
-                                                    rows={4}
-                                                />
-                                            </div>
-                                        </CardContent>
-                                        <CardFooter>
-                                            <Button onClick={(e) => {
-                                                e.preventDefault()
-                                                handleStatusUpdate(selectedApplication.id, "Reject")
-                                            }}>
-                                                Reject Application
-                                            </Button>
-                                        </CardFooter>
-                                    </Card>
+                                    <IfAllowed permission="funding:create" fallback={null}>
+                                        <Card>
+                                            <CardHeader>
+                                                <CardTitle className="text-lg">Rejection Reason</CardTitle>
+                                            </CardHeader>
+                                            <CardContent>
+                                                <div className="space-y-3">
+                                                    <Textarea
+                                                        placeholder="Add your rejection reason here..."
+                                                        value={rejectionReason}
+                                                        onChange={(e) => setRejectionReason(e.target.value)}
+                                                        rows={4}
+                                                    />
+                                                </div>
+                                            </CardContent>
+                                            <CardFooter>
+                                                <Button onClick={(e) => {
+                                                    e.preventDefault()
+                                                    handleStatusUpdate(selectedApplication.id, "Reject")
+                                                }}>
+                                                    Reject Application
+                                                </Button>
+                                            </CardFooter>
+                                        </Card>
+                                    </IfAllowed>
                                 )}
                             </div>
                         </>

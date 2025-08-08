@@ -6,6 +6,7 @@ import {dehydrate, HydrationBoundary, QueryClient} from "@tanstack/react-query";
 import {fundingService} from "@/lib/services/funding";
 import AllProviders from "@/app/dashboard/funding-providers/_components/all-providers";
 import CreateProviderModal from "@/app/dashboard/funding-providers/_components/CreateProviderModal";
+import {IfAllowed} from "@/components/auth/IfAllowed";
 
 export default function FundingProvidersPage() {
     const queryClient = new QueryClient();
@@ -38,7 +39,9 @@ export default function FundingProvidersPage() {
                     <p className="text-muted-foreground">Manage and browse funding providers</p>
                 </div>
 
-                <CreateProviderModal />
+                <IfAllowed permission={"funding:create"}>
+                    <CreateProviderModal />
+                </IfAllowed>
 
             </motion.div>
 

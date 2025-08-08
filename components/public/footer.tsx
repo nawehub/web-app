@@ -36,8 +36,8 @@ export const Footer = () => {
                                 </Link>
                             </li>
                             <li>
-                                <Link href={"/faqs"} className="hover:text-white">
-                                    FAQs
+                                <Link href={"/lyd"} className="hover:text-white">
+                                    Love Your District
                                 </Link>
                             </li>
                         </ul>
@@ -46,22 +46,17 @@ export const Footer = () => {
                         <h4 className="font-semibold mb-4">Support</h4>
                         <ul className="space-y-2 text-gray-400">
                             <li>
-                                <Link href={"/help"} className="hover:text-white">
-                                    Help Center
+                                <Link href={"#"} className="hover:text-white">
+                                    FAQs
                                 </Link>
                             </li>
                             <li>
-                                <Link href={"/about"} className="hover:text-white">
-                                    About Us
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href={"/privacy"} className="hover:text-white">
+                                <Link href={"#"} className="hover:text-white">
                                     Privacy Policy
                                 </Link>
                             </li>
                             <li>
-                                <Link href={"/terms"} className="hover:text-white">
+                                <Link href={"#"} className="hover:text-white">
                                     Terms of Service
                                 </Link>
                             </li>
@@ -71,7 +66,9 @@ export const Footer = () => {
                         <h4 className="font-semibold mb-4">Connect</h4>
                         <p className="text-gray-400 mb-2">Follow us for updates and success stories</p>
                         <div className="flex space-x-4">
-                            <Button size="sm" variant={"default"}
+                            <Button onClick={() => {
+                                window.open("https://www.facebook.com/Ewomensl", "_blank");
+                            }} size="sm" variant={"default"}
                                     className="text-white border-gray-600 hover:bg-gray-800">
                                 <FaFacebook className={"h-5 w-5"} />
                             </Button>
@@ -89,3 +86,5 @@ export const Footer = () => {
         </footer>
     );
 }
+
+// https://www.facebook.com/share/18tzHmzkmp/
