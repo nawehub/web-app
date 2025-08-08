@@ -24,15 +24,31 @@ import {BusinessData} from "@/lib/services/business";
 import {categories} from "@/utils/business-categories";
 import {Badge} from "@/components/ui/badge";
 import {NewBizDialog} from "@/app/dashboard/my-businesses/_components/NewBizDialog";
+import {IfAllowed} from "@/components/auth/IfAllowed";
+import {useSession} from "next-auth/react";
+import {usePermissions} from "@/hooks/use-permissions";
 
 export default function AllBusinesses() {
-    const {data, error, isLoading} = useListBusinessQuery("all");
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState<string>("all");
     const [categoryFilter, setCategoryFilter] = useState<string>("all");
     const [sortBy, setSortBy] = useState<string>("registerDate");
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
     const [viewBusiness, setViewBusiness] = useState<BusinessData | null>(null);
+    const [viewMode, setViewMode] = useState<"all" | "own">("own");
+
+    const { data: session } = useSession();
+
+    const { hasPermission, isAdmin } = usePermissions();
+
+    const {data, error, isLoading} = useListBusinessQuery("all");
+
+    useEffect(() => {
+        if (isAdmin() || hasPermission("business:read-all")){
+            setViewMode("all");
+        }
+
+    }, [viewMode]);
 
     const filteredAndSortedBusinesses = useMemo(() => {
         let filtered = data?.businesses.filter(business => {
