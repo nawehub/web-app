@@ -7,7 +7,7 @@ import {
     Eye,
     Filter,
     MapPin,
-    Phone, Plus,
+    Phone,
     Search,
     SortAsc,
     SortDesc,
@@ -24,8 +24,6 @@ import {BusinessData} from "@/lib/services/business";
 import {categories} from "@/utils/business-categories";
 import {Badge} from "@/components/ui/badge";
 import {NewBizDialog} from "@/app/dashboard/my-businesses/_components/NewBizDialog";
-import {IfAllowed} from "@/components/auth/IfAllowed";
-import {useSession} from "next-auth/react";
 import {usePermissions} from "@/hooks/use-permissions";
 
 export default function AllBusinesses() {
@@ -37,11 +35,9 @@ export default function AllBusinesses() {
     const [viewBusiness, setViewBusiness] = useState<BusinessData | null>(null);
     const [viewMode, setViewMode] = useState<"all" | "own">("own");
 
-    const { data: session } = useSession();
-
     const { hasPermission, isAdmin } = usePermissions();
 
-    const {data, error, isLoading} = useListBusinessQuery("all");
+    const {data, isLoading} = useListBusinessQuery("all");
 
     useEffect(() => {
         if (isAdmin() || hasPermission("business:read-all")){
