@@ -19,10 +19,10 @@ export const exploreMenuItems = [
     // { name: "Network", href: "/dashboard/network", icon: Network },
     { name: "Discussion Forums", href: "/dashboard/forums", icon: Network },
     { name: "Funding Providers", href: "/dashboard/funding-providers", icon: Briefcase },
+    { name: "Resource Library", href: "/dashboard/resources", icon: BookOpen },
 ];
 
 export const documentMenuItems = [
-    { name: "Resource Library", href: "/dashboard/resources", icon: BookOpen },
     { name: "File Manager", href: "/dashboard/files", icon: Folder },
     { name: "Users", href: "/dashboard/users", icon: Users },
     { name: "App Settings", href: "/dashboard/settings", icon: Settings },

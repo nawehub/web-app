@@ -5,6 +5,7 @@ import {Avatar, AvatarFallback} from "@/components/ui/avatar";
 import {bottomMenuItems, documentMenuItems, exploreMenuItems} from "@/components/MenuItems";
 import { SidebarItem } from "./SidebarItem";
 import {useSession} from "next-auth/react";
+import {IfAllowed} from "@/components/auth/IfAllowed";
 
 interface SidebarProps {
     isSidebarOpen: boolean
@@ -56,14 +57,16 @@ export function Sidebar({isSidebarOpen, toggleSidebar, pathname}: SidebarProps) 
             </nav>
 
             {/* Documents Section */}
-            <div className="px-4 mt-6">
-                <h3 className={`text-xs font-medium text-gray-500 mb-2`}>Documents</h3>
-                <div className="space-y-1">
-                    {documentMenuItems.map((item, i) => (
-                        <SidebarItem key={i} href={item.href} icon={<item.icon className="w-4 h-4"/>} title={item.name} isActive={pathname === item.href} />
-                    ))}
+            <IfAllowed anyOf={["funding:create", "full:access"]}>
+                <div className="px-4 mt-6">
+                    <h3 className={`text-xs font-medium text-gray-500 mb-2`}>Management</h3>
+                    <div className="space-y-1">
+                        {documentMenuItems.map((item, i) => (
+                            <SidebarItem key={i} href={item.href} icon={<item.icon className="w-4 h-4"/>} title={item.name} isActive={pathname === item.href} />
+                        ))}
+                    </div>
                 </div>
-            </div>
+            </IfAllowed>
 
             {/* Bottom Section */}
             <div className="absolute bottom-0 w-64 p-4 space-y-2">
