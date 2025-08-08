@@ -52,8 +52,9 @@ export default function ContactUsSection() {
                     viewport={{ once: true }}
                     className="text-lg text-gray-600 dark:text-gray-300 mb-12 max-w-2xl"
                 >
-                    We're here to answer your questions, discuss your project, and help you find the best solutions for your software needs. Reach out to us, and let's start building something great together.
-                </motion.p>
+                    We’re here to answer your questions, explore your business ideas,
+                    and support you in formalizing and growing your business sustainably. Connect with us--let’s
+                    build successful businesses together.                </motion.p>
                 <div className="flex flex-col md:flex-row gap-10 md:gap-16 items-start">
                     {/* Left: Contact Form */}
                     <motion.div

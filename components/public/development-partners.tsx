@@ -1,20 +1,16 @@
 import React from "react";
 
 const partners = [
-    {name: "eWomen", url: "/images/partners/ewomen.png"},
-    {name: "World Bank", url: "/images/partners/worldbank.svg"},
-    {name: "UNDP", url: "/images/partners/UNDP_logo.svg.png"},
-    {name: "USAID", url: "/images/partners/usaid.png"},
+    // {name: "eWomen", url: "/images/partners/ewomen.png"},
     {name: "EU", url: "/images/partners/eu.png"},
-    {name: "DFID", url: "/images/partners/dfid.png"},
+    {name: "UNDP", url: "/images/partners/UNDP_logo.svg.png"},
     {name: "GIZ", url: "/images/partners/giz-Logo.gif"},
-    {
-        name: "AfDB",
-        url: "https://www.afdb.org/sites/default/files/styles/scale_width_1200/public/2021-03/afdb-logo.png"
-    },
-    {name: "UN Women", url: "/images/partners/unwomen.png"},
-    {name: "IFC", url: "https://upload.wikimedia.org/wikipedia/commons/2/2a/IFC_logo.svg"},
-    {name: "ECOWAS", url: "/images/partners/ecowas.png"},
+    {name: "SLEDP", url: "/images/partners/sledp.png"},
+    {name: "SMEDA", url: "/images/partners/smeda.jpeg"},
+    {name: "UNIMAK", url: "/images/partners/unimak.png"},
+    {name: "EBK", url: "/images/partners/ebk.svg"},
+    {name: "Government of Sierra Leone", url: "/images/partners/Coat_of_arm.svg.png"},
+    {name: "ILO", url: "/images/partners/ilo.jpg"},
 ];
 
 export default function DevelopmentPartners() {

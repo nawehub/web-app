@@ -261,9 +261,9 @@ export function UploadFileDialog({ open, onOpenChangeAction, folderId }: UploadF
                         {/* Restricted */}
                         <div className="flex items-center justify-between">
                             <div className="space-y-0.5">
-                                <Label htmlFor="restricted">Restricted Access</Label>
+                                <Label htmlFor="restricted">Featured Resource</Label>
                                 <p className="text-sm text-muted-foreground">
-                                    Require special permissions to access this file
+                                    Mark this resource as featured on the resource library.
                                 </p>
                             </div>
                             <Switch

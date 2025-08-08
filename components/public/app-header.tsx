@@ -21,10 +21,6 @@ const HeaderNavs = [
         link: "/contact-us",
     },
     {
-        name: "Blogs",
-        link: "/blogs",
-    },
-    {
         name: "FAQ",
         link: "/faq",
     }
@@ -43,8 +39,10 @@ export default function AppHeader({isVisible}: AppHeaderProps) {
                 <div
                     className={`flex items-center gap-2 transition-all duration-700 ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'}`}>
                     <div className="items-center h-16 mb-8 pt-5">
-                        <img src={"/images/wehub-sample-logo.png"} alt="Logo" className="h-10 w-auto mr-2"/>
-                        <span className="font-light text-xs -mt-5 ml-4 tracking-tight text-zinc-900 dark:text-white">Salone Success</span>
+                        <Link href={"/"}>
+                            <img src={"/images/wehub-sample-logo.png"} alt="Logo" className="h-10 w-auto mr-2"/>
+                            <span className="font-light text-xs -mt-5 ml-4 tracking-tight text-zinc-900 dark:text-white">Salone Success</span>
+                        </Link>
                     </div>
                 </div>
 

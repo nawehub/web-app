@@ -348,7 +348,7 @@ export function DonationForm({onSubmitAction, onCancelAction}: DonationFormProps
                                 </SelectTrigger>
                                 <SelectContent>
                                     {currencies.map((currency) => (
-                                        <SelectItem key={currency.code} value={currency.code}>
+                                        <SelectItem key={currency.code} value={currency.code} disabled={currency.disabled}>
                                             {currency.symbol} {currency.name} ({currency.code})
                                         </SelectItem>
                                     ))}
@@ -426,8 +426,8 @@ export function DonationForm({onSubmitAction, onCancelAction}: DonationFormProps
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="Momo">Mobile Money</SelectItem>
-                                    <SelectItem value="Bank">Bank Transfer</SelectItem>
-                                    <SelectItem value="Card">Credit/Debit Card</SelectItem>
+                                    <SelectItem value="Bank" disabled>Bank Transfer</SelectItem>
+                                    <SelectItem value="Card" disabled>Credit/Debit Card</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -448,7 +448,7 @@ export function DonationForm({onSubmitAction, onCancelAction}: DonationFormProps
                                     </SelectTrigger>
                                     <SelectContent>
                                         {paymentProviders[formData.paymentMethod as keyof typeof paymentProviders]?.map((provider) => (
-                                            <SelectItem key={provider.id} value={provider.id}>
+                                            <SelectItem key={provider.id} value={provider.id} disabled={provider.id !== 'm17'}>
                                                 {provider.name}
                                             </SelectItem>
                                         ))}

@@ -37,7 +37,7 @@ export default function Home() {
     const stats = [
         {number: "16", label: "Districts Covered", icon: Globe},
         {number: "1,000+", label: "SMEs Supported", icon: Users},
-        {number: "Le 50M+", label: "Funds Raised", icon: DollarSign},
+        {number: "NLe 50M+", label: "Funds Raised", icon: DollarSign},
         {number: "24/7", label: "Support Available", icon: Shield}
     ];
 
@@ -57,7 +57,7 @@ export default function Home() {
     ];
 
     const lydFeatures = [
-        {icon: Heart, title: "Micro-donations from Le 1", description: "Every contribution makes a difference"},
+        {icon: Heart, title: "Micro-contributions from 5 Nle", description: "Every contribution makes a difference"},
         {icon: TrendingUp, title: "District Leaderboards", description: "Track and celebrate district achievements"},
         {icon: Shield, title: "Transparent Fund Management", description: "Complete visibility into fund allocation"},
         {icon: Target, title: "Community Project Funding", description: "Support local development initiatives"}
@@ -76,14 +76,14 @@ export default function Home() {
                         <Badge variant="secondary"
                                className="bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 transition-all duration-300 hover:scale-105 shadow-sm">
                             <Star className="w-3 h-3 mr-1"/>
-                            Supporting SMEs Across Sierra Leone
+                            Supporting Startups, Early-Stage Innovators and SMEs Across Sierra Leone
                         </Badge>
                     </div>
 
                     <div
                         className={`transition-all duration-1000 delay-500 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-                        <h1 className="text-5xl md:text-7xl font-bold tracking-tight max-w-5xl mx-auto leading-tight">
-                            Empowering SMEs Across{' '}
+                        <h1 className="text-5xl md:text-5xl font-bold tracking-tight max-w-5xl mx-auto leading-tight">
+                            Empowering Startups, Early-Stage Innovators <br/> And SMEs Across{' '}
                             <span
                                 className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent animate-pulse">
                                 Sierra Leone
@@ -139,7 +139,7 @@ export default function Home() {
                                     <CardTitle className="text-2xl font-bold text-slate-800">Business Support
                                         Hub</CardTitle>
                                     <CardDescription className="text-slate-600 text-base">
-                                        Comprehensive resources and tools for SME growth and development
+                                        Comprehensive resources and tools for Startups, Early-Stage and SMEs growth and development
                                     </CardDescription>
                                 </div>
                             </div>
@@ -208,7 +208,7 @@ export default function Home() {
                                 <Button variant="outline"
                                         className="w-full group/btn border-2 border-emerald-200 hover:bg-emerald-50 hover:border-emerald-300 shadow-lg hover:shadow-xl transition-all duration-300"
                                         size="lg">
-                                    Donate to a District ("Love Your District")
+                                    Contribute to a District ("Love Your District")
                                     <Heart
                                         className="ml-2 h-4 w-4 group-hover/btn:scale-110 transition-transform duration-300"/>
                                 </Button>
@@ -291,7 +291,11 @@ export default function Home() {
                                     <div className="flex justify-center mb-4">
                                         <div
                                             className="h-12 w-12 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-all duration-300">
-                                            <stat.icon className="h-6 w-6"/>
+                                            {stat.label === 'Funds Raised' ? (
+                                                <span className="h-6 w-6 text-white">NLe</span>
+                                            ): (
+                                                <stat.icon className="h-6 w-6"/>
+                                            )}
                                         </div>
                                     </div>
                                     <div
