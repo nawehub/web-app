@@ -1,5 +1,5 @@
 import {z} from "zod";
-import {FundingApplication, FundingOpportunity, FundingProvider} from "@/types/funding";
+import {FundingApplication, FundingOpportunity, FundingOpportunityDto, FundingProvider} from "@/types/funding";
 import {api4app} from "@/lib/api4app";
 
 export const createProviderForm = z.object({
@@ -34,9 +34,13 @@ export type createOpportunityForm = Omit<FundingOpportunity, "id" | "provider" |
     providerId: string
 }
 
+export type createMinimalOpp = Omit<FundingOpportunityDto, "id" | "createdAt" | "updatedAt" | "provider"> & {
+    providerId: string
+}
+
 export type OpportunityListResponse = {
     count: number
-    opportunities: FundingOpportunity[]
+    opportunities: FundingOpportunityDto[]
 }
 
 export type ProviderListResponse = {
@@ -47,6 +51,12 @@ export type ProviderListResponse = {
 export type FundingCreateResponse<T> = {
     message: string
     provider: T
+}
+
+export type MinimalOpportunityResponse = {
+    message: string;
+    opportunityTitle: string;
+    opportunityId: string;
 }
 
 export type ApplicationListResponse = {
@@ -98,9 +108,9 @@ export const fundingService = () => {
                     },
                 })
 
-                return response as Promise<FundingOpportunity>
+                return response as Promise<FundingOpportunityDto>
             },
-            create: async (req: createOpportunityForm) => {
+            create: async (req: createMinimalOpp) => {
                 const resp = await api4app('/funding/opportunity', {
                     method: 'POST',
                     headers: {
@@ -109,7 +119,7 @@ export const fundingService = () => {
                     body: JSON.stringify(req),
                 })
 
-                return resp as Promise<FundingCreateResponse<FundingOpportunity>>
+                return resp as Promise<MinimalOpportunityResponse>
             }
         },
         applications: {

@@ -6,7 +6,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     try {
         const { id } = await params;
 
-        const response = await apiRequest("/funding/opportunities/" + id, {
+        const response = await apiRequest("/funding/opportunities/minimal/opp/" + id, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         })

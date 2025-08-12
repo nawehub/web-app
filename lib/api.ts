@@ -26,6 +26,7 @@ export async function apiRequest(endpoint: string, options: RequestInit = {}) {
 
 }
 
+
 export async function apiRequest4ResourceUpload(endpoint: string, options: RequestInit = {}) {
     const session = await getServerSession(authOptions);
 

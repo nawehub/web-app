@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
-        const type = searchParams.get('type') || 'all';
+        const type = searchParams.get('type');
 
         const response = await apiRequest("/business?type=" + type, {
             method: 'GET',

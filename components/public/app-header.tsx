@@ -63,10 +63,16 @@ export default function AppHeader({isVisible}: AppHeaderProps) {
 
                 <div
                     className={`flex items-center gap-2 transition-all duration-700 delay-300 ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-10 opacity-0'}`}>
+                    <Link href="/business-registration">
+                        <Button variant="outline" size="sm"
+                                className="hover:scale-105 transition-all duration-300 hover:shadow-lg">
+                            Register Your Business
+                        </Button>
+                    </Link>
                     <Link href="/login">
                         <Button variant="outline" size="sm"
-                                className="hover:scale-105 transition-all duration-300 hover:shadow-lg bg-[#f4813f] hover:bg-[#e67730] text-white ">
-                            Go To App 👉🏻
+                                className="hover:scale-105 transition-all duration-300 hover:shadow-lg bg-[#f4813f] hover:bg-[#e67730] text-white hover:text-white">
+                            Sign In
                         </Button>
                     </Link>
                 </div>

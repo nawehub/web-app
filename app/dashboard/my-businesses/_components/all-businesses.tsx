@@ -37,13 +37,12 @@ export default function AllBusinesses() {
 
     const { hasPermission, isAdmin } = usePermissions();
 
-    const {data, isLoading} = useListBusinessQuery("all");
+    const {data, isLoading} = useListBusinessQuery(viewMode);
 
     useEffect(() => {
         if (isAdmin() || hasPermission("business:read-all")){
             setViewMode("all");
         }
-
     }, [viewMode]);
 
     const filteredAndSortedBusinesses = useMemo(() => {

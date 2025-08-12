@@ -239,7 +239,7 @@ export default function Home() {
                                 toward gaining recognition, protection, and growth opportunities.
                             </p>
 
-                            <Link href="/register">
+                            <Link href="/business-registration">
                                 <Button size="lg"
                                         className="px-12 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 text-lg">
                                     Register Your Business Now
@@ -323,7 +323,7 @@ export default function Home() {
 
                     <div
                         className="relative overflow-hidden bg-gradient-to-r from-slate-50 to-blue-50 py-12">
-                        {/* Gradient overlays for smooth fade effect */}
+                        {/* Gradient overlays for a smooth fade effect */}
                         <div
                             className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-slate-50 to-transparent z-10"></div>
                         <div
@@ -351,7 +351,7 @@ export default function Home() {
                             <Link href="/register">
                                 <Button size="lg"
                                         className="px-12 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 text-lg group">
-                                    Entrepreneur Login / Register
+                                    Entrepreneur Register
                                     <ArrowRight
                                         className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300"/>
                                 </Button>

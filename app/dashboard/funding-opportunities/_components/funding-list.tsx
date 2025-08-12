@@ -1,15 +1,20 @@
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {
-    AlertCircle, Award, Briefcase,
+    AlertCircle,
+    Award,
+    Briefcase,
     Building,
     Calendar,
     CheckCircle,
     Clock,
-    DollarSign, EuroIcon,
-    Filter, Globe, InfinityIcon,
+    DollarSign,
+    EuroIcon,
+    Globe,
+    InfinityIcon,
     Plus,
     Search,
-    Star, Target, TrendingUp,
+    Target,
+    TrendingUp,
     XCircle
 } from "lucide-react";
 import {Input} from "@/components/ui/input";
@@ -30,19 +35,11 @@ export default function FundingList() {
 
     const filteredOpportunities = useMemo(() => {
         return data?.opportunities.filter(opportunity => {
-            const matchesSearch = opportunity.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            return opportunity.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 opportunity.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 opportunity.provider?.name.toLowerCase().includes(searchTerm.toLowerCase());
-
-            const matchesStatus = statusFilter === "all" || opportunity.status === statusFilter;
-            const matchesType = typeFilter === "all" || opportunity.type === typeFilter;
-
-            return matchesSearch && matchesStatus && matchesType;
         });
-    }, [data?.opportunities, searchTerm, statusFilter, typeFilter]);
-
-    const featuredOpportunities = filteredOpportunities?.filter(opp => opp.isFeatured);
-    const regularOpportunities = filteredOpportunities?.filter(opp => !opp.isFeatured);
+    }, [data?.opportunities, searchTerm]);
 
     const getStatusIcon = (status: string) => {
         switch (status) {
@@ -125,19 +122,6 @@ export default function FundingList() {
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-3">
-                            <Select value={statusFilter} onValueChange={setStatusFilter}>
-                                <SelectTrigger className="w-full sm:w-[150px]">
-                                    <Filter className="h-4 w-4 mr-2"/>
-                                    <SelectValue/>
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">All Status</SelectItem>
-                                    <SelectItem value="Open">Open</SelectItem>
-                                    <SelectItem value="Upcoming">Upcoming</SelectItem>
-                                    <SelectItem value="Closed">Closed</SelectItem>
-                                </SelectContent>
-                            </Select>
-
                             <Select value={typeFilter} onValueChange={setTypeFilter}>
                                 <SelectTrigger className="w-full sm:w-[150px]">
                                     <Building className="h-4 w-4 mr-2"/>
@@ -160,87 +144,6 @@ export default function FundingList() {
                 </CardContent>
             </Card>
 
-            {/* Featured Opportunities */}
-            {featuredOpportunities?.length && featuredOpportunities.length > 0 && (
-                <div className="space-y-4 pt-6">
-                    <div className="flex items-center gap-2">
-                        <Star className="h-5 w-5 text-yellow-500"/>
-                        <h2 className="text-xl font-semibold">Featured Opportunities</h2>
-                    </div>
-
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        {featuredOpportunities?.map((opportunity) => (
-                            <Card key={opportunity.id}
-                                  className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 border-yellow-200 bg-gradient-to-br from-yellow-50 to-orange-50">
-                                <CardHeader className="pb-3">
-                                    <div className="flex justify-between items-start">
-                                        <div className="flex-1">
-                                            <div className="flex items-center gap-2 mb-2">
-                                                <Star className="h-4 w-4 text-yellow-500 fill-current"/>
-                                                <Badge variant="secondary"
-                                                       className="bg-yellow-100 text-yellow-800">Featured</Badge>
-                                            </div>
-                                            <CardTitle
-                                                className="text-lg font-bold text-slate-800 group-hover:text-emerald-600 transition-colors duration-300">
-                                                {opportunity.title}
-                                            </CardTitle>
-                                            <CardDescription className="flex items-center gap-1 mt-1">
-                                                <Building className="h-3 w-3"/>
-                                                {opportunity.provider?.name}
-                                            </CardDescription>
-                                        </div>
-                                        {getStatusBadge(opportunity.status)}
-                                    </div>
-                                </CardHeader>
-
-                                <CardContent className="space-y-4">
-                                    <p className="text-sm text-slate-600 line-clamp-3">{opportunity.description}</p>
-
-                                    <div className="space-y-2">
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center gap-2">
-                                                {getTypeIcon(opportunity.type)}
-                                                <span
-                                                    className="text-sm font-medium capitalize">{opportunity.type}</span>
-                                            </div>
-                                            <div className="text-sm font-semibold text-emerald-600">
-                                                {formatAmount(opportunity.amountMin, opportunity.amountMax, opportunity.currency)}
-                                            </div>
-                                        </div>
-
-                                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                            <Calendar className="h-4 w-4"/>
-                                            <span>Deadline: {new Date(opportunity.applicationDeadline).toLocaleDateString()}</span>
-                                            {isDeadlineApproaching(opportunity.applicationDeadline.toString()) && (
-                                                <Badge variant="destructive" className="ml-2">Urgent</Badge>
-                                            )}
-                                        </div>
-
-                                        <div className="text-sm text-slate-600">
-                                            <strong>Eligibility:</strong> {opportunity.eligibilitySummary}
-                                        </div>
-                                    </div>
-
-                                    <div className="flex gap-2 pt-3 border-t">
-                                        <Button
-                                            className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700">
-                                            Apply Now
-                                        </Button>
-                                        <Button
-                                            variant="outline"
-                                            className="flex-1"
-                                            onClick={() => router.push(`/dashboard/funding-opportunities/${opportunity.id}`)}
-                                        >
-                                            Learn More
-                                        </Button>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
-                </div>
-            )}
-
             {/* Regular Opportunities */}
             <div className="space-y-4">
                 {filteredOpportunities?.length && filteredOpportunities.length > 0 && (
@@ -248,7 +151,7 @@ export default function FundingList() {
                 )}
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {regularOpportunities?.map((opportunity) => (
+                    {filteredOpportunities?.map((opportunity) => (
                         <Card key={opportunity.id}
                               className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 border-slate-100 hover:border-emerald-200">
                             <CardHeader className="pb-3">
@@ -263,7 +166,7 @@ export default function FundingList() {
                                             {opportunity.provider?.name}
                                         </CardDescription>
                                     </div>
-                                    {getStatusBadge(opportunity.status)}
+                                    {getStatusBadge("Open")}
                                 </div>
                             </CardHeader>
 
@@ -271,16 +174,6 @@ export default function FundingList() {
                                 <p className="text-sm text-slate-600 line-clamp-3">{opportunity.description}</p>
 
                                 <div className="space-y-2">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            {getTypeIcon(opportunity.type)}
-                                            <span className="text-sm font-medium capitalize">{opportunity.type}</span>
-                                        </div>
-                                        <div className="text-sm font-semibold text-emerald-600">
-                                            {formatAmount(opportunity.amountMin, opportunity.amountMax, opportunity.currency)}
-                                        </div>
-                                    </div>
-
                                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                         <Calendar className="h-4 w-4"/>
                                         <span>Deadline: {new Date(opportunity.applicationDeadline).toLocaleDateString()}</span>
@@ -288,18 +181,20 @@ export default function FundingList() {
                                             <Badge variant="destructive" className="ml-2">Urgent</Badge>
                                         )}
                                     </div>
-
-                                    <div className="text-sm text-slate-600">
-                                        <strong>Eligibility:</strong> {opportunity.eligibilitySummary}
-                                    </div>
                                 </div>
 
                                 <div className="flex gap-2 pt-3 border-t">
-                                    <Button size="sm"
-                                            className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700">
+                                    <Button
+                                        onClick={() => window.open(opportunity.applyLink, "_blank")}
+                                        size="sm"
+                                        className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
+                                    >
                                         Apply Now
                                     </Button>
-                                    <Button variant="outline" size="sm" className="flex-1">
+                                    <Button
+                                        onClick={() => router.push(`/dashboard/funding-opportunities/${opportunity.id}`)}
+                                        variant="outline" size="sm" className="flex-1"
+                                    >
                                         Details
                                     </Button>
                                 </div>
@@ -309,7 +204,7 @@ export default function FundingList() {
                 </div>
             </div>
 
-            {filteredOpportunities?.length === 0 && (
+            {filteredOpportunities?.length == 0 && (
                 <Card className="text-center py-12">
                     <CardContent>
                         <DollarSign className="h-12 w-12 text-muted-foreground mx-auto mb-4"/>

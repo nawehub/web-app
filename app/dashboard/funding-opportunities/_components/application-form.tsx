@@ -335,12 +335,13 @@ export function ApplicationForm({opportunity, onSubmitAction, onCancelAction}: A
             {/* Progress Bar */}
             <div className="mb-8">
                 <div className="flex items-center justify-between mb-4">
-          <span className="text-sm font-medium">
-            Step {currentStep} of {steps.length}
-          </span>
+                    <span className="text-sm font-medium">
+                        Step {currentStep} of {steps.length}
+                    </span>
+
                     <span className="text-sm text-muted-foreground">
-            {Math.round((currentStep / steps.length) * 100)}% Complete
-          </span>
+                        {Math.round((currentStep / steps.length) * 100)}% Complete
+                    </span>
                 </div>
                 <Progress value={(currentStep / steps.length) * 100} className="h-2"/>
             </div>

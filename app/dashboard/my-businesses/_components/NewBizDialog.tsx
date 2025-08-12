@@ -7,13 +7,12 @@ import {
     DialogTrigger
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
-import {Plus, PlusCircleIcon} from "lucide-react";
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {ChevronLeft, ChevronRight, Plus, PlusCircleIcon} from "lucide-react";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import {useToast} from "@/hooks/use-toast";
 import {useRegisterBusinessMutation} from "@/hooks/repository/use-business";
-import {useState, useTransition} from "react";
+import React, {useState, useTransition} from "react";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {motion} from "framer-motion";
 import {useForm} from "react-hook-form";
@@ -28,7 +27,11 @@ import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
 
 import "react-datepicker/dist/react-datepicker.css";
 import {CustomDatePicker} from "@/components/ui/date-picker";
-import { Icons } from "@/components/ui/icon";
+import {Icons} from "@/components/ui/icon";
+import {Progress} from "@/components/ui/progress";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Checkbox} from "@/components/ui/checkbox";
+import { steps, BusinessFormData, initData, getDate15YearsAgo } from "@/types/business";
 
 export const NewBizDialog = () => {
     const {toast} = useToast();
@@ -36,16 +39,51 @@ export const NewBizDialog = () => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isPending, startTransition] = useTransition();
     const [loading, setLoading] = useState(false);
+    const [currentStep, setCurrentStep] = useState(1)
+    const [formData, setFormData] = useState<BusinessFormData>(initData)
 
     const form = useForm<z.infer<typeof registerBizForm>>({
-        resolver: zodResolver(registerBizForm),
+        resolver: zodResolver(registerBizForm)
     });
 
-    const handleSubmit = async (values: z.infer<typeof registerBizForm>) => {
+    const updateFormData = (field: keyof BusinessFormData, value: any) => {
+        setFormData((prev) => ({...prev, [field]: value}))
+    }
+
+    const nextStep = () => {
+        if (currentStep < steps.length) {
+            setCurrentStep(currentStep + 1)
+        }
+    }
+
+    const prevStep = () => {
+        if (currentStep > 1) {
+            setCurrentStep(currentStep - 1)
+        }
+    }
+
+    const isStepValid = (step: number) => {
+        switch (step) {
+            case 1:
+                return formData.businessName && formData.businessAddress && formData.category && formData.isAlreadyRegistered && formData.isAlreadyRegistered ? formData.registerDate : formData.isAlreadyRegistered
+            case 2:
+                return formData.ownerName && formData.ownerAddress && formData.placeOfBirth && formData.dateOfBirth
+                    && formData.nationality && formData.mothersName && formData.email && formData.contactNumber && formData.gender
+            default:
+                return false
+        }
+    }
+
+    const handleSubmit = async () => {
         setLoading(true);
         startTransition(async () => {
+            const data: z.infer<typeof registerBizForm> = {
+                ...formData,
+                dateOfBirth: new Date(formData.dateOfBirth),
+                gender: formData.gender as z.infer<typeof registerBizForm>["gender"]
+            }
             try {
-                const response: RegisterResponse = await register.mutateAsync({...values});
+                const response: RegisterResponse = await register.mutateAsync(data);
                 toast({
                     title: 'Registration Successful',
                     description: response.message,
@@ -66,14 +104,330 @@ export const NewBizDialog = () => {
         });
     };
 
-    function getDate15YearsAgo() {
-        const currentDate = new Date(); // Get the current date and time
-        const currentYear = currentDate.getFullYear(); // Get the current year
+    const renderStepContent = () => {
+        switch (currentStep) {
+            case 1:
+                return (
+                    <div className="space-y-4 mt-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField
+                                name={'businessName'}
+                                control={form.control}
+                                render={({field}) => (
+                                    <div className="space-y-2">
+                                        <Label htmlFor="businessName">Business Name *</Label>
+                                        <Input
+                                            id="businessName"
+                                            {...field}
+                                            value={formData.businessName}
+                                            onChange={(e) => updateFormData('businessName', e.target.value)}
+                                            type={'text'}
+                                            required
+                                            placeholder="Enter business name"
+                                        />
+                                    </div>
+                                )}
+                            />
 
-        // Set the year to 15 years ago
-        currentDate.setFullYear(currentYear - 15);
+                            <FormField
+                                name={'category'}
+                                control={form.control}
+                                render={({field}) => (
+                                    <div className="space-y-2">
+                                        <Label htmlFor="category">Business Category</Label>
+                                        <CustomCombobox
+                                            {...field}
+                                            placeholder="Select your business category"
+                                            searchPlaceholder={'Search category...'}
+                                            data={categories}
+                                            searchField={'name'}
+                                            displayField={'name'}
+                                            valueField={'name'}
+                                            onSelectAction={(value) => {
+                                                updateFormData('category', value)
+                                                field.onChange(value)
+                                            }}/>
+                                    </div>
+                                )}
+                            />
+                        </div>
+                        <FormField
+                            name={'businessAddress'}
+                            control={form.control}
+                            render={({field}) => (
+                                <div className="space-y-2">
+                                    <Label htmlFor="businessAddress">Business Address</Label>
+                                    <Input
+                                        id="businessAddress"
+                                        {...field}
+                                        value={formData.businessAddress}
+                                        onChange={(e) => updateFormData('businessAddress', e.target.value)}
+                                        required
+                                        type={'text'}
+                                        placeholder="Enter business address"
+                                    />
+                                </div>
+                            )}
+                        />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField
+                                name={'isAlreadyRegistered'}
+                                control={form.control}
+                                render={() => (
+                                    <div className="space-y-2">
+                                        <div className="flex items-center space-x-2">
+                                            <Checkbox
+                                                id="isAlreadyRegistered"
+                                                checked={formData.isAlreadyRegistered}
+                                                onCheckedChange={(checked) => updateFormData("isAlreadyRegistered", checked as boolean)}
+                                            />
+                                            <Label htmlFor="isAlreadyRegistered">Business Already Registered</Label>
+                                        </div>
+                                    </div>
+                                )}
+                            />
+                            {formData.isAlreadyRegistered && (
+                                <FormField
+                                    name={'registerDate'}
+                                    control={form.control}
+                                    render={({field}) => (
+                                        <div className="space-y-2">
+                                            <Label htmlFor="registerDate">Register Date *</Label>
+                                            <CustomDatePicker
+                                                date={field.value}
+                                                setDateAction={(e) => {
+                                                    field.onChange(e)
+                                                    updateFormData('registerDate', e)
+                                                }}
+                                                isRequired={false}
+                                                isDisable={(date) =>
+                                                    date > new Date() || date < new Date("1900-01-01")
+                                                }
+                                            />
+                                        </div>
+                                    )}
+                                />
+                            )}
+                        </div>
+                    </div>
+                )
+            case 2:
+                return (
+                    <div className="space-y-4 mt-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField
+                                name={'ownerName'}
+                                control={form.control}
+                                render={({field}) => (
+                                    <div className="space-y-2">
+                                        <Label htmlFor="ownerName">Owner Name *</Label>
+                                        <Input
+                                            id="ownerName"
+                                            {...field}
+                                            value={formData.ownerName}
+                                            onChange={(e) => updateFormData('ownerName', e.target.value)}
+                                            required
+                                            type={'text'}
+                                            placeholder="Enter business owner name"
+                                        />
+                                    </div>
+                                )}
+                            />
 
-        return currentDate; // Return the modified Date object
+                            <FormField
+                                name={'placeOfBirth'}
+                                control={form.control}
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormControl>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="placeOfBirth">Place of Birth *</Label>
+                                                <Input
+                                                    id="placeOfBirth"
+                                                    {...field}
+                                                    value={formData.placeOfBirth}
+                                                    onChange={(e) => updateFormData('placeOfBirth', e.target.value)}
+                                                    required
+                                                    type={'text'}
+                                                    placeholder="Enter business owner address"
+                                                />
+                                            </div>
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField
+                                name={'dateOfBirth'}
+                                control={form.control}
+                                render={({field}) => (
+                                    <FormItem className={'space-y-2'}>
+                                        <FormLabel>Date of Birth *</FormLabel>
+                                        <FormControl>
+                                            <div>
+                                                <CustomDatePicker
+                                                    date={field.value}
+                                                    setDateAction={(e) => {
+                                                        field.onChange(e)
+                                                        updateFormData('dateOfBirth', e)
+                                                    }}
+                                                    isRequired={false}
+                                                    isDisable={(date) =>
+                                                        date > getDate15YearsAgo() || date < new Date("1900-01-01")
+                                                    }
+                                                />
+                                            </div>
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="gender"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <Label>Gender → <br/> <span className={"text-xs pb-4"}>Select owner gender</span></Label>
+                                        <FormControl>
+                                            <RadioGroup
+                                                onValueChange={(e) => {
+                                                    field.onChange(e)
+                                                    updateFormData('gender', e)
+                                                }}
+                                                defaultValue={field.value}
+                                            >
+                                                {['Male', 'Female'].map((gender, index) => (
+                                                    <div className='flex flex-row items-center space-x-3'
+                                                         key={index}>
+                                                        <RadioGroupItem value={gender}/>
+                                                        <Label htmlFor={gender} className='font-normal'>
+                                                            {gender}
+                                                        </Label>
+                                                    </div>
+                                                ))}
+                                            </RadioGroup>
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <FormField
+                                name={'ownerAddress'}
+                                control={form.control}
+                                render={({field}) => (
+                                    <div className="space-y-2">
+                                        <Label htmlFor="ownerAddress">Owner Address *</Label>
+                                        <Input
+                                            id="ownerAddress"
+                                            {...field}
+                                            value={formData.ownerAddress}
+                                            onChange={(e) => updateFormData('ownerAddress', e.target.value)}
+                                            required
+                                            type={'text'}
+                                            placeholder="Enter business owner address"
+                                        />
+                                    </div>
+                                )}
+                            />
+                        </div>
+
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField
+                                name={'contactNumber'}
+                                control={form.control}
+                                render={({field}) => (
+                                    <div className="space-y-2">
+                                        <Label htmlFor="contactNumber">Owner's Contact Number *</Label>
+                                        <Input
+                                            id="contactNumber"
+                                            {...field}
+                                            value={formData.contactNumber}
+                                            onChange={(e) => updateFormData('contactNumber', e.target.value)}
+                                            required
+                                            type={'text'}
+                                            placeholder="Enter contact number"
+                                        />
+                                    </div>
+                                )}
+                            />
+
+                            <FormField
+                                name={'email'}
+                                control={form.control}
+                                render={({field}) => (
+                                    <div className="space-y-2">
+                                        <Label htmlFor="email">Owner Or Business Email *</Label>
+                                        <Input
+                                            id="email"
+                                            {...field}
+                                            value={formData.email}
+                                            onChange={(e) => updateFormData('email', e.target.value)}
+                                            required
+                                            type={'text'}
+                                            placeholder="Enter email"
+                                        />
+                                    </div>
+                                )}
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField
+                                name={'mothersName'}
+                                control={form.control}
+                                render={({field}) => (
+                                    <div className="space-y-2">
+                                        <Label htmlFor="mothersName">Mother's Name *</Label>
+                                        <Input
+                                            id="mothersName"
+                                            {...field}
+                                            value={formData.mothersName}
+                                            onChange={(e) => updateFormData('mothersName', e.target.value)}
+                                            required
+                                            type={'text'}
+                                            placeholder="Enter mother's name"
+                                        />
+                                    </div>
+                                )}
+                            />
+
+                            <FormField
+                                name={'nationality'}
+                                control={form.control}
+                                render={({field}) => (
+                                    <div className="space-y-2">
+                                        <Label htmlFor="nationality">Owner's Nationality</Label>
+                                        <CustomCombobox
+                                            {...field}
+                                            placeholder="Select your nationality"
+                                            searchPlaceholder={'Search country...'}
+                                            data={countries}
+                                            searchField={'name'}
+                                            displayField={'name'}
+                                            valueField={'name'}
+                                            {...field}
+                                            value={formData.nationality}
+                                            onSelectAction={(value) => {
+                                                field.onChange(value)
+                                                updateFormData('nationality', value)
+                                            }}/>
+                                    </div>
+                                )}
+                            />
+                        </div>
+                    </div>
+                )
+            default:
+                return null
+        }
     }
 
     return (
@@ -93,308 +447,67 @@ export const NewBizDialog = () => {
                     </DialogDescription>
                 </DialogHeader>
 
+                {/* Progress Bar */}
+                <div className="mb-8">
+                    <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-medium">
+                        Step {currentStep} of {steps.length}
+                    </span>
+
+                        <span className="text-sm text-muted-foreground">
+                        {Math.round((currentStep / steps.length) * 50)}% Complete
+                    </span>
+                    </div>
+                    <Progress value={(currentStep / steps.length) * 50} className="h-2"/>
+                </div>
+
                 <Form {...form}>
                     <motion.form
                         initial={{opacity: 0, y: 10}}
                         animate={{opacity: 1, y: 0}}
                         transition={{duration: 0.3}}
-                        onSubmit={form.handleSubmit(handleSubmit)}
-                        className="space-y-4 mt-6"
+                        className="space-y-4"
                     >
-                        <Tabs defaultValue="business" className="w-full">
-                            <TabsList className="grid w-full grid-cols-2">
-                                <TabsTrigger value="business">Business Information</TabsTrigger>
-                                <TabsTrigger value="owner">Owner Information</TabsTrigger>
-                            </TabsList>
-
-                            <TabsContent value="business" className="space-y-4 mt-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <FormField
-                                        name={'businessName'}
-                                        control={form.control}
-                                        render={({field}) => (
-                                            <div className="space-y-2">
-                                                <Label htmlFor="businessName">Business Name *</Label>
-                                                <Input
-                                                    id="businessName"
-                                                    {...field}
-                                                    type={'text'}
-                                                    required
-                                                    placeholder="Enter business name"
-                                                />
-                                            </div>
-                                        )}
-                                    />
-
-                                    <FormField
-                                        name={'category'}
-                                        control={form.control}
-                                        render={({field}) => (
-                                            <div className="space-y-2">
-                                                <Label htmlFor="category">Business Address</Label>
-                                                <CustomCombobox
-                                                    {...field}
-                                                    placeholder="Select your business category"
-                                                    searchPlaceholder={'Search category...'}
-                                                    data={categories}
-                                                    searchField={'name'}
-                                                    displayField={'name'}
-                                                    valueField={'name'}
-                                                    {...field}
-                                                    onSelectAction={(value) => {
-                                                        field.onChange(value)
-                                                    }}/>
-                                            </div>
-                                        )}
-                                    />
+                        <Card>
+                            <CardHeader>
+                                <div>
+                                    <CardTitle>{steps[currentStep - 1].title}</CardTitle>
+                                    <CardDescription>{steps[currentStep - 1].description}</CardDescription>
                                 </div>
-                                <FormField
-                                    name={'businessAddress'}
-                                    control={form.control}
-                                    render={({field}) => (
-                                        <div className="space-y-2">
-                                            <Label htmlFor="businessAddress">Business Address</Label>
-                                            <Input
-                                                id="businessAddress"
-                                                {...field}
-                                                required
-                                                type={'text'}
-                                                placeholder="Enter business address"
-                                            />
-                                        </div>
+                            </CardHeader>
+                            <CardContent>
+                                {renderStepContent()}
+                            </CardContent>
+                        </Card>
+                        <div className="flex justify-between mt-6">
+                            <div className="flex space-x-2">
+                                <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                                    Cancel
+                                </Button>
+                                <Button variant="outline" onClick={prevStep} disabled={currentStep === 1}>
+                                    <ChevronLeft className="mr-2 h-4 w-4"/>
+                                    Previous
+                                </Button>
+                            </div>
+
+                            {currentStep === steps.length ? (
+                                <Button
+                                    onClick={() => handleSubmit()}
+                                    disabled={!isStepValid(currentStep) || isPending || loading}
+                                    className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700">
+                                    {isPending || loading ? (
+                                        <Icons.spinner className={'h-4 w-4 mr-2 animate-spin'}/>
+                                    ) : (
+                                        <PlusCircleIcon className={'h-4 w-4 mr-2'}/>
                                     )}
-                                />
-                            </TabsContent>
-
-                            <TabsContent value="owner" className="space-y-4 mt-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <FormField
-                                        name={'ownerName'}
-                                        control={form.control}
-                                        render={({field}) => (
-                                            <div className="space-y-2">
-                                                <Label htmlFor="ownerName">Owner Name *</Label>
-                                                <Input
-                                                    id="ownerName"
-                                                    {...field}
-                                                    required
-                                                    type={'text'}
-                                                    placeholder="Enter business owner name"
-                                                />
-                                            </div>
-                                        )}
-                                    />
-
-                                    <FormField
-                                        name={'placeOfBirth'}
-                                        control={form.control}
-                                        render={({field}) => (
-                                            <FormItem>
-                                                <FormControl>
-                                                    <div className="space-y-2">
-                                                        <Label htmlFor="placeOfBirth">Place of Birth *</Label>
-                                                        <Input
-                                                            id="placeOfBirth"
-                                                            {...field}
-                                                            required
-                                                            type={'text'}
-                                                            placeholder="Enter business owner address"
-                                                        />
-                                                    </div>
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <FormField
-                                        name={'dateOfBirth'}
-                                        control={form.control}
-                                        render={({field}) => (
-                                            <FormItem className={'space-y-2'}>
-                                                <FormLabel>Date of Birth *</FormLabel>
-                                                <FormControl>
-                                                    <div>
-                                                        <CustomDatePicker
-                                                            date={field.value}
-                                                            setDateAction={field.onChange}
-                                                            isRequired={false}
-                                                            isDisable={(date) =>
-                                                                date > getDate15YearsAgo() || date < new Date("1900-01-01")
-                                                            }
-                                                        />
-                                                    </div>
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-
-                                    <FormField
-                                        control={form.control}
-                                        name="gender"
-                                        render={({field}) => (
-                                            <FormItem>
-                                                <Label>Gender → <br/> <span className={"text-xs pb-4"}>Select owner gender</span></Label>
-                                                <FormControl>
-                                                    <RadioGroup
-                                                        onValueChange={(e) => {
-                                                            field.onChange(e)
-                                                        }}
-                                                        defaultValue={field.value}
-                                                    >
-                                                        {['Male', 'Female'].map((gender, index) => (
-                                                            <div className='flex flex-row items-center space-x-3'
-                                                                 key={index}>
-                                                                <RadioGroupItem value={gender}/>
-                                                                <Label htmlFor={gender} className='font-normal'>
-                                                                    {gender}
-                                                                </Label>
-                                                            </div>
-                                                        ))}
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <FormField
-                                        name={'ownerAddress'}
-                                        control={form.control}
-                                        render={({field}) => (
-                                            <div className="space-y-2">
-                                                <Label htmlFor="ownerAddress">Owner Address *</Label>
-                                                <Input
-                                                    id="ownerAddress"
-                                                    {...field}
-                                                    required
-                                                    type={'text'}
-                                                    placeholder="Enter business owner address"
-                                                />
-                                            </div>
-                                        )}
-                                    />
-                                </div>
-
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <FormField
-                                        name={'contactNumber'}
-                                        control={form.control}
-                                        render={({field}) => (
-                                            <div className="space-y-2">
-                                                <Label htmlFor="contactNumber">Owner's Contact Number *</Label>
-                                                <Input
-                                                    id="contactNumber"
-                                                    {...field}
-                                                    required
-                                                    type={'text'}
-                                                    placeholder="Enter contact number"
-                                                />
-                                            </div>
-                                        )}
-                                    />
-
-                                    <FormField
-                                        name={'email'}
-                                        control={form.control}
-                                        render={({field}) => (
-                                            <div className="space-y-2">
-                                                <Label htmlFor="email">Owner Or Business Email *</Label>
-                                                <Input
-                                                    id="email"
-                                                    {...field}
-                                                    required
-                                                    type={'text'}
-                                                    placeholder="Enter email"
-                                                />
-                                            </div>
-                                        )}
-                                    />
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <FormField
-                                        name={'mothersName'}
-                                        control={form.control}
-                                        render={({field}) => (
-                                            <div className="space-y-2">
-                                                <Label htmlFor="mothersName">Mother's Name *</Label>
-                                                <Input
-                                                    id="mothersName"
-                                                    {...field}
-                                                    required
-                                                    type={'text'}
-                                                    placeholder="Enter mother's name"
-                                                />
-                                            </div>
-                                        )}
-                                    />
-
-                                    <FormField
-                                        name={'nationality'}
-                                        control={form.control}
-                                        render={({field}) => (
-                                            <div className="space-y-2">
-                                                <Label htmlFor="nationality">Owner's Nationality</Label>
-                                                <CustomCombobox
-                                                    {...field}
-                                                    placeholder="Select your nationality"
-                                                    searchPlaceholder={'Search country...'}
-                                                    data={countries}
-                                                    searchField={'name'}
-                                                    displayField={'name'}
-                                                    valueField={'name'}
-                                                    {...field}
-                                                    onSelectAction={(value) => {
-                                                        field.onChange(value)
-                                                    }}/>
-                                            </div>
-                                        )}
-                                    />
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <FormField
-                                        name={'registerDate'}
-                                        control={form.control}
-                                        render={({field}) => (
-                                            <div className="space-y-2">
-                                                <Label htmlFor="registerDate">Register Date *</Label>
-                                                <CustomDatePicker
-                                                    date={field.value}
-                                                    setDateAction={field.onChange}
-                                                    isRequired={false}
-                                                    isDisable={(date) =>
-                                                        date > new Date() || date < new Date("1900-01-01")
-                                                    }
-                                                />
-                                            </div>
-                                        )}
-                                    />
-                                </div>
-                            </TabsContent>
-                        </Tabs>
-                        <div className="flex justify-end gap-3 mt-6 pt-6 border-t">
-                            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                                Cancel
-                            </Button>
-                            <Button
-                                type={"submit"}
-                                disabled={loading || isPending}
-                                className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700">
-                                {isPending || loading ? (
-                                    <Icons.spinner className={'h-4 w-4 mr-2 animate-spin'} />
-                                ) : (
-                                    <PlusCircleIcon className={'h-4 w-4 mr-2'} />
-                                )}
-                                Register Business
-                            </Button>
+                                    Register Business
+                                </Button>
+                            ) : (
+                                <Button onClick={nextStep} disabled={!isStepValid(currentStep)}>
+                                    Next
+                                    <ChevronRight className="ml-2 h-4 w-4"/>
+                                </Button>
+                            )}
                         </div>
                     </motion.form>
                 </Form>

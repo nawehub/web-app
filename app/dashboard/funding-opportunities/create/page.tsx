@@ -1,87 +1,57 @@
 "use client"
 
 import React, {FormEvent, useState, useTransition} from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import {CalendarIcon, ChevronLeft, ChevronRight, Plus, PlusCircleIcon, X} from "lucide-react"
-import { format } from "date-fns"
-import { cn } from "@/lib/utils"
-import { useRouter } from "next/navigation"
+import {motion, AnimatePresence} from "framer-motion"
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
+import {Button} from "@/components/ui/button"
+import {Input} from "@/components/ui/input"
+import {Label} from "@/components/ui/label"
+import {Textarea} from "@/components/ui/textarea"
+import {Progress} from "@/components/ui/progress"
+import {Calendar} from "@/components/ui/calendar"
+import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover"
+import {CalendarIcon, ChevronLeft, ChevronRight, PlusCircleIcon} from "lucide-react"
+import {format} from "date-fns"
+import {cn} from "@/lib/utils"
+import {useRouter} from "next/navigation"
 import {CustomCombobox} from "@/components/ui/combobox";
 import {useCreateOpportunityMutation, useListProvidersQuery} from "@/hooks/repository/use-funding";
-import {createOpportunityForm} from "@/lib/services/funding";
+import {createMinimalOpp} from "@/lib/services/funding";
 import {useToast} from "@/hooks/use-toast";
 import {Icons} from "@/components/ui/icon";
-import { fundingTypes, criteriaTypes, currencies } from "@/types/funding";
+import QuillEditor from "@/components/QuillEditor";
 
-const initialFormData: createOpportunityForm = {
+const initialFormData: createMinimalOpp = {
     title: "",
     description: "",
     providerId: "",
     amountMin: 0.00,
     amountMax: 0.00,
-    currency: "",
+    about: "",
     applicationDeadline: new Date(),
-    status: "",
-    type: "",
-    eligibilitySummary: "",
-    isFeatured: false,
-    tags: [],
-    criteria: [],
+    applyLink: ""
 }
 
 const steps = [
-    { id: 1, title: "Basic Information", description: "Enter the basic details of the funding opportunity" },
-    { id: 2, title: "Funding Details", description: "Specify the funding amount and terms" },
-    { id: 3, title: "Eligibility & Criteria", description: "Define eligibility requirements and criteria" },
-    { id: 4, title: "Additional Settings", description: "Configure tags and additional settings" },
-    { id: 5, title: "Review & Submit", description: "Review all information before submitting" },
+    {id: 1, title: "Basic Information", description: "Enter the basic details of the funding opportunity"},
+    {id: 2, title: "Funding Benefit", description: "Specify the funding amount and terms"},
+    {id: 3, title: "Funding Details", description: "Give details about the funding opportunity"},
+    {id: 4, title: "Review & Submit", description: "Review all information before submitting"},
 ]
 
 export default function CreateFundingOpportunity() {
     const newOpportunity = useCreateOpportunityMutation()
-    const { data } = useListProvidersQuery();
+    const {data} = useListProvidersQuery();
     const [currentStep, setCurrentStep] = useState(1)
     const [providerId, setProviderId] = useState("");
-    const [formData, setFormData] = useState<createOpportunityForm>(initialFormData)
-    const [newTag, setNewTag] = useState("")
+    const [formData, setFormData] = useState<createMinimalOpp>(initialFormData)
     const [isPending, startTransition] = useTransition()
     const [providerName, setProviderName] = useState("")
-    const { toast } = useToast();
-    const [newCriteria, setNewCriteria] = useState({
-        key: "",
-        value: "",
-        type: "String",
-        required: false,
-    })
+    const {toast} = useToast();
     const router = useRouter()
 
-    const updateFormData = (field: keyof createOpportunityForm, value: any) => {
-        setFormData((prev) => ({ ...prev, [field]: value }))
-    }
-
-    const addTag = () => {
-        if (newTag.trim() && !formData.tags.includes(newTag.trim())) {
-            updateFormData("tags", [...formData.tags, newTag.trim()])
-            setNewTag("")
-        }
-    }
-
-    const removeTag = (tagToRemove: string) => {
-        updateFormData(
-            "tags",
-            formData.tags.filter((tag) => tag !== tagToRemove),
-        )
+    const updateFormData = (field: keyof createMinimalOpp, value: any) => {
+        setFormData((prev) => ({...prev, [field]: value}))
     }
 
     const getProvider = (pId: string) => {
@@ -92,20 +62,6 @@ export default function CreateFundingOpportunity() {
                 setProviderName(provider.name)
             }
         }
-    }
-
-    const addCriteria = () => {
-        if (newCriteria.key.trim() && newCriteria.value.trim()) {
-            updateFormData("criteria", [...formData.criteria, { ...newCriteria }])
-            setNewCriteria({ key: "", value: "", type: "string", required: false })
-        }
-    }
-
-    const removeCriteria = (index: number) => {
-        updateFormData(
-            "criteria",
-            formData.criteria.filter((_, i) => i !== index),
-        )
     }
 
     const nextStep = () => {
@@ -144,14 +100,12 @@ export default function CreateFundingOpportunity() {
     const isStepValid = (step: number) => {
         switch (step) {
             case 1:
-                return formData.title && formData.description && formData.providerId && formData.type
+                return formData.title && formData.description && formData.providerId && formData.applyLink
             case 2:
                 return formData.amountMin && formData.amountMax && formData.applicationDeadline
             case 3:
-                return formData.eligibilitySummary
+                return formData.about
             case 4:
-                return true // Optional step
-            case 5:
                 return true // Review step
             default:
                 return false
@@ -163,9 +117,9 @@ export default function CreateFundingOpportunity() {
             case 1:
                 return (
                     <motion.div
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
+                        initial={{opacity: 0, x: 20}}
+                        animate={{opacity: 1, x: 0}}
+                        exit={{opacity: 0, x: -20}}
                         className="space-y-4"
                     >
                         <div className="space-y-2">
@@ -206,19 +160,14 @@ export default function CreateFundingOpportunity() {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="type">Funding Type *</Label>
-                            <Select value={formData.type} onValueChange={(value) => updateFormData("type", value)}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select funding type" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {fundingTypes.map((type) => (
-                                        <SelectItem key={type} value={type}>
-                                            {type.replace("_", " ")}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <Label htmlFor="applyLink">Application Link *</Label>
+                            <Input
+                                id="applyLink"
+                                type="url"
+                                value={formData.applyLink}
+                                onChange={(e) => updateFormData("applyLink", e.target.value)}
+                                placeholder="Link people can go to apply for this funding opportunity"
+                            />
                         </div>
                     </motion.div>
                 )
@@ -226,9 +175,9 @@ export default function CreateFundingOpportunity() {
             case 2:
                 return (
                     <motion.div
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
+                        initial={{opacity: 0, x: 20}}
+                        animate={{opacity: 1, x: 0}}
+                        exit={{opacity: 0, x: -20}}
                         className="space-y-4"
                     >
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -253,22 +202,6 @@ export default function CreateFundingOpportunity() {
                                     placeholder="0"
                                 />
                             </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="currency">Currency</Label>
-                                <Select value={formData.currency} onValueChange={(value) => updateFormData("currency", value)}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder={"Select currency"} />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {currencies.map((currency) => (
-                                            <SelectItem key={currency} value={currency}>
-                                                {currency}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
                         </div>
 
                         <div className="space-y-2">
@@ -282,7 +215,7 @@ export default function CreateFundingOpportunity() {
                                             !formData.applicationDeadline && "text-muted-foreground",
                                         )}
                                     >
-                                        <CalendarIcon className="mr-2 h-4 w-4" />
+                                        <CalendarIcon className="mr-2 h-4 w-4"/>
                                         {formData.applicationDeadline ? (
                                             format(formData.applicationDeadline, "PPP")
                                         ) : (
@@ -300,114 +233,21 @@ export default function CreateFundingOpportunity() {
                                 </PopoverContent>
                             </Popover>
                         </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="status">Status</Label>
-                            <Select value={formData.status} onValueChange={(value) => updateFormData("status", value)}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select opportunity status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="Open">Open</SelectItem>
-                                    <SelectItem value="Upcoming">Upcoming</SelectItem>
-                                    <SelectItem value="Closed">Closed</SelectItem>
-                                    <SelectItem value="Archived">Archived</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
                     </motion.div>
                 )
 
             case 3:
                 return (
                     <motion.div
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        className="space-y-4"
+                        initial={{opacity: 0, x: 20}}
+                        animate={{opacity: 1, x: 0}}
+                        exit={{opacity: 0, x: -20}}
+                        className="space-y-6"
                     >
-                        <div className="space-y-2">
-                            <Label htmlFor="eligibilitySummary">Eligibility Summary *</Label>
-                            <Textarea
-                                id="eligibilitySummary"
-                                value={formData.eligibilitySummary}
-                                onChange={(e) => updateFormData("eligibilitySummary", e.target.value)}
-                                placeholder="Provide a summary of eligibility requirements"
-                                rows={3}
-                            />
-                        </div>
-
                         <div className="space-y-4">
-                            <Label>Eligibility Criteria</Label>
-
-                            <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
-                                <Input
-                                    placeholder="Criteria key"
-                                    value={newCriteria.key}
-                                    onChange={(e) => setNewCriteria((prev) => ({ ...prev, key: e.target.value }))}
-                                />
-                                <Input
-                                    placeholder="Criteria value"
-                                    value={newCriteria.value}
-                                    onChange={(e) => setNewCriteria((prev) => ({ ...prev, value: e.target.value }))}
-                                />
-                                <Select
-                                    value={newCriteria.type}
-                                    onValueChange={(value) => setNewCriteria((prev) => ({ ...prev, type: value }))}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select criteria type" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {criteriaTypes.map((type) => (
-                                            <SelectItem key={type} value={type}>
-                                                {type}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <div className="flex items-center space-x-2">
-                                    <Checkbox
-                                        id="required"
-                                        checked={newCriteria.required}
-                                        onCheckedChange={(checked) => setNewCriteria((prev) => ({ ...prev, required: checked as boolean }))}
-                                    />
-                                    <Label htmlFor="required" className="text-sm">
-                                        Required
-                                    </Label>
-                                </div>
-                            </div>
-
-                            <Button type="button" onClick={addCriteria} size="sm">
-                                <Plus className="mr-2 h-4 w-4" />
-                                Add Criteria
-                            </Button>
-
-                            {formData.criteria.length > 0 && (
-                                <div className="space-y-2">
-                                    {formData.criteria.map((criteria, index) => (
-                                        <div key={index} className="flex items-center justify-between p-3 border rounded-md">
-                                            <div className="flex-1">
-                                                <div className="flex items-center space-x-2">
-                                                    <span className="font-medium">{criteria.key}:</span>
-                                                    <span>{criteria.value}</span>
-                                                    <Badge variant="outline" className="text-xs">
-                                                        {criteria.type}
-                                                    </Badge>
-                                                    {criteria.required && (
-                                                        <Badge variant="destructive" className="text-xs">
-                                                            Required
-                                                        </Badge>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            <Button type="button" variant="ghost" size="sm" onClick={() => removeCriteria(index)}>
-                                                <X className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
+                            <Label htmlFor="status">Detailed About This Opportunity</Label>
+                            <QuillEditor placeholder={""} value={formData.about}
+                                         onChange={(value) => updateFormData("about", value)}/>
                         </div>
                     </motion.div>
                 )
@@ -415,63 +255,9 @@ export default function CreateFundingOpportunity() {
             case 4:
                 return (
                     <motion.div
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        className="space-y-4"
-                    >
-                        <div className="space-y-4">
-                            <Label>Tags</Label>
-
-                            <div className="flex space-x-2">
-                                <Input
-                                    placeholder="Add a tag"
-                                    value={newTag}
-                                    onChange={(e) => setNewTag(e.target.value)}
-                                    onKeyUp={(e) => e.key === "Enter" && (e.preventDefault(), addTag())}
-                                />
-                                <Button type="button" onClick={addTag} size="sm">
-                                    <Plus className="h-4 w-4" />
-                                </Button>
-                            </div>
-
-                            {formData.tags.length > 0 && (
-                                <div className="flex flex-wrap gap-2">
-                                    {formData.tags.map((tag) => (
-                                        <Badge key={tag} variant="secondary" className="flex items-center space-x-1">
-                                            <span>{tag}</span>
-                                            <Button
-                                                type="button"
-                                                variant="ghost"
-                                                size="sm"
-                                                className="h-auto p-0 ml-1"
-                                                onClick={() => removeTag(tag)}
-                                            >
-                                                <X className="h-3 w-3" />
-                                            </Button>
-                                        </Badge>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="flex items-center space-x-2">
-                            <Checkbox
-                                id="isFeatured"
-                                checked={formData.isFeatured}
-                                onCheckedChange={(checked) => updateFormData("isFeatured", checked as boolean)}
-                            />
-                            <Label htmlFor="isFeatured">Feature this opportunity</Label>
-                        </div>
-                    </motion.div>
-                )
-
-            case 5:
-                return (
-                    <motion.div
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
+                        initial={{opacity: 0, x: 20}}
+                        animate={{opacity: 1, x: 0}}
+                        exit={{opacity: 0, x: -20}}
                         className="space-y-6"
                     >
                         <div className="space-y-4">
@@ -488,7 +274,7 @@ export default function CreateFundingOpportunity() {
                                             <span className="font-medium">Provider:</span> {providerName}
                                         </p>
                                         <p>
-                                            <span className="font-medium">Type:</span> {formData.type}
+                                            <span className="font-medium">Type:</span> {formData.applyLink}
                                         </p>
                                         <p>
                                             <span className="font-medium">Description:</span> {formData.description}
@@ -500,62 +286,25 @@ export default function CreateFundingOpportunity() {
                                     <h4 className="font-medium mb-2">Funding Details</h4>
                                     <div className="space-y-1 text-sm">
                                         <p>
-                                            <span className="font-medium">Amount Range:</span> {formData.currency} {formData.amountMin} -{" "}
+                                            <span
+                                                className="font-medium">Amount Range:</span> SLE {formData.amountMin} -{" "}
                                             {formData.amountMax}
                                         </p>
                                         <p>
                                             <span className="font-medium">Deadline:</span>{" "}
                                             {formData.applicationDeadline ? format(formData.applicationDeadline, "PPP") : "Not set"}
                                         </p>
-                                        <p>
-                                            <span className="font-medium">Status:</span> {formData.status}
-                                        </p>
                                     </div>
                                 </div>
 
-                                <div className="p-4 border rounded-md">
-                                    <h4 className="font-medium mb-2">Eligibility</h4>
-                                    <div className="space-y-1 text-sm">
-                                        <p>
-                                            <span className="font-medium">Summary:</span> {formData.eligibilitySummary}
-                                        </p>
-                                        {formData.criteria.length > 0 && (
-                                            <div>
-                                                <span className="font-medium">Criteria:</span>
-                                                <ul className="list-disc list-inside ml-4 mt-1">
-                                                    {formData.criteria.map((criteria, index) => (
-                                                        <li key={index}>
-                                                            {criteria.key}: {criteria.value} ({criteria.type})
-                                                            {criteria.required && <span className="text-red-500"> *</span>}
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                {(formData.tags.length > 0 || formData.isFeatured) && (
+                                {(formData.about && formData.about.length > 0) && (
                                     <div className="p-4 border rounded-md">
-                                        <h4 className="font-medium mb-2">Additional Settings</h4>
-                                        <div className="space-y-1 text-sm">
-                                            {formData.tags.length > 0 && (
-                                                <div>
-                                                    <span className="font-medium">Tags:</span>
-                                                    <div className="flex flex-wrap gap-1 mt-1">
-                                                        {formData.tags.map((tag) => (
-                                                            <Badge key={tag} variant="secondary" className="text-xs">
-                                                                {tag}
-                                                            </Badge>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            )}
-                                            {formData.isFeatured && (
-                                                <p>
-                                                    <span className="font-medium">Featured:</span> Yes
-                                                </p>
-                                            )}
+                                        <h4 className="font-medium mb-2">About Opportunity</h4>
+                                        <div className="space-y-2">
+                                            <div
+                                                className="prose prose-sm max-w-none dark:prose-invert"
+                                                dangerouslySetInnerHTML={{ __html: formData.about }}
+                                            />
                                         </div>
                                     </div>
                                 )}
@@ -570,7 +319,7 @@ export default function CreateFundingOpportunity() {
     }
 
     return (
-        <div className="flex-1 space-y-4 p-4 md:p-8 pt-6 max-w-4xl mx-auto">
+        <div className="flex-1 space-y-4 pt-6 max-w-6xl mx-auto">
             <div className="flex items-center justify-between">
                 <div>
                     <h2 className="text-3xl font-bold tracking-tight">Create Funding Opportunity</h2>
@@ -578,18 +327,18 @@ export default function CreateFundingOpportunity() {
                 </div>
             </div>
 
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-6xl mx-auto">
                 {/* Progress Bar */}
                 <div className="mb-8">
                     <div className="flex items-center justify-between mb-4">
-            <span className="text-sm font-medium">
-              Step {currentStep} of {steps.length}
-            </span>
+                        <span className="text-sm font-medium">
+                          Step {currentStep} of {steps.length}
+                        </span>
                         <span className="text-sm text-muted-foreground">
-              {Math.round((currentStep / steps.length) * 100)}% Complete
-            </span>
+                          {Math.round((currentStep / steps.length) * 100)}% Complete
+                        </span>
                     </div>
-                    <Progress value={(currentStep / steps.length) * 100} className="h-2" />
+                    <Progress value={(currentStep / steps.length) * 100} className="h-2"/>
                 </div>
 
                 {/* Step Indicators */}
@@ -621,7 +370,7 @@ export default function CreateFundingOpportunity() {
 
                         <div className="flex justify-between mt-8">
                             <Button variant="outline" onClick={prevStep} disabled={currentStep === 1}>
-                                <ChevronLeft className="mr-2 h-4 w-4" />
+                                <ChevronLeft className="mr-2 h-4 w-4"/>
                                 Previous
                             </Button>
 
@@ -631,16 +380,16 @@ export default function CreateFundingOpportunity() {
                                     disabled={isPending}
                                 >
                                     {isPending ? (
-                                        <Icons.spinner className={'h-4 w-4 mr-2 animate-spin'} />
+                                        <Icons.spinner className={'h-4 w-4 mr-2 animate-spin'}/>
                                     ) : (
-                                        <PlusCircleIcon className={'h-4 w-4 mr-2'} />
+                                        <PlusCircleIcon className={'h-4 w-4 mr-2'}/>
                                     )}
                                     Create Opportunity
                                 </Button>
                             ) : (
                                 <Button onClick={nextStep} disabled={!isStepValid(currentStep)}>
                                     Next
-                                    <ChevronRight className="ml-2 h-4 w-4" />
+                                    <ChevronRight className="ml-2 h-4 w-4"/>
                                 </Button>
                             )}
                         </div>

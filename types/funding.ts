@@ -34,6 +34,20 @@ export interface FundingOpportunity {
     updatedAt: Date
 }
 
+export interface FundingOpportunityDto {
+    id: string
+    title: string
+    description: string
+    about: string
+    provider: FundingProvider | undefined
+    amountMin: number
+    amountMax: number
+    applicationDeadline: Date
+    applyLink: string
+    createdAt: Date
+    updatedAt: Date
+}
+
 export interface FundingProvider {
     id?: string
     name: string

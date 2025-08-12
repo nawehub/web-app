@@ -18,6 +18,8 @@ export const registerBizForm = z.object({
     email: z.string({message: "email is required"}).email({message: "owner's email must be a valid email address"}),
     category: z.string({message: "business category is required"}),
     registerDate: z.date({message: "register date must be valid"}).optional(),
+    isAlreadyRegistered: z.boolean(),
+    isPublicRegister: z.boolean(),
 })
 
 export const approveOrRejectBizForm = z.object({
@@ -65,6 +67,14 @@ export const businessService = () => {
         business: {
             registerBiz: async (req: z.infer<typeof registerBizForm>) =>
                 api4app('/businesses/manage', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(req),
+                }),
+            registerPublicBiz: async (req: z.infer<typeof registerBizForm>) =>
+                api4app('/businesses/manage/public', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

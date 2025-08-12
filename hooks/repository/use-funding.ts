@@ -1,8 +1,7 @@
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {
     ApplyForm,
-    ApproveOrRejectForm,
-    createOpportunityForm,
+    ApproveOrRejectForm, createMinimalOpp,
     createProviderForm,
     fundingService
 } from "@/lib/services/funding";
@@ -38,7 +37,7 @@ export const useGetOpportunityQuery = (id: string) => {
 export function useCreateOpportunityMutation() {
     return useMutation({
         mutationKey: ['createOpportunity'],
-        mutationFn: (data: createOpportunityForm) => fundingService().opportunities.create(data),
+        mutationFn: (data: createMinimalOpp) => fundingService().opportunities.create(data),
     });
 }
 

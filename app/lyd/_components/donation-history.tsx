@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Search, Calendar, DollarSign, MapPin, Phone, Mail, Filter } from "lucide-react"
-import { mockDonations, currencies } from "@/lib/lyd-data"
+import { currencies } from "@/lib/lyd-data"
 import {LYDDonation} from "@/types/lyd";
 import {allDistricts} from "@/types/demographs";
 import {useListProfileDonationsQuery} from "@/hooks/repository/use-lyd";
@@ -29,7 +29,7 @@ export function DonationHistoryComponent({ onCloseAction }: DonationHistoryProps
     const [searchTerm, setSearchTerm] = useState("")
     const [searchType, setSearchType] = useState<"email" | "phone">("email")
     const [searchResults, setSearchResults] = useState<SearchResults | null>(null)
-    const { data: donationData, refetch, isLoading} = useListProfileDonationsQuery(searchTerm);
+    const { data, refetch, isLoading} = useListProfileDonationsQuery(searchTerm);
 
     const handleSearch = async () => {
         if (!searchTerm) return;

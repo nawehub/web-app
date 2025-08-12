@@ -1,10 +1,10 @@
 import {apiRequest} from "@/lib/api";
 import {NextResponse} from "next/server";
-import {createOpportunityForm} from "@/lib/services/funding";
+import {createMinimalOpp} from "@/lib/services/funding";
 
 export async function GET(_: Request) {
     try {
-        const response = await apiRequest("/funding/opportunities", {
+        const response = await apiRequest("/funding/opportunities/minimal/all", {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         })
@@ -18,8 +18,8 @@ export async function GET(_: Request) {
 
 export async function POST(req: Request) {
     try {
-        const body: createOpportunityForm = await req.json();
-        const response = await apiRequest("/funding/opportunities", {
+        const body: createMinimalOpp = await req.json();
+        const response = await apiRequest("/funding/opportunities/new-minimal", {
             method: 'POST',
             body: JSON.stringify(body),
         })

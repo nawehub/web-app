@@ -8,6 +8,12 @@ export function useRegisterBusinessMutation() {
     });
 }
 
+export function useRegisterPublicBusinessMutation() {
+    return useMutation({
+        mutationFn: (data: z.infer<typeof registerBizForm>) => businessService().business.registerPublicBiz(data),
+    });
+}
+
 export function useApproveRejectBusinessMutation() {
     return useMutation({
         mutationFn: (data: z.infer<typeof approveOrRejectBizForm>) => businessService().business.approveOrReject(data),

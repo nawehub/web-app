@@ -1,7 +1,19 @@
 import {z} from "zod";
 import {NextResponse} from "next/server";
 import {approveOrRejectBizForm, registerBizForm} from "@/lib/services/business";
-import {apiRequest} from "@/lib/api";
+import {api4Public, apiRequest} from "@/lib/api";
+
+function passthrough(res: Response) {
+    // Stream upstream response as-is; no JSON parsing, so no crash on empty bodies.
+    return new NextResponse(res.body, {
+        status: res.status,
+        headers: {
+            // Preserve content type if provided; default to JSON.
+            "Content-Type": res.headers.get("content-type") ?? "application/json",
+        },
+    });
+}
+
 
 export async function POST(req: Request) {
     try {
@@ -12,8 +24,10 @@ export async function POST(req: Request) {
         })
 
         const data = await response.json();
+        console.log({data})
         return NextResponse.json(data, {status: response.status});
     } catch (error) {
+        console.log({error})
         return NextResponse.json({message: 'Internal server error'}, {status: 500});
     }
 }
