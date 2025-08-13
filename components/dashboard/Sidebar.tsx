@@ -18,7 +18,7 @@ export function Sidebar({isSidebarOpen, toggleSidebar, pathname}: SidebarProps) 
     
     return (
         <div
-            className={`fixed top-0 left-0 h-full w-64 transform transition-transform duration-300 ease-in-out z-50 lg:translate-x-0 ${
+            className={`left-sidebar fixed top-0 left-0 h-full w-64 transform transition-transform duration-300 ease-in-out z-50 lg:translate-x-0 ${
                 isSidebarOpen ? "translate-x-0" : "-translate-x-full"
             } border-r`}
         >
@@ -35,7 +35,7 @@ export function Sidebar({isSidebarOpen, toggleSidebar, pathname}: SidebarProps) 
             </div>
 
             {/* Logo */}
-            <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-800">
+            <div className="logo-wrap px-4 py-2 border-b border-gray-200 dark:border-gray-800">
                 <div className="flex items-center justify-center">
                     <img src="/images/wehub-sample-logo.png" alt="Logo" className="h-11 w-auto"/>
                 </div>
