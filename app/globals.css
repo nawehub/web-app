@@ -46,6 +46,9 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
+    --input-gray: rgba(39, 39, 42, 1);
+    --input-border-gray:  rgba(63 63 70);
+    --text-white: #ffffff;
   }
 }
 
@@ -56,4 +59,55 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@media screen and (max-width: 500px) {
+    button.text-sm {
+        font-size: 0.8rem;
+        text-wrap: auto;
+    }
+}
+
+.left-sidebar {
+    background-color: var(--text-white);
+    z-index: 50;
+}
+
+.dark header,
+.dark .head-wrap,
+.dark .left-sidebar {
+    background-color: hsl(var(--background));
+}
+
+.dark input.bg-gray-200 {
+    background-color: var(--input-gray);
+    border: 1px solid var(--input-border-gray);
+}
+
+.dark .head-wrap .user-name,
+.dark .hover\:bg-accent:hover svg {
+    color: var(--text-white);
+}
+
+.chart-wrap {
+    overflow-x: auto;
+}
+
+.recent-activity-block {
+    @media screen and (max-width: 1024px) {
+        grid-column: span 4 / span 4;
+    }
+}
+
+.logo-wrap {
+    padding-bottom: 0.65rem;
+    padding-top: 0.6rem;
+}
+
+header nav a.underline {
+    text-decoration: none;
+}
+
+header nav a.underline span {
+    width: 100%;
 }

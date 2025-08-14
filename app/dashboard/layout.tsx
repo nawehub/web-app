@@ -45,7 +45,7 @@ export default function DashboardLayout({children}: { children: ReactNode }) {
             <div className="lg:ml-64">
                 {/* Fixed Top Navigation */}
                 <div
-                    className={`fixed top-0 right-0 left-0 lg:left-64 z-30 bg-white border-gray-200 border-b`}
+                    className={`head-wrap fixed top-0 right-0 left-0 lg:left-64 z-30 bg-white border-gray-200 border-b`}
                 >
                     <div className="px-4 lg:px-6 py-3">
                         <div className="flex items-center justify-between">
@@ -63,7 +63,7 @@ export default function DashboardLayout({children}: { children: ReactNode }) {
                                 {/* Desktop Navigation */}
                                 <nav className="hidden md:flex items-center gap-4 lg:gap-14">
                                     <a href="#"
-                                       className={`text-sm font-medium text-gray-900`}>
+                                       className={`user-name text-sm font-medium text-gray-900`}>
                                         Hello {session?.user?.firstName}!
                                     </a>
                                     <div className="relative flex md:max-w-sm items-center justify-center text-center">
