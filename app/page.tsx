@@ -206,7 +206,7 @@ export default function Home() {
 
                             <Link href="/lyd">
                                 <Button variant="outline"
-                                        className="w-full group/btn border-2 border-emerald-200 hover:bg-emerald-50 hover:border-emerald-300 shadow-lg hover:shadow-xl transition-all duration-300"
+                                        className="button-dark-transparent w-full group/btn border-2 border-emerald-200 hover:bg-emerald-50 hover:border-emerald-300 shadow-lg hover:shadow-xl transition-all duration-300"
                                         size="lg">
                                     Contribute to a District ("Love Your District")
                                     <Heart
@@ -221,7 +221,7 @@ export default function Home() {
                 <div
                     className={`py-20 transition-all duration-1000 delay-400 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
                     <div
-                        className="bg-gradient-to-r from-slate-50 to-blue-50 -mx-4 px-4 py-16 rounded-3xl border border-slate-200/50 shadow-xl">
+                        className="register-business-wrap bg-gradient-to-r from-slate-50 to-blue-50 -mx-4 px-4 py-16 rounded-3xl border border-slate-200/50 shadow-xl">
                         <div className="max-w-5xl mx-auto text-center">
                             <div
                                 className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-lg mb-8">
@@ -264,7 +264,7 @@ export default function Home() {
                         </p>
 
                         <Button variant="outline" size="lg"
-                                className="px-12 py-4 border-2 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 hover:border-purple-300 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 text-lg group">
+                                className="button-dark-transparent px-12 py-4 border-2 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 hover:border-purple-300 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 text-lg group">
                             Turn Problems into Opportunities
                             <Zap className="ml-2 h-5 w-5 group-hover:text-purple-600 transition-colors duration-300"/>
                         </Button>
@@ -322,7 +322,7 @@ export default function Home() {
                     </div>
 
                     <div
-                        className="relative overflow-hidden bg-gradient-to-r from-slate-50 to-blue-50 py-12">
+                        className="dashboard-slider relative overflow-hidden bg-gradient-to-r from-slate-50 to-blue-50 py-12">
                         {/* Gradient overlays for a smooth fade effect */}
                         <div
                             className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-slate-50 to-transparent z-10"></div>
