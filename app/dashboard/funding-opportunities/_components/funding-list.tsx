@@ -213,8 +213,15 @@ export default function FundingList() {
                         <p className="text-muted-foreground mb-4">
                             {searchTerm || statusFilter !== "all" || typeFilter !== "all"
                                 ? "Try adjusting your search or filters"
-                                : "Be the first to add a funding opportunity"}
+                                : ""}
                         </p>
+                        {!searchTerm || statusFilter == "all" || typeFilter === "all" && (
+                            <IfAllowed permission={"funding:create"}>
+                                <p className="text-muted-foreground mb-4">
+                                    Be the first to add a funding opportunity
+                                </p>
+                            </IfAllowed>
+                        )}
                         {!searchTerm && statusFilter === "all" && typeFilter === "all" && (
                             <IfAllowed permission={"funding:create"}>
                                 <Button onClick={() => router.push("/dashboard/funding-opportunities/create")}

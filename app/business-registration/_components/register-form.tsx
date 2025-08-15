@@ -478,11 +478,14 @@ export default function RegisterForm() {
                     <DialogBody>
                         <div className={"flex-1 items-center text-center"}>
                             {isPending ? (
-                                <Icons.spinner className={'h-7 w-7 mr-2 animate-spin'}/>
+                                <div className={"flex flex-col items-center justify-center space-y-4 mt-5 text-center"}>
+                                    <Icons.spinner className={'h-7 w-7 mr-2 animate-spin'}/>
+                                </div>
                             ) : (
                                 <div className={"flex flex-col items-center justify-center space-y-4 mt-5"}>
                                     <div>
-                                        <p className={"text-muted-foreground mb-5"}>{message}</p>
+                                        <p className={"text-muted-foreground"}>{message}</p>
+                                        <p className={"text-muted-foreground mb-5"}>Credentials to access the dashboard and track the status of your dashboard has been sent to your email</p>
                                     </div>
                                     <div className={"flex items-center justify-center space-x-4"}>
                                         <Button variant={"outline"} onClick={() => {
