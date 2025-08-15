@@ -8,7 +8,6 @@ import React, {useState, useTransition} from "react";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import {CustomCombobox} from "@/components/ui/combobox";
-import {categories} from "@/utils/business-categories";
 import {CustomDatePicker} from "@/components/ui/date-picker";
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
 import {countries} from "@/utils/countries";
@@ -16,7 +15,7 @@ import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {registerBizForm} from "@/lib/services/business";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {BusinessFormData, steps, initData, getDate15YearsAgo} from "@/types/business";
+import {BusinessFormData, steps, initData, getDate15YearsAgo, categories, businessTypes} from "@/types/business";
 import {useRouter} from "next/navigation";
 import {RegisterResponse} from "@/store/auth";
 import {useRegisterPublicBusinessMutation} from "@/hooks/repository/use-business";
@@ -29,6 +28,7 @@ import {
     DialogTitle
 } from "@/components/ui/dialog";
 import {DialogBody} from "next/dist/client/components/react-dev-overlay/ui/components/dialog";
+import {Textarea} from "@/components/ui/textarea";
 
 export default function RegisterForm() {
     const [isPending, startTransition] = useTransition()
@@ -39,6 +39,7 @@ export default function RegisterForm() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [message, setMessage] = useState("");
     const [title, setTitle] = useState("Registering your business");
+    const [typeDescription, setTypeDescription] = useState<string[]>([]);
 
     const form = useForm<z.infer<typeof registerBizForm>>({
         resolver: zodResolver(registerBizForm)
@@ -84,14 +85,14 @@ export default function RegisterForm() {
     };
 
     const isStepValid = () => {
-        return formData.businessName && formData.businessAddress && formData.category && formData.ownerName && formData.ownerAddress && formData.placeOfBirth && formData.dateOfBirth
-            && formData.nationality && formData.mothersName && formData.email && formData.contactNumber && formData.gender
+        return formData.businessName && formData.businessAddress && formData.businessActivities && formData.businessEntityType && formData.category && formData.ownerName && formData.ownerAddress && formData.placeOfBirth && formData.dateOfBirth
+            && formData.nationality && formData.mothersName && formData.email && formData.contactNumber && formData.gender;
     }
 
     return (
         <div className="max-w-6xl mx-auto">
             {/* Header */}
-            <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+            <motion.div initial={{opacity: 0, y: -20}} animate={{opacity: 1, y: 0}} className="mb-8">
                 <h1 className="text-3xl font-bold mb-2">Business Registration</h1>
                 <p className="text-muted-foreground"> Fill in the details below to register your new business</p>
 
@@ -153,21 +154,75 @@ export default function RegisterForm() {
                                             )}
                                         />
                                     </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <FormField
+                                            name={'businessEntityType'}
+                                            control={form.control}
+                                            render={({field}) => (
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="category">Business Entity Type</Label>
+                                                    <CustomCombobox
+                                                        {...field}
+                                                        placeholder="Select your business category"
+                                                        searchPlaceholder={'Search business entity type...'}
+                                                        data={businessTypes}
+                                                        searchField={'name'}
+                                                        displayField={'name'}
+                                                        valueField={'name'}
+                                                        onSelectAction={(value) => {
+                                                            updateFormData('businessEntityType', value)
+                                                            field.onChange(value)
+                                                            setTypeDescription(businessTypes.filter(type => {
+                                                                return type.name == value
+                                                            })[0].descriptions)
+                                                        }}/>
+                                                    {typeDescription.length > 0 && (
+                                                        typeDescription.map((description, index) => (
+                                                            <p key={index} className="text-muted-foreground text-xs">
+                                                                 {description}
+                                                             </p>
+                                                        ))
+                                                    )}
+                                                </div>
+                                            )}
+                                        />
+                                        <FormField
+                                            name={'businessAddress'}
+                                            control={form.control}
+                                            render={({field}) => (
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="businessAddress">Business Address</Label>
+                                                    <Textarea
+                                                        id="businessAddress"
+                                                        {...field}
+                                                        value={formData.businessAddress}
+                                                        onChange={(e) => updateFormData('businessAddress', e.target.value)}
+                                                        required
+                                                        rows={2}
+                                                        placeholder="Enter business address"
+                                                    />
+                                                </div>
+                                            )}
+                                        />
+                                    </div>
                                     <FormField
-                                        name={'businessAddress'}
+                                        name={'businessActivities'}
                                         control={form.control}
                                         render={({field}) => (
                                             <div className="space-y-2">
-                                                <Label htmlFor="businessAddress">Business Address</Label>
-                                                <Input
-                                                    id="businessAddress"
+                                                <Label htmlFor="businessActivities">Business Activities</Label>
+                                                <Textarea
+                                                    id="businessActivities"
                                                     {...field}
-                                                    value={formData.businessAddress}
-                                                    onChange={(e) => updateFormData('businessAddress', e.target.value)}
+                                                    value={formData.businessActivities}
+                                                    onChange={(e) => updateFormData('businessActivities', e.target.value)}
                                                     required
-                                                    type={'text'}
-                                                    placeholder="Enter business address"
+                                                    placeholder="Enter business activities here..."
+                                                    rows={6}
                                                 />
+                                                <p className="text-muted-foreground text-xs">
+                                                    Please provide a brief description of your business activities.
+                                                </p>
                                             </div>
                                         )}
                                     />
@@ -383,7 +438,6 @@ export default function RegisterForm() {
                                                         searchField={'name'}
                                                         displayField={'name'}
                                                         valueField={'name'}
-                                                        {...field}
                                                         value={formData.nationality}
                                                         onSelectAction={(value) => {
                                                             field.onChange(value)
@@ -429,7 +483,7 @@ export default function RegisterForm() {
                         <div className={"flex-1 items-center text-center"}>
                             {isPending ? (
                                 <Icons.spinner className={'h-7 w-7 mr-2 animate-spin'}/>
-                            ): (
+                            ) : (
                                 <div className={"flex flex-col items-center justify-center space-y-4 mt-5"}>
                                     <div>
                                         <p className={"text-muted-foreground mb-5"}>{message}</p>

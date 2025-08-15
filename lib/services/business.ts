@@ -7,6 +7,8 @@ export const registerBizForm = z.object({
     businessName: z.string({message: "business name is required"}).min(3, {message: "business name must be at least 3 chars long"})
         .max(100, { message: "business name must be at most 100 chars long" }),
     businessAddress: z.string({message: "business address is required"}),
+    businessActivities: z.string({message: "business activities is required"}),
+    businessEntityType: z.string({message: "business entity type is required"}),
     ownerName: z.string({message: "business owner name is required"}),
     ownerAddress: z.string({message: "owner's address is required"}),
     placeOfBirth: z.string({message: "owner's place of birth is required"}),

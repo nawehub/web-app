@@ -11,6 +11,7 @@ import {FcGoogle} from "react-icons/fc";
 import {FaGithub, FaApple} from "react-icons/fa";
 import {Eye, EyeOff} from "lucide-react";
 import Loading from "@/components/loading";
+import {Logo} from "@/components/logo";
 
 export default function Login() {
     const {status} = useSession();
@@ -78,10 +79,7 @@ export default function Login() {
             <div
                 className="w-full md:w-1/2 flex flex-col justify-between bg-white dark:bg-zinc-900 px-6 py-8 md:py-0 md:px-16 min-h-screen">
                 {/* Logo */}
-                <div className="items-center h-16 mb-8 pt-5">
-                    <img src="/images/wehub-sample-logo.png" alt="Logo" className="h-10 w-auto mr-2"/>
-                    <span className="font-light text-xs -top-5 ml-4 tracking-tight text-zinc-900 dark:text-white">Salone Success</span>
-                </div>
+                <Logo />
                 <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full">
                     <h2 className="text-2xl font-semibold mb-2 text-zinc-900 dark:text-white">Log in to your
                         account</h2>
@@ -137,41 +135,30 @@ export default function Login() {
                         <Button
                             variant="outline"
                             className="w-full flex items-center justify-center gap-2 bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-lg py-2.5 text-base font-normal"
-                            onClick={() => signIn()}
-                        >
-                            <span className="inline-block rotate-180"><svg width="20" height="20" fill="none"
-                                                                           viewBox="0 0 20 20"><path
-                                d="M10 2v16M2 10h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg></span>
-                            Use SSO login
-                        </Button>
-                        <Button
-                            variant="outline"
-                            className="w-full flex items-center justify-center gap-2 bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-lg py-2.5 text-base font-normal"
                             onClick={() => handleSocialLogin("google")}
                         >
                             <FcGoogle className="h-5 w-5"/>
                             Continue with Google
                         </Button>
-                        <Button
-                            variant="outline"
-                            className="w-full flex items-center justify-center gap-2 bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-lg py-2.5 text-base font-normal"
-                            onClick={() => handleSocialLogin("github")}
-                        >
-                            <FaGithub className="h-5 w-5"/>
-                            Continue with GitHub
-                        </Button>
-                        <Button
-                            variant="outline"
-                            className="w-full flex items-center justify-center gap-2 bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-lg py-2.5 text-base font-normal"
-                            onClick={() => handleSocialLogin("apple")}
-                        >
-                            <FaApple className="h-5 w-5"/>
-                            Continue with Apple
-                        </Button>
+                        {/*<Button*/}
+                        {/*    variant="outline"*/}
+                        {/*    className="w-full flex items-center justify-center gap-2 bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-lg py-2.5 text-base font-normal"*/}
+                        {/*    onClick={() => handleSocialLogin("github")}*/}
+                        {/*>*/}
+                        {/*    <FaGithub className="h-5 w-5"/>*/}
+                        {/*    Continue with GitHub*/}
+                        {/*</Button>*/}
+                        {/*<Button*/}
+                        {/*    variant="outline"*/}
+                        {/*    className="w-full flex items-center justify-center gap-2 bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-lg py-2.5 text-base font-normal"*/}
+                        {/*    onClick={() => handleSocialLogin("apple")}*/}
+                        {/*>*/}
+                        {/*    <FaApple className="h-5 w-5"/>*/}
+                        {/*    Continue with Apple*/}
+                        {/*</Button>*/}
                     </div>
                     <div className="mt-8 text-center text-xs text-zinc-500 dark:text-zinc-400">
-                        <span>New to YourApp? <Link href="/register"
-                                                    className="text-orange-600 hover:underline">Sign up</Link></span>
+                        <span>New to Nawehub? <Link href="/register" className="text-orange-600 hover:underline">Sign up</Link></span>
                         <br/>
                         <Link href="#" className="text-orange-600 hover:underline">Get help</Link>
                     </div>
@@ -179,11 +166,11 @@ export default function Login() {
                 {/* Footer */}
                 <div className="bottom-0 max-w-md text-xs text-gray-500 text-center leading-relaxed mx-auto mb-5">
                     This site is protected by reCAPTCHA Enterprise and the Google<br/>{" "}
-                    <Link href="/privacy" className="text-orange-600 hover:text-orange-700">
+                    <Link href="/#" className="text-orange-600 hover:text-orange-700">
                         Privacy Policy
                     </Link>{" "}
                     and{" "}
-                    <Link href="/terms" className="text-orange-600 hover:text-orange-700">
+                    <Link href="/#" className="text-orange-600 hover:text-orange-700">
                         Terms of Service
                     </Link>{" "}
                     apply.

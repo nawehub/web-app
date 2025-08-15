@@ -21,8 +21,6 @@ import {
 } from "lucide-react"
 import {DonationForm} from "@/app/lyd/_components/donation-form"
 import {DonationHistoryComponent} from "@/app/lyd/_components/donation-history"
-import {currencies} from "@/lib/lyd-data"
-import type {LYDDonation} from "@/types/lyd"
 import AppHeader from "@/components/public/app-header";
 import {useListDistrictRankingsQuery, useListTopContributorsQuery} from "@/hooks/repository/use-lyd";
 import {allDistricts} from "@/types/demographs";
@@ -35,7 +33,7 @@ export default function LYDPage() {
     const { data: topContributors, refetch: refetchContributors } = useListTopContributorsQuery()
     const { data: districtRankings, refetch: refetchRankings } = useListDistrictRankingsQuery()
 
-    const handleDonationSubmit = (donationData: Partial<LYDDonation>) => {
+    const handleDonationSubmit = () => {
         refetchContributors().then()
         refetchRankings().then()
         setShowDonationForm(false)
@@ -100,11 +98,11 @@ export default function LYDPage() {
                             className="bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white px-8 py-3"
                         >
                             <Plus className="mr-2 h-5 w-5"/>
-                            Make a Donation
+                            Make a Contribution
                         </Button>
                         <Button size="lg" variant="outline" onClick={() => setShowDonationHistory(true)}>
                             <Calendar className="mr-2 h-5 w-5"/>
-                            View Donation History
+                            View Contribution History
                         </Button>
                     </div>
                 </motion.div>
@@ -258,7 +256,7 @@ export default function LYDPage() {
                                             <Star className="h-5 w-5 text-blue-600"/>
                                             <span>Top Contributors</span>
                                         </CardTitle>
-                                        <CardDescription>Leading donors making the biggest impact</CardDescription>
+                                        <CardDescription>Leading contributors making the biggest impact</CardDescription>
                                     </div>
                                     <Select value={selectedYear} onValueChange={setSelectedYear}>
                                         <SelectTrigger className="w-[100px]">

@@ -84,8 +84,8 @@ export function DonationHistoryComponent({ onCloseAction }: DonationHistoryProps
         <div className="max-w-6xl mx-auto">
             {/* Header */}
             <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
-                <h1 className="text-3xl font-bold mb-2">Donation History</h1>
-                <p className="text-muted-foreground">Search for donation history using email address or phone number</p>
+                <h1 className="text-3xl font-bold mb-2">Contribution History</h1>
+                <p className="text-muted-foreground">Search for contribution history using email address or phone number</p>
             </motion.div>
 
             {/* Search Form */}
@@ -94,9 +94,9 @@ export function DonationHistoryComponent({ onCloseAction }: DonationHistoryProps
                     <CardHeader>
                         <CardTitle className="flex items-center space-x-2">
                             <Search className="h-5 w-5" />
-                            <span>Search Donations</span>
+                            <span>Search Contributions</span>
                         </CardTitle>
-                        <CardDescription>Enter your email address or phone number to view your donation history</CardDescription>
+                        <CardDescription>Enter your email address or phone number to view your contribution history</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="flex flex-col md:flex-row gap-4">
@@ -165,7 +165,7 @@ export function DonationHistoryComponent({ onCloseAction }: DonationHistoryProps
                             </CardHeader>
                             <CardContent>
                                 <div className="text-2xl font-bold">{searchResults.totalDonations}</div>
-                                <p className="text-xs text-muted-foreground">Lifetime donations</p>
+                                <p className="text-xs text-muted-foreground">Lifetime contributions</p>
                             </CardContent>
                         </Card>
 
@@ -182,7 +182,7 @@ export function DonationHistoryComponent({ onCloseAction }: DonationHistoryProps
 
                         <Card>
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">Average Donation</CardTitle>
+                                <CardTitle className="text-sm font-medium">Average Contribution</CardTitle>
                                 <DollarSign className="h-4 w-4 text-muted-foreground" />
                             </CardHeader>
                             <CardContent>
@@ -191,7 +191,7 @@ export function DonationHistoryComponent({ onCloseAction }: DonationHistoryProps
                                         ? formatCurrency(Math.round(searchResults.totalAmount / searchResults.totalDonations), "SLE")
                                         : formatCurrency(0, "SLE")}
                                 </div>
-                                <p className="text-xs text-muted-foreground">Per donation</p>
+                                <p className="text-xs text-muted-foreground">Per contribution</p>
                             </CardContent>
                         </Card>
                     </div>
@@ -201,12 +201,12 @@ export function DonationHistoryComponent({ onCloseAction }: DonationHistoryProps
                         <CardHeader>
                             <CardTitle className="flex items-center space-x-2">
                                 <Calendar className="h-5 w-5" />
-                                <span>Donation History</span>
+                                <span>Contribution History</span>
                             </CardTitle>
                             <CardDescription>
                                 {searchResults.totalDonations > 0
-                                    ? `Found ${searchResults.totalDonations} donation${searchResults.totalDonations > 1 ? "s" : ""}`
-                                    : "No donations found for this search term"}
+                                    ? `Found ${searchResults.totalDonations} contribution${searchResults.totalDonations > 1 ? "s" : ""}`
+                                    : "No contributions found for this search term"}
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -266,9 +266,9 @@ export function DonationHistoryComponent({ onCloseAction }: DonationHistoryProps
                             ) : (
                                 <div className="text-center py-12">
                                     <Filter className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                                    <h3 className="text-lg font-semibold mb-2">No donations found</h3>
+                                    <h3 className="text-lg font-semibold mb-2">No contributions found</h3>
                                     <p className="text-muted-foreground">
-                                        No donation history was found for the provided{" "}
+                                        No contribution history was found for the provided{" "}
                                         {searchType === "email" ? "email address" : "phone number"}.
                                     </p>
                                 </div>

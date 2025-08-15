@@ -6,6 +6,7 @@ import {businessService} from "@/lib/services/business";
 import {NewBizDialog} from "@/app/dashboard/my-businesses/_components/NewBizDialog";
 import {HydrationBoundary, QueryClient, dehydrate} from "@tanstack/react-query";
 import AllBusinesses from "@/app/dashboard/my-businesses/_components/all-businesses";
+import {IfAllowed} from "@/components/auth/IfAllowed";
 
 export default function MyBusinessesPage() {
     const queryClient = new QueryClient();
@@ -36,7 +37,9 @@ export default function MyBusinessesPage() {
                         Manage your registered businesses and track their status
                     </p>
                 </div>
-                <NewBizDialog />
+                <IfAllowed permission={"user:read"}>
+                    <NewBizDialog />
+                </IfAllowed>
             </div>
             <HydrationBoundary state={dehydrate(client!)}>
                 <AllBusinesses />

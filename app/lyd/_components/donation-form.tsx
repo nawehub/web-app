@@ -1,6 +1,6 @@
 "use client"
 
-import {useState, useTransition} from "react"
+import React, {useState, useTransition} from "react"
 import {motion, AnimatePresence} from "framer-motion"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
 import {Button} from "@/components/ui/button"
@@ -15,6 +15,8 @@ import type {LYDProfile, LYDDonation, MakeDonationRequest} from "@/types/lyd"
 import {allDistricts} from "@/types/demographs";
 import {useMakeDonationMutation} from "@/hooks/repository/use-lyd";
 import {useToast} from "@/hooks/use-toast";
+import {countries} from "@/utils/countries";
+import {CustomCombobox} from "@/components/ui/combobox";
 
 interface DonationFormProps {
     onSubmitAction: (donation: Partial<LYDDonation>) => void
@@ -192,11 +194,21 @@ export function DonationForm({onSubmitAction, onCancelAction}: DonationFormProps
                                     <SelectContent>
                                         <SelectItem value="Male">Male</SelectItem>
                                         <SelectItem value="Female">Female</SelectItem>
+                                        <SelectItem value="Prefer_Not_To_Say">Prefer Not to Say</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="nationality">Nationality *</Label>
+                                <CustomCombobox
+                                    placeholder="Select your nationality"
+                                    searchPlaceholder={'Search country...'}
+                                    data={countries}
+                                    searchField={'name'}
+                                    displayField={'name'}
+                                    valueField={'name'}
+                                    value={formData.profile.nationality}
+                                    onSelectAction={(value) => updateFormData('nationality', value)}/>
                                 <Input
                                     id="nationality"
                                     value={formData.profile.nationality}

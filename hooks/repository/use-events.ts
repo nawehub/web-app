@@ -1,73 +1,30 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { api4app, api4FileUpload } from '@/lib/api4app';
-
-export interface Event {
-    id: string;
-    title: string;
-    flier?: string; // URL to the uploaded flier
-    description: string;
-    about: string; // Rich text content
-    host: string;
-    type: "CONFERENCE" | "CONCERT" | "WORKSHOP" | "MEETING" | "WEBINAR" | "OTHER";
-    startDate: string;
-    endDate: string;
-    hostWebsite?: string;
-    createdAt: string;
-    updatedAt: string;
-}
-
-export interface CreateEventData {
-    title: string;
-    flier: File;
-    description: string;
-    about: string;
-    host: string;
-    type: "CONFERENCE" | "CONCERT" | "WORKSHOP" | "MEETING" | "WEBINAR" | "OTHER";
-    startDate: Date;
-    endDate: Date;
-    hostWebsite?: string;
-}
+import {eventService} from "@/lib/services/event";
 
 // Events
-export function useEventsQuery(status: 'open' | 'closed' | 'all' = 'open') {
+export function useEventsQuery() {
     return useQuery({
-        queryKey: ['events', status],
-        queryFn: async () => {
-            const params = status !== 'all' ? `?status=${status}` : '';
-            const response = await api4app(`/api/events${params}`);
-            return response.data as Event[];
-        },
+        queryKey: ['events'],
+        queryFn: async () => await eventService().event.listAllEvents()
     });
 }
 
 export function useEventQuery(id: string) {
     return useQuery({
         queryKey: ['event', id],
-        queryFn: async () => {
-            const response = await api4app(`/api/events/${id}`);
-            return response.data as Event;
-        },
+        queryFn: async () => eventService().event.getEvent(id),
         enabled: !!id,
     });
 }
 
 export function useCreateEventMutation() {
     const queryClient = useQueryClient();
-
     return useMutation({
+        mutationKey: ['create-event'],
         mutationFn: async (formData: FormData) => {
-            const response = await api4FileUpload('/api/events', {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to create event');
-            }
-
-            return response.json();
+            return eventService().event.createEvent(formData);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['events'] }).then();

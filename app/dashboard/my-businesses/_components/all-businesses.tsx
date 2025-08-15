@@ -21,7 +21,7 @@ import {useListBusinessQuery} from "@/hooks/repository/use-business";
 import Loading from "@/components/loading";
 import {useEffect, useMemo, useState} from "react";
 import {BusinessData} from "@/lib/services/business";
-import {categories} from "@/utils/business-categories";
+import {categories} from "@/types/business";
 import {Badge} from "@/components/ui/badge";
 import {NewBizDialog} from "@/app/dashboard/my-businesses/_components/NewBizDialog";
 import {usePermissions} from "@/hooks/use-permissions";

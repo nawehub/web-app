@@ -43,7 +43,7 @@ export default function ResourcesPage() {
     })
 
     const featuredResources = resources?.files.filter((resource) => {
-        return resource.featured == true
+        return resource.isFeatured == true
     })
 
     const toggleBookmark = (resourceId: string) => {
@@ -158,7 +158,7 @@ export default function ResourcesPage() {
                                 <h2 className="text-2xl font-bold text-gray-900 mb-4">Featured Resources</h2>
                                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {resources?.files
-                                        .filter((r) => r.featured == true)
+                                        .filter((r) => r.isFeatured == true)
                                         .map((resource) => (
                                             <Card key={resource.id} className="border-2 border-emerald-200">
                                                 <CardHeader>
@@ -227,7 +227,7 @@ export default function ResourcesPage() {
                                                 <div className="flex-1">
                                                     <div className="flex items-center gap-3 mb-2">
                                                         <Badge variant="secondary">{resource.type}</Badge>
-                                                        {resource.featured && <Badge variant="default">Featured</Badge>}
+                                                        {resource.isFeatured && <Badge variant="default">Featured</Badge>}
                                                     </div>
                                                     <h3 className="text-lg font-semibold text-gray-900 mb-2">{resource.title}</h3>
                                                     <p className="text-gray-600 mb-3">{resource.description}</p>
@@ -302,7 +302,7 @@ export default function ResourcesPage() {
                                                         <div className="flex-1">
                                                             <div className="flex items-center gap-3 mb-2">
                                                                 <Badge variant="secondary">{resource.type}</Badge>
-                                                                {resource.featured &&
+                                                                {resource.isFeatured &&
                                                                     <Badge variant="default">Featured</Badge>}
                                                             </div>
                                                             <h3 className="text-lg font-semibold text-gray-900 mb-2">{resource.title}</h3>

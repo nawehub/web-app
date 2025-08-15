@@ -2,7 +2,7 @@ export interface LYDProfile {
     id: string
     firstName: string
     lastName: string
-    gender: "Male" | "Female"
+    gender: "Male" | "Female" | "Prefer_Not_To_Say"
     phoneNumber: string
     email: string
     nationality: string
@@ -50,4 +50,20 @@ export type MakeDonationRequest = {
     paymentProvider: string
     currency: "SLE" | "USD" | "GBP" | "EUR"
     targetValue: string
+}
+
+type Venue = {
+    id: string;
+    name: string;
+    address: string;
+    capacity: number;
+    amenities: string[]; // e.g., ["Wi-Fi", "Parking", "Projector"]
+    contactPerson?: string;
+}
+
+export type ProfileWithContribution = Omit<LYDProfile, "createdAt" | "updatedAt"> & {
+    paymentMethod: "Momo" | "Bank" | "Card"
+    paymentProvider: string
+    currency: "SLE" | "USD" | "GBP" | "EUR"
+    totalContributions: number
 }

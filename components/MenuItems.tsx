@@ -17,7 +17,7 @@ export const exploreMenuItems = [
     { name: "Events", href: "/dashboard/events", icon: PartyPopper },
     { name: "My Business", href: "/dashboard/my-businesses", icon: Building2 },
     // { name: "Network", href: "/dashboard/network", icon: Network },
-    { name: "Discussion Forums", href: "/dashboard/forums", icon: Network },
+    // { name: "Discussion Forums", href: "/dashboard/forums", icon: Network },
     { name: "Funding Providers", href: "/dashboard/funding-providers", icon: Briefcase },
     { name: "Resource Library", href: "/dashboard/resources", icon: BookOpen },
 ];
@@ -31,7 +31,7 @@ export const documentMenuItems = [
 ];
 
 export const bottomMenuItems = [
-    { name: "User Settings", href: "/dashboard/user-settings", icon: Settings },
+    { name: "User Settings", href: "/dashboard/user-settings", icon: Settings, action: () => void{} },
     // { name: "Get Help", href: "/dashboard/file-manager", icon: HelpCircle },
     { name: "Search", href: "#", icon: Search, action: () => void{} }
 ];
