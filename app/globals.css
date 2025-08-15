@@ -46,6 +46,9 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
+    --input-gray: rgba(39, 39, 42, 1);
+    --input-border-gray:  rgba(63 63 70);
+    --text-white: #ffffff;
   }
 }
 
@@ -57,30 +60,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-/* Custom animations for testimonies */
-@keyframes scroll {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
-}
-
-.animate-scroll {
-    animation: scroll 35s linear infinite;
-}
-
-.animate-scroll:hover {
-  animation-play-state: paused;
-}
-
-/* Line clamp utility */
-.line-clamp-6 {
-  display: -webkit-box;
-  -webkit-line-clamp: 6;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-

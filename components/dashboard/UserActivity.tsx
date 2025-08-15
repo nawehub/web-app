@@ -35,7 +35,7 @@ export const UserActivity = () => {
     return (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
             {/* User Activity Chart */}
-            <Card className="col-span-4">
+            <Card className="chart-wrap col-span-4">
                 <CardHeader>
                     <div className="flex items-center justify-between">
                         <div>
@@ -84,7 +84,7 @@ export const UserActivity = () => {
             </Card>
 
             {/* Recent Activity */}
-            <Card className="col-span-3">
+            <Card className="recent-activity-block col-span-3">
                 <CardHeader>
                     <CardTitle>Recent Activity</CardTitle>
                     <CardDescription>Latest updates and activities</CardDescription>
