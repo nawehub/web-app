@@ -6,6 +6,16 @@ export type FolderCreateResponse = {
     folder: FolderData
 }
 
+export type CreateCategoryRequest = {
+    name: string
+    description: string
+}
+
+export type CreateCategoryResponse = {
+    message: string
+    category: Category
+}
+
 export type CreateTagResponse = {
     message: string
     tag: Tag
@@ -52,6 +62,15 @@ export const resourceService = () => {
                 })
 
                 return response as Promise<Category[]>
+            },
+            createCategory: async (req: CreateCategoryRequest) => {
+                return await api4app('/resources/categories', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(req),
+                })
             }
         },
         tag: {
@@ -64,6 +83,15 @@ export const resourceService = () => {
                 })
 
                 return response as Promise<Tag[]>
+            },
+            createTag: async (req: Pick<CreateCategoryRequest, "name">) => {
+                return await api4app('/resources/tags', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(req),
+                })
             }
         },
         resource: {

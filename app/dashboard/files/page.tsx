@@ -2,7 +2,7 @@
 
 import {useEffect, useState} from 'react';
 import {Button} from '@/components/ui/button';
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card';
+import {Card} from '@/components/ui/card';
 import {Input} from '@/components/ui/input';
 import {
     Folder,
@@ -10,7 +10,6 @@ import {
     Plus,
     Upload,
     Search,
-    ArrowLeft,
     MoreVertical,
     Grid3X3,
     List,
@@ -31,14 +30,10 @@ import {
 import {Badge} from '@/components/ui/badge';
 import {CreateFolderDialog} from '@/app/dashboard/files/_components/create-folder-dialog';
 import {UploadFileDialog} from '@/app/dashboard/files/_components/upload-file-dialog';
-import {
-    useFoldersQuery,
-    useFilesQuery,
-    type Folder as FolderType,
-    type FileItem
-} from '@/hooks/repository/use-file-management';
 import {useListFolderResourcesQuery, useListFoldersQuery} from "@/hooks/repository/use-resources";
 import {FolderData} from "@/types/files";
+import {CreateTagDialog} from "@/app/dashboard/files/_components/create-tag-dialog";
+import {CreateCategoryDialog} from "@/app/dashboard/files/_components/create-category-dialog";
 
 interface Selection {
     files: Set<string>;
@@ -55,7 +50,7 @@ export default function FilesPage() {
     const [showCreateFolder, setShowCreateFolder] = useState(false);
     const [showUploadFile, setShowUploadFile] = useState(false);
     const [selection, setSelection] = useState<Selection>({ files: new Set(), folders: new Set() });
-    const [lastSelectedItem, setLastSelectedItem] = useState<string | null>(null);
+    // const [lastSelectedItem, setLastSelectedItem] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [folderHistory, setFolderHistory] = useState<Array<{id: string, name: string}>>([]);
     const [isOperationPending, setIsOperationPending] = useState(false);
@@ -199,6 +194,8 @@ export default function FilesPage() {
                         <Plus className="h-4 w-4 mr-2"/>
                         New Folder
                     </Button>
+                    <CreateTagDialog />
+                    <CreateCategoryDialog />
                 </div>
             </div>
 

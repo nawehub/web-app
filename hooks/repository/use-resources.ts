@@ -1,6 +1,6 @@
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {CreateFolderTagRequest} from "@/types/files";
-import {resourceService} from "@/lib/services/resources";
+import {CreateCategoryRequest, resourceService} from "@/lib/services/resources";
 
 export function useCreateFolderMutation() {
     return useMutation({
@@ -23,10 +23,24 @@ export const useListCategoriesQuery = () => {
     });
 }
 
+export function useCreateCategoryMutation() {
+    return useMutation({
+        mutationKey: ['create-category'],
+        mutationFn: (data: CreateCategoryRequest) => resourceService().category.createCategory(data),
+    });
+}
+
 export const useListTagsQuery = () => {
     return useQuery({
         queryKey: ['tags'],
         queryFn: async () => await resourceService().tag.listAllTags()
+    });
+}
+
+export function useCreateTagMutation() {
+    return useMutation({
+        mutationKey: ['create-tag'],
+        mutationFn: (data: Pick<CreateCategoryRequest, "name">) => resourceService().tag.createTag(data),
     });
 }
 
