@@ -61,7 +61,7 @@ const [topRow, bottomRow] = splitTestimonials(testimonials);
 
 export default function Testimonials() {
     return (
-        <section className="w-full bg-gradient-to-r from-slate-50 to-blue-50 py-20 border-t ">
+        <section className="feedback-wrap w-full bg-gradient-to-r from-slate-50 to-blue-50 py-20 border-t ">
             <div className="px-4">
                 <h2 className="text-center text-3xl font-bold mb-4 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">What people have been saying</h2>
                 <p className="text-center text-lg text-gray-400 mb-10">Join nearly 1M SME's in the hub →</p>
