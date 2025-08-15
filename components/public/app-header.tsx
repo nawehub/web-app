@@ -20,7 +20,7 @@ const HeaderNavs = [
     },
     {
         name: "Contact Us",
-        link: "/contact-us",
+        link: "/contact",
     },
     {
         name: "FAQ",

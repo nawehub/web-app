@@ -13,6 +13,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
     title: 'NaWeHub',
     description: 'Salone Success'
+
 }
 
 export default function RootLayout({
