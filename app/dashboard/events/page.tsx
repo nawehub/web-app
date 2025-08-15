@@ -17,6 +17,7 @@ import {useEventsQuery} from '@/hooks/repository/use-events';
 import Link from 'next/link';
 import {formatDate} from "@/types/funding";
 import {useRouter} from "next/navigation";
+import {IfAllowed} from "@/components/auth/IfAllowed";
 
 export default function EventsPage() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -84,11 +85,12 @@ export default function EventsPage() {
                         Discover and manage business events and workshops
                     </p>
                 </div>
-
-                <Button onClick={() => router.push('/dashboard/events/create')}>
-                    <Plus className="h-4 w-4 mr-2"/>
-                    Create Event
-                </Button>
+                <IfAllowed permission={"funding:create"}>
+                    <Button onClick={() => router.push('/dashboard/events/create')}>
+                        <Plus className="h-4 w-4 mr-2"/>
+                        Create Event
+                    </Button>
+                </IfAllowed>
             </div>
 
             {/* Search and Filters */}
