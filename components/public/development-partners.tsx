@@ -22,7 +22,7 @@ export default function DevelopmentPartners() {
                         {partners.concat(partners).map((partner, idx) => (
                             <div
                                 key={idx}
-                                className="mx-8 flex flex-col items-center justify-center h-20 rounded-lg transition-all hover:scale-105"
+                                className="slider-item mx-8 flex flex-col items-center justify-center h-20 rounded-lg transition-all hover:scale-105"
                             >
                                 <img
                                     src={partner.url}

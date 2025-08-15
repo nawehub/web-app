@@ -15,7 +15,7 @@ const partners = [
 
 export default function ScrollPartners() {
     return (
-        <div className=" flex items-center">
+        <div className="dashboard-slider flex items-center">
             <div className="w-full inline-flex flex-nowrap overflow-scroll"
                  style={{maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent);'}}>
                 <ul className="flex items-center justify-center md:justify-start [&amp;_img]:max-w-none marquee animate-marquee">
