@@ -76,10 +76,6 @@ export default function RegisterForm() {
                     description: `${error instanceof Error ? error.message : 'An unknown error occurred'}`,
                     variant: 'destructive',
                 });
-            } finally {
-                setIsDialogOpen(false);
-                setMessage("");
-                setTitle("Registering your business");
             }
         });
     };
