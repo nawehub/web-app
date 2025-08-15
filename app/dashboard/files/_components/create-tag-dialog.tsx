@@ -8,12 +8,13 @@ import {
     DialogDescription,
     DialogFooter,
     DialogHeader,
-    DialogTitle,
+    DialogTitle, DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {useCreateTagMutation} from '@/hooks/repository/use-resources';
 import { useToast } from '@/hooks/use-toast';
+import {Plus} from "lucide-react";
 
 export function CreateTagDialog() {
     const [tagName, setTagName] = useState('');
@@ -57,6 +58,12 @@ export function CreateTagDialog() {
 
     return (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+                <Button>
+                    <Plus className="h-4 w-4 mr-2"/>
+                    Create New Tag
+                </Button>
+            </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>Create New Tag</DialogTitle>
