@@ -10,9 +10,11 @@ export const Footer = () => {
                 <div className="grid md:grid-cols-4 gap-8">
                     <div>
                         <div className="items-center h-16 mb-8 pt-5">
-                            <img src={"/images/wehub-sample-logo.png"} alt="Logo" className="h-10 w-auto mr-2"/>
-                            <span
-                                className="font-light text-xs -mt-5 ml-4 tracking-tight text-zinc-100 dark:text-white">Salone Success</span>
+                           <Link href={"/"}>
+                               <img src={"/images/wehub-sample-logo.png"} alt="Logo" className="h-10 w-auto mr-2"/>
+                               <span
+                                   className="font-light text-xs -mt-5 ml-4 tracking-tight text-zinc-100 dark:text-white">Salone Success</span>
+                           </Link>
                         </div>
                         <p className="text-gray-400">Empowering businesses and building communities across Sierra
                             Leone.</p>
@@ -46,7 +48,7 @@ export const Footer = () => {
                         <h4 className="font-semibold mb-4">Support</h4>
                         <ul className="space-y-2 text-gray-400">
                             <li>
-                                <Link href={"#"} className="hover:text-white">
+                                <Link href={"/faq"} className="hover:text-white">
                                     FAQs
                                 </Link>
                             </li>

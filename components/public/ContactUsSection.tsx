@@ -71,15 +71,15 @@ export default function ContactUsSection() {
                         <h3 className="text-lg font-semibold mb-6 text-gray-900 dark:text-white">Let's Talk About Your Project</h3>
                         <form className="space-y-5">
                             <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }} viewport={{ once: true }}>
-                                <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Name</label>
+                                <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Name *</label>
                                 <input type="text" className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/60 transition" placeholder="Your full name" required />
                             </motion.div>
                             <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.25 }} viewport={{ once: true }}>
-                                <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Email Address</label>
+                                <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Email Address *</label>
                                 <input type="email" className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/60 transition" placeholder="We'll get back to you here" required />
                             </motion.div>
                             <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.3 }} viewport={{ once: true }}>
-                                <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Company Name</label>
+                                <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Company / Business Name *</label>
                                 <input type="text" className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/60 transition" placeholder="Let us know who you represent" />
                             </motion.div>
                             <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.35 }} viewport={{ once: true }}>
@@ -87,7 +87,7 @@ export default function ContactUsSection() {
                                 <input type="text" className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/60 transition" placeholder="What's this about?" />
                             </motion.div>
                             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }} viewport={{ once: true }}>
-                                <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Message</label>
+                                <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Message *</label>
                                 <textarea className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/60 transition min-h-[90px]" placeholder="Tell us how we can help" required />
                             </motion.div>
                             <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 0.5 }} viewport={{ once: true }}>
@@ -120,13 +120,13 @@ export default function ContactUsSection() {
                             style={{ minHeight: 100, maxHeight: 720 }}
                         >
                             {/* Static map image for demo; replace with real map if needed */}
-                            <img
-                                src="https://maps.googleapis.com/maps/api/staticmap?center=Innovation+City,Techland&zoom=14&size=600x220&key=AIzaSyD-EXAMPLE"
-                                alt="Map"
-                                className="w-full h-1/2 object-cover"
-                                style={{ minHeight: 180, maxHeight: 450 }}
-                            />
-                            <div className="absolute bottom-4 left-4 bg-white/90 dark:bg-gray-900/90 rounded-xl p-4 shadow flex flex-col gap-2 max-w-[80%]">
+                            {/*<img*/}
+                            {/*    src="https://www.google.com/maps/search/59+Rogbaneh+Road,+Makeni+City,+Sierra+Leone/@8.891985,-12.0655564,13.53z?entry=ttu&g_ep=EgoyMDI1MDgxMy4wIKXMDSoASAFQAw%3D%3D"*/}
+                            {/*    alt="Map"*/}
+                            {/*    className="w-full h-1/2 object-cover"*/}
+                            {/*    style={{ minHeight: 180, maxHeight: 450 }}*/}
+                            {/*/>*/}
+                            <div className="w-full bottom-4 left-4 bg-white/90 dark:bg-gray-900/90 rounded-xl p-4 shadow flex flex-col gap-2">
                                 <div className="font-semibold text-gray-900 dark:text-white text-base">Visit Our Office</div>
                                 <div className="text-gray-700 dark:text-gray-200 text-sm">59 Rogbaneh Road, Makeni, Sierra Leone</div>
                                 {/*<button className="mt-2 px-4 py-2 rounded-lg bg-primary text-white font-medium text-sm shadow hover:bg-primary/90 transition w-max flex items-center gap-2">*/}

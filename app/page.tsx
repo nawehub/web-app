@@ -162,7 +162,7 @@ export default function Home() {
 
                             <Link href="/register">
                                 <Button
-                                    className="w-full group/btn bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all duration-300"
+                                    className="w-full group/btn bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 dark:text-white shadow-lg hover:shadow-xl transition-all duration-300"
                                     size="lg">
                                     Entrepreneur Login / Register
                                     <ArrowRight
