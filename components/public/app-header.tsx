@@ -2,6 +2,8 @@ import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import React from "react";
 import { usePathname } from "next/navigation"
+import {useSession} from "next-auth/react";
+import {ThemeToggle} from "@/components/theme-toggle";
 
 const HeaderNavs = [
     {
@@ -31,6 +33,7 @@ interface AppHeaderProps {
 }
 
 export default function AppHeader({isVisible}: AppHeaderProps) {
+    const { data: session } = useSession();
     const pathname = usePathname();
     return (
         <header
@@ -69,12 +72,13 @@ export default function AppHeader({isVisible}: AppHeaderProps) {
                             Register Your Business
                         </Button>
                     </Link>
-                    <Link href="/login">
+                    <Link href={session?.user ? "/dashboard" : "/login"}>
                         <Button variant="outline" size="sm"
                                 className="hover:scale-105 transition-all duration-300 hover:shadow-lg bg-[#f4813f] hover:bg-[#e67730] text-white hover:text-white">
-                            Sign In
+                            {session?.user ? "Go To Dashboard" : "Sign In" }
                         </Button>
                     </Link>
+                    <ThemeToggle />
                 </div>
             </div>
         </header>
