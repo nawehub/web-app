@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import {useState, useEffect} from 'react';
 import {Button} from '@/components/ui/button';
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card';
+import {Card, CardDescription, CardTitle} from '@/components/ui/card';
 import {Badge} from '@/components/ui/badge';
 import {
     ArrowRight,
@@ -23,9 +23,10 @@ import {
 } from 'lucide-react';
 import {Footer} from "@/components/public/footer";
 import AppHeader from "@/components/public/app-header";
-import DevelopmentPartners from "@/components/public/development-partners";
 import Testimonials from "@/components/public/testiminials";
 import ContactUsSection from "@/components/public/ContactUsSection";
+import ScrollPartners from "@/components/public/ScrollPartners";
+import Testimonies from "@/components/public/testimonies";
 
 export default function Home() {
     const [isVisible, setIsVisible] = useState(false);
@@ -36,8 +37,8 @@ export default function Home() {
 
     const stats = [
         {number: "16", label: "Districts Covered", icon: Globe},
-        {number: "1,000+", label: "SMEs Supported", icon: Users},
-        {number: "NLe 50M+", label: "Funds Raised", icon: DollarSign},
+        {number: "1,000+", label: "Businesses Supported", icon: Users},
+        {number: "SLE 10M+", label: "Funds Raised", icon: DollarSign},
         {number: "24/7", label: "Support Available", icon: Shield}
     ];
 
@@ -136,8 +137,7 @@ export default function Home() {
                                     <Zap className="h-8 w-8 text-white"/>
                                 </div>
                                 <div>
-                                    <CardTitle className="text-2xl font-bold text-slate-800">Business Support
-                                        Hub</CardTitle>
+                                    <CardTitle className="text-2xl font-bold text-slate-800">Join NaWeHub for Business Growth</CardTitle>
                                     <CardDescription className="text-slate-600 text-base">
                                         Comprehensive resources and tools for Startups, Early-Stage and SMEs growth and development
                                     </CardDescription>
@@ -292,7 +292,7 @@ export default function Home() {
                                         <div
                                             className="h-12 w-12 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-all duration-300">
                                             {stat.label === 'Funds Raised' ? (
-                                                <span className="h-6 w-6 text-white">NLe</span>
+                                                <span className="h-6 w-6 text-white">SLE</span>
                                             ): (
                                                 <stat.icon className="h-6 w-6"/>
                                             )}
@@ -322,13 +322,10 @@ export default function Home() {
                     </div>
 
                     <div
-                        className="dashboard-slider relative overflow-hidden bg-gradient-to-r from-slate-50 to-blue-50 py-12">
-                        {/* Gradient overlays for a smooth fade effect */}
-                        <div
-                            className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-slate-50 to-transparent z-10"></div>
-                        <div
-                            className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-slate-50 to-transparent z-10"></div>
-                        <DevelopmentPartners/>
+                        // className="relative overflow-hidden bg-gradient-to-r from-slate-50 to-blue-50 py-12"
+                    >
+
+                        <ScrollPartners />
                     </div>
                 </div>
 
@@ -361,7 +358,8 @@ export default function Home() {
                 </div>
 
                 {/* Testimonials */}
-                <Testimonials/>
+                <Testimonies />
+                {/*<Testimonials/>*/}
                 {/*  Contact Us  */}
                 <ContactUsSection/>
             </main>

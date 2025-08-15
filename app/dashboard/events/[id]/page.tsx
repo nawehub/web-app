@@ -171,7 +171,7 @@ export default function EventDetailPage() {
                                     Start Date
                                 </div>
                                 <p className="text-sm text-muted-foreground ml-6">
-                                    {formatDate(event.startDate)} at {formatTime(event.startDate)}
+                                    {formatDate(event.startDate.toString())} at {formatTime(event.startDate.toString())}
                                 </p>
                             </div>
 
@@ -183,7 +183,7 @@ export default function EventDetailPage() {
                                     End Date
                                 </div>
                                 <p className="text-sm text-muted-foreground ml-6">
-                                    {formatDate(event.endDate)} at {formatTime(event.endDate)}
+                                    {formatDate(event.endDate.toString())} at {formatTime(event.endDate.toString())}
                                 </p>
                             </div>
 

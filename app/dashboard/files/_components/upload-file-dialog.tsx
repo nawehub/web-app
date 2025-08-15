@@ -72,6 +72,7 @@ export function UploadFileDialog({ open, onOpenChangeAction, folderId }: UploadF
                 title: 'Error',
                 description: 'Please fill in all required fields',
                 variant: 'destructive',
+                duration: 5000
             });
             return;
         }
@@ -248,7 +249,7 @@ export function UploadFileDialog({ open, onOpenChangeAction, folderId }: UploadF
                             <Label htmlFor="accessLevel">Access Level</Label>
                             <Select value={accessLevel} onValueChange={(value: AccessLevel) => setAccessLevel(value)}>
                                 <SelectTrigger>
-                                    <SelectValue />
+                                    <SelectValue placeholder={''} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="public">Public</SelectItem>

@@ -8,9 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
-import { FaGithub, FaApple } from "react-icons/fa";
-import { HiOutlineMail, HiOutlineKey } from "react-icons/hi";
-import { useSession } from "next-auth/react";
+import { HiOutlineMail } from "react-icons/hi";
+import {signIn, useSession} from "next-auth/react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {useToast} from "@/hooks/use-toast";
 import {registerForm} from "@/lib/services/use-auth";
@@ -20,6 +19,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {useRegisterMutation} from "@/hooks/repository/use-auth";
 import {RegisterResponse} from "@/store/auth";
 import {Form, FormField} from "@/components/ui/form";
+import {Logo} from "@/components/logo";
 
 export default function Register() {
     const { status } = useSession();
@@ -91,10 +91,7 @@ export default function Register() {
             {/* Left: Signup Form */}
             <div className="w-full md:w-1/2 flex flex-col justify-between bg-white dark:bg-zinc-900 px-6 py-8 md:py-0 md:px-16 min-h-screen">
                 {/* Logo */}
-                <div className="items-center h-16 mb-8 pt-5">
-                    <img src="/images/wehub-sample-logo.png" alt="Logo" className="h-10 w-auto mr-2" />
-                    <span className="font-light text-xs -mt-5 ml-4 tracking-tight text-zinc-900 dark:text-white">Salone Success</span>
-                </div>
+                <Logo />
                 <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full">
                     <h2 className="text-2xl font-semibold mb-6 text-zinc-900 dark:text-white text-center">Create a YourApp account</h2>
                     {/* SSO Buttons */}
@@ -102,27 +99,27 @@ export default function Register() {
                         <Button
                             variant="outline"
                             className="w-full flex items-center justify-center gap-2 bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-lg py-2.5 text-base font-normal"
-                            onClick={() => {/* signIn('google') */ }}
+                            onClick={() => {signIn('google').then() }}
                         >
                             <FcGoogle className="h-5 w-5" />
                             Continue with Google
                         </Button>
-                        <Button
-                            variant="outline"
-                            className="w-full flex items-center justify-center gap-2 bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-lg py-2.5 text-base font-normal"
-                            onClick={() => {/* signIn('github') */ }}
-                        >
-                            <FaGithub className="h-5 w-5" />
-                            Continue with GitHub
-                        </Button>
-                        <Button
-                            variant="outline"
-                            className="w-full flex items-center justify-center gap-2 bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-lg py-2.5 text-base font-normal"
-                            onClick={() => {/* signIn('apple') */ }}
-                        >
-                            <FaApple className="h-5 w-5" />
-                            Continue with Apple
-                        </Button>
+                        {/*<Button*/}
+                        {/*    variant="outline"*/}
+                        {/*    className="w-full flex items-center justify-center gap-2 bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-lg py-2.5 text-base font-normal"*/}
+                        {/*    onClick={() => {signIn('github').then() }}*/}
+                        {/*>*/}
+                        {/*    <FaGithub className="h-5 w-5" />*/}
+                        {/*    Continue with GitHub*/}
+                        {/*</Button>*/}
+                        {/*<Button*/}
+                        {/*    variant="outline"*/}
+                        {/*    className="w-full flex items-center justify-center gap-2 bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-lg py-2.5 text-base font-normal"*/}
+                        {/*    onClick={() => {signIn('apple').then() }}*/}
+                        {/*>*/}
+                        {/*    <FaApple className="h-5 w-5" />*/}
+                        {/*    Continue with Apple*/}
+                        {/*</Button>*/}
                     </div>
                     {/* Divider */}
                     <div className="flex items-center my-6">
@@ -139,14 +136,6 @@ export default function Register() {
                         >
                             <HiOutlineMail className="h-5 w-5" />
                             Email & password
-                        </Button>
-                        <Button
-                            variant="outline"
-                            className="w-full flex items-center justify-center gap-2 bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-lg py-2.5 text-base font-normal"
-                            onClick={() => {/* signIn() for SSO */ }}
-                        >
-                            <HiOutlineKey className="h-5 w-5" />
-                            Single sign-on (SSO)
                         </Button>
                     </div>
                     {/* Email/password form, hidden by default */}
@@ -279,7 +268,7 @@ export default function Register() {
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     <SelectItem value="entrepreneur">Entrepreneur</SelectItem>
-                                                    <SelectItem value="development-partner">Development Partner</SelectItem>
+                                                    <SelectItem value="development-partner">Development Partner or Innovation Hub</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </div>

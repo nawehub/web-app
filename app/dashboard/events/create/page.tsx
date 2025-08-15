@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -13,13 +13,14 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import QuillEditor from "@/components/QuillEditor";
+import {EventMetadata} from "@/types/event";
 
 export default function CreateEventPage() {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [about, setAbout] = useState('');
     const [host, setHost] = useState('');
-    const [type, setType] = useState<"CONFERENCE" | "CONCERT" | "WORKSHOP" | "MEETING" | "WEBINAR" | "OTHER">('WORKSHOP');
+    const [eventType, setEventType] = useState('');
     const [flier, setFlier] = useState<File | null>(null);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
@@ -28,37 +29,6 @@ export default function CreateEventPage() {
     const { toast } = useToast();
     const router = useRouter();
     const createEventMutation = useCreateEventMutation();
-
-    // Rich text editor configuration
-    const quillModules = {
-        toolbar: [
-            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-            [{ 'font': [] }],
-            [{ 'size': ['small', false, 'large', 'huge'] }],
-            ['bold', 'italic', 'underline', 'strike'],
-            [{ 'color': [] }, { 'background': [] }],
-            [{ 'script': 'sub'}, { 'script': 'super' }],
-            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-            [{ 'indent': '-1'}, { 'indent': '+1' }],
-            [{ 'direction': 'rtl' }],
-            [{ 'align': [] }],
-            ['blockquote', 'code-block'],
-            ['link'],
-            ['clean']
-        ],
-    };
-
-    const quillFormats = [
-        'header', 'font', 'size',
-        'bold', 'italic', 'underline', 'strike',
-        'color', 'background',
-        'script',
-        'list', 'bullet',
-        'indent',
-        'direction', 'align',
-        'blockquote', 'code-block',
-        'link'
-    ];
 
     const handleFlierChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFile = e.target.files?.[0];
@@ -90,56 +60,12 @@ export default function CreateEventPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!title.trim()) {
+        if (!title.trim() || !description.trim() || !host.trim() || !about.trim() || !flier || !startDate || !endDate) {
             toast({
                 title: 'Error',
-                description: 'Please enter an event title',
+                description: 'Please fill in all required fields',
                 variant: 'destructive',
-            });
-            return;
-        }
-
-        if (!description.trim()) {
-            toast({
-                title: 'Error',
-                description: 'Please enter an event description',
-                variant: 'destructive',
-            });
-            return;
-        }
-
-        if (!host.trim()) {
-            toast({
-                title: 'Error',
-                description: 'Please enter the event host',
-                variant: 'destructive',
-            });
-            return;
-        }
-
-        if (!about.trim()) {
-            toast({
-                title: 'Error',
-                description: 'Please enter event details in the About section',
-                variant: 'destructive',
-            });
-            return;
-        }
-
-        if (!flier) {
-            toast({
-                title: 'Error',
-                description: 'Please upload an event flier',
-                variant: 'destructive',
-            });
-            return;
-        }
-
-        if (!startDate || !endDate) {
-            toast({
-                title: 'Error',
-                description: 'Please select start and end dates',
-                variant: 'destructive',
+                duration: 5000
             });
             return;
         }
@@ -149,6 +75,7 @@ export default function CreateEventPage() {
                 title: 'Error',
                 description: 'End date must be after start date',
                 variant: 'destructive',
+                duration: 5000,
             });
             return;
         }
@@ -157,22 +84,21 @@ export default function CreateEventPage() {
             const formData = new FormData();
 
             // Create metadata as JSON blob with proper content-type
-            const metadata = {
+            const metadata: EventMetadata = {
                 title: title.trim(),
                 description: description.trim(),
                 host: host.trim(),
-                type,
+                eventType: eventType as EventMetadata['eventType'],
                 about: about.trim(),
-                startDate: new Date(startDate).toISOString(),
-                endDate: new Date(endDate).toISOString(),
-                hostWebsite: hostWebsite.trim() || undefined,
+                startDate: new Date(startDate),
+                endDate: new Date(endDate),
+                hostWebsite: hostWebsite.trim() || "",
             };
 
-            const metadataBlob = new Blob([JSON.stringify(metadata)], {
+            // Append the metadata as a JSON string
+            formData.append('metadata', new Blob([JSON.stringify(metadata)], {
                 type: 'application/json'
-            });
-
-            formData.append('metadata', metadataBlob);
+            }));
             formData.append('flier', flier);
 
             await createEventMutation.mutateAsync(formData);
@@ -180,14 +106,15 @@ export default function CreateEventPage() {
             toast({
                 title: 'Success',
                 description: 'Event created successfully',
+                variant: 'default'
             });
 
-            // Navigate back to events list
+            // Navigate back to an events list
             router.push('/dashboard/events');
         } catch (error) {
             toast({
                 title: 'Error',
-                description: 'Failed to create event',
+                description: `${error instanceof Error ? error.message : 'Failed to upload file'}`,
                 variant: 'destructive',
             });
         }
@@ -259,9 +186,9 @@ export default function CreateEventPage() {
 
                                     <div className="grid gap-2">
                                         <Label htmlFor="type">Event Type</Label>
-                                        <Select value={type} onValueChange={(value: "CONFERENCE" | "CONCERT" | "WORKSHOP" | "MEETING" | "WEBINAR" | "OTHER") => setType(value)}>
+                                        <Select value={eventType} onValueChange={(value) => setEventType(value)}>
                                             <SelectTrigger>
-                                                <SelectValue />
+                                                <SelectValue placeholder={'Select Event Type'} />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="CONFERENCE">Conference</SelectItem>

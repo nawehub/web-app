@@ -22,7 +22,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {RegisterResponse} from "@/store/auth";
 import {CustomCombobox} from "@/components/ui/combobox";
 import {countries} from "@/utils/countries";
-import {categories} from "@/utils/business-categories";
+import {businessTypes, categories} from "@/types/business";
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -32,6 +32,7 @@ import {Progress} from "@/components/ui/progress";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Checkbox} from "@/components/ui/checkbox";
 import { steps, BusinessFormData, initData, getDate15YearsAgo } from "@/types/business";
+import {Textarea} from "@/components/ui/textarea";
 
 export const NewBizDialog = () => {
     const {toast} = useToast();
@@ -41,6 +42,7 @@ export const NewBizDialog = () => {
     const [loading, setLoading] = useState(false);
     const [currentStep, setCurrentStep] = useState(1)
     const [formData, setFormData] = useState<BusinessFormData>(initData)
+    const [typeDescription, setTypeDescription] = useState<string[]>([]);
 
     const form = useForm<z.infer<typeof registerBizForm>>({
         resolver: zodResolver(registerBizForm)
@@ -62,10 +64,18 @@ export const NewBizDialog = () => {
         }
     }
 
+    function validateRegisterDate() {
+        if (formData.isAlreadyRegistered) {
+            return formData.registerDate !== null && formData.registerDate !== undefined;
+        }
+        return true;
+    }
+
     const isStepValid = (step: number) => {
         switch (step) {
             case 1:
-                return formData.businessName && formData.businessAddress && formData.category && formData.isAlreadyRegistered && formData.isAlreadyRegistered ? formData.registerDate : formData.isAlreadyRegistered
+                return formData.businessName && formData.category && formData.businessAddress && formData.businessEntityType && formData.businessActivities
+                && validateRegisterDate()
             case 2:
                 return formData.ownerName && formData.ownerAddress && formData.placeOfBirth && formData.dateOfBirth
                     && formData.nationality && formData.mothersName && formData.email && formData.contactNumber && formData.gender
@@ -169,6 +179,60 @@ export const NewBizDialog = () => {
                                 </div>
                             )}
                         />
+                        <FormField
+                            name={'businessEntityType'}
+                            control={form.control}
+                            render={({field}) => (
+                                <div className="space-y-2">
+                                    <Label htmlFor="category">Business Entity Type</Label>
+                                    <CustomCombobox
+                                        {...field}
+                                        placeholder="Select your business category"
+                                        searchPlaceholder={'Search business entity type...'}
+                                        data={businessTypes}
+                                        searchField={'name'}
+                                        displayField={'name'}
+                                        valueField={'name'}
+                                        onSelectAction={(value) => {
+                                            updateFormData('businessEntityType', value)
+                                            field.onChange(value)
+                                            setTypeDescription(businessTypes.filter(type => {
+                                                return type.name == value
+                                            })[0].descriptions)
+                                        }}/>
+                                    {typeDescription.length > 0 && (
+                                        typeDescription.map((description, index) => (
+                                            <p key={index} className="text-muted-foreground text-xs">
+                                                {description}
+                                            </p>
+                                        ))
+                                    )}
+                                </div>
+                            )}
+                        />
+
+                        <FormField
+                            name={'businessActivities'}
+                            control={form.control}
+                            render={({field}) => (
+                                <div className="space-y-2">
+                                    <Label htmlFor="businessActivities">Business Activities</Label>
+                                    <Textarea
+                                        id="businessActivities"
+                                        {...field}
+                                        value={formData.businessActivities}
+                                        onChange={(e) => updateFormData('businessActivities', e.target.value)}
+                                        required
+                                        placeholder="Enter business activities here..."
+                                        rows={6}
+                                    />
+                                    <p className="text-muted-foreground text-xs">
+                                        Please provide a brief description of your business activities.
+                                    </p>
+                                </div>
+                            )}
+                        />
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField
                                 name={'isAlreadyRegistered'}

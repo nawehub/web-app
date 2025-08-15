@@ -29,3 +29,10 @@ export const useListProfileDonationsQuery = (emailOrPhone: string) => {
         queryFn: async () => await lydService().lyd.profileDonations(emailOrPhone)
     });
 }
+
+export const useProfileWithContributionQuery = (emailOrPhone: string) => {
+    return useQuery({
+        queryKey: ['profile-with-contribution', emailOrPhone],
+        queryFn: async () => await lydService().lyd.profileWithContribution(emailOrPhone)
+    });
+}

@@ -25,6 +25,7 @@ import {useMemo, useState} from "react";
 import {useListOpportunitiesQuery} from "@/hooks/repository/use-funding";
 import {fundingTypes} from "@/types/funding";
 import {useRouter} from "next/navigation";
+import { IfAllowed } from "@/components/auth/IfAllowed";
 
 export default function FundingList() {
     const { data, isLoading } = useListOpportunitiesQuery()
@@ -215,11 +216,13 @@ export default function FundingList() {
                                 : "Be the first to add a funding opportunity"}
                         </p>
                         {!searchTerm && statusFilter === "all" && typeFilter === "all" && (
-                            <Button onClick={() => router.push("/dashboard/funding-opportunities/create")}
-                                    className="bg-gradient-to-r from-emerald-600 to-teal-600">
-                                <Plus className="h-4 w-4 mr-2"/>
-                                Add First Opportunity
-                            </Button>
+                            <IfAllowed permission={"funding:create"}>
+                                <Button onClick={() => router.push("/dashboard/funding-opportunities/create")}
+                                        className="bg-gradient-to-r from-emerald-600 to-teal-600">
+                                    <Plus className="h-4 w-4 mr-2"/>
+                                    Add First Opportunity
+                                </Button>
+                            </IfAllowed>
                         )}
                     </CardContent>
                 </Card>

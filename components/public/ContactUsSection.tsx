@@ -83,7 +83,7 @@ export default function ContactUsSection() {
                                 <input type="text" className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/60 transition" placeholder="Let us know who you represent" />
                             </motion.div>
                             <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.35 }} viewport={{ once: true }}>
-                                <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Subject</label>
+                                <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">Subject *</label>
                                 <input type="text" className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/60 transition" placeholder="What's this about?" />
                             </motion.div>
                             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }} viewport={{ once: true }}>
@@ -106,8 +106,8 @@ export default function ContactUsSection() {
                         <div className="bg-white dark:bg-gray-900/80 rounded-2xl shadow-xl px-8 pb-3 pt-8 border border-gray-200 dark:border-gray-800 mb-2">
                             <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Prefer a Direct Approach?</h4>
                             <ul className="space-y-3 text-gray-700 dark:text-gray-200">
-                                <li className="flex items-center gap-2"><span role="img" aria-label="phone">📞</span> +232 76293389</li>
-                                <li className="flex items-center gap-2"><span role="img" aria-label="email">✉️</span> contact@nawehub.com</li>
+                                <li className="flex items-center gap-2"><span role="img" aria-label="phone">📞</span> +23278976369</li>
+                                <li className="flex items-center gap-2"><span role="img" aria-label="email">✉️</span> info@ewomensl.com</li>
                                 <li className="flex items-center gap-2"><span role="img" aria-label="clock">🕒</span> Monday to Friday, 9 AM – 6 PM (GMT)</li>
                             </ul>
                         </div>
@@ -128,10 +128,10 @@ export default function ContactUsSection() {
                             />
                             <div className="absolute bottom-4 left-4 bg-white/90 dark:bg-gray-900/90 rounded-xl p-4 shadow flex flex-col gap-2 max-w-[80%]">
                                 <div className="font-semibold text-gray-900 dark:text-white text-base">Visit Our Office</div>
-                                <div className="text-gray-700 dark:text-gray-200 text-sm">123 Rogbaneh Road, Makeni, Sierra Leone</div>
-                                <button className="mt-2 px-4 py-2 rounded-lg bg-primary text-white font-medium text-sm shadow hover:bg-primary/90 transition w-max flex items-center gap-2">
-                                    Get a Direction <span aria-hidden>→</span>
-                                </button>
+                                <div className="text-gray-700 dark:text-gray-200 text-sm">59 Rogbaneh Road, Makeni, Sierra Leone</div>
+                                {/*<button className="mt-2 px-4 py-2 rounded-lg bg-primary text-white font-medium text-sm shadow hover:bg-primary/90 transition w-max flex items-center gap-2">*/}
+                                {/*    Get a Direction <span aria-hidden>→</span>*/}
+                                {/*</button>*/}
                             </div>
                         </motion.div>
                     </motion.div>

@@ -3,9 +3,10 @@ import {MoreVertical, X, Zap} from "lucide-react";
 import React from "react";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar";
 import {bottomMenuItems, documentMenuItems, exploreMenuItems} from "@/components/MenuItems";
-import { SidebarItem } from "./SidebarItem";
+import {SidebarItem} from "./SidebarItem";
 import {useSession} from "next-auth/react";
 import {IfAllowed} from "@/components/auth/IfAllowed";
+import Link from "next/link";
 
 interface SidebarProps {
     isSidebarOpen: boolean
@@ -15,7 +16,7 @@ interface SidebarProps {
 
 export function Sidebar({isSidebarOpen, toggleSidebar, pathname}: SidebarProps) {
     const {data: session} = useSession();
-    
+
     return (
         <div
             className={`left-sidebar fixed top-0 left-0 h-full w-64 transform transition-transform duration-300 ease-in-out z-50 lg:translate-x-0 ${
@@ -37,7 +38,9 @@ export function Sidebar({isSidebarOpen, toggleSidebar, pathname}: SidebarProps) 
             {/* Logo */}
             <div className="logo-wrap px-4 py-2 border-b border-gray-200 dark:border-gray-800">
                 <div className="flex items-center justify-center">
-                    <img src="/images/wehub-sample-logo.png" alt="Logo" className="h-11 w-auto"/>
+                    <Link href={"/"}>
+                        <img src="/images/wehub-sample-logo.png" alt="Logo" className="h-11 w-auto"/>
+                    </Link>
                 </div>
             </div>
 
@@ -52,7 +55,8 @@ export function Sidebar({isSidebarOpen, toggleSidebar, pathname}: SidebarProps) 
             {/* Navigation */}
             <nav className="px-4 space-y-1">
                 {exploreMenuItems.map((item, i) => (
-                    <SidebarItem key={i} href={item.href} icon={<item.icon className="w-4 h-4"/>} title={item.name} isActive={pathname === item.href} />
+                    <SidebarItem key={i} href={item.href} icon={<item.icon className="w-4 h-4"/>} title={item.name}
+                                 isActive={pathname === item.href}/>
                 ))}
             </nav>
 
@@ -62,7 +66,8 @@ export function Sidebar({isSidebarOpen, toggleSidebar, pathname}: SidebarProps) 
                     <h3 className={`text-xs font-medium text-gray-500 mb-2`}>Management</h3>
                     <div className="space-y-1">
                         {documentMenuItems.map((item, i) => (
-                            <SidebarItem key={i} href={item.href} icon={<item.icon className="w-4 h-4"/>} title={item.name} isActive={pathname === item.href} />
+                            <SidebarItem key={i} href={item.href} icon={<item.icon className="w-4 h-4"/>}
+                                         title={item.name} isActive={pathname === item.href}/>
                         ))}
                     </div>
                 </div>
@@ -71,7 +76,8 @@ export function Sidebar({isSidebarOpen, toggleSidebar, pathname}: SidebarProps) 
             {/* Bottom Section */}
             <div className="absolute bottom-0 w-64 p-4 space-y-2">
                 {bottomMenuItems.map((item, i) => (
-                    <SidebarItem key={i} href={item.href} icon={<item.icon className="w-4 h-4"/>} title={item.name} isActive={pathname === item.href} />
+                    <SidebarItem key={i} href={item.href} icon={<item.icon className="w-4 h-4"/>} title={item.name}
+                                 isActive={pathname === item.href}/>
                 ))}
 
                 {/* User Profile */}

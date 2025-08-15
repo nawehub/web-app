@@ -7,6 +7,8 @@ import Link from "next/link";
 import {dehydrate, HydrationBoundary, QueryClient} from "@tanstack/react-query";
 import {fundingService} from "@/lib/services/funding";
 import FundingList from "@/app/dashboard/funding-opportunities/_components/funding-list";
+import CreateProviderModal from "@/app/dashboard/funding-providers/_components/CreateProviderModal";
+import {IfAllowed} from "@/components/auth/IfAllowed";
 
 export default function FundingOpportunitiesPage() {
     const queryClient = new QueryClient();
@@ -38,13 +40,16 @@ export default function FundingOpportunitiesPage() {
                     </p>
                 </div>
 
-                <Link href="/dashboard/funding-opportunities/create">
-                    <Button
-                        className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                        <Plus className="h-4 w-4 mr-2"/>
-                        Add Opportunity
-                    </Button>
-                </Link>
+                <IfAllowed permission={"funding:create"}>
+                    <Link href="/dashboard/funding-opportunities/create">
+                        <Button
+                            className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                            <Plus className="h-4 w-4 mr-2"/>
+                            Add Opportunity
+                        </Button>
+                    </Link>
+                </IfAllowed>
+
             </div>
 
             <HydrationBoundary state={dehydrate(client!)}>

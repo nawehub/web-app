@@ -1,4 +1,4 @@
-import {DistrictRanking, LYDDonation, MakeDonationRequest, TopContributor} from "@/types/lyd";
+import {DistrictRanking, LYDDonation, MakeDonationRequest, ProfileWithContribution, TopContributor} from "@/types/lyd";
 import {api4app} from "@/lib/api4app";
 
 export type DonationResponse = {
@@ -43,6 +43,16 @@ export const lydService = () => {
                 })
 
                 return response as Promise<ListProfileDonationsResponse>
+            },
+            profileWithContribution: async (emailOrPhone: string) => {
+                const response = await api4app('/lyd/' + emailOrPhone, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+
+                return response as Promise<ProfileWithContribution>
             },
             donate: async (req: MakeDonationRequest) => {
                 const resp = await api4app('/lyd', {
