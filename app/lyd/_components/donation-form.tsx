@@ -208,13 +208,7 @@ export function DonationForm({onSubmitAction, onCancelAction}: DonationFormProps
                                     displayField={'name'}
                                     valueField={'name'}
                                     value={formData.profile.nationality}
-                                    onSelectAction={(value) => updateFormData('nationality', value)}/>
-                                <Input
-                                    id="nationality"
-                                    value={formData.profile.nationality}
-                                    onChange={(e) => updateFormData("profile.nationality", e.target.value)}
-                                    placeholder="e.g., Sierra Leone, USA, UK"
-                                />
+                                    onSelectAction={(value) => updateFormData('profile.nationality', value)}/>
                             </div>
                         </div>
 
