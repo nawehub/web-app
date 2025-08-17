@@ -17,6 +17,7 @@ import {useMakeDonationMutation} from "@/hooks/repository/use-lyd";
 import {useToast} from "@/hooks/use-toast";
 import {countries} from "@/utils/countries";
 import {CustomCombobox} from "@/components/ui/combobox";
+import {formatResponse} from "@/utils/format-response";
 
 interface DonationFormProps {
     onSubmitAction: (donation: Partial<LYDDonation>) => void
@@ -120,7 +121,7 @@ export function DonationForm({onSubmitAction, onCancelAction}: DonationFormProps
                 console.error({e})
                 toast({
                     title: "Development Contribution",
-                    description: e instanceof Error ? e.message : "An error occurred",
+                    description: e instanceof Error ? formatResponse(e.message) : "An error occurred",
                     variant: "destructive",
                 })
             }

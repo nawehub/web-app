@@ -55,7 +55,8 @@ export default function Login() {
             });
 
             if (result?.error) {
-                setError(result.error || "Invalid email or password");
+                console.log({result})
+                setError("Invalid sign-in credentials. Please try again.");
                 return;
             }
 

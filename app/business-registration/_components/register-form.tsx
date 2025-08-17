@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/dialog";
 import {DialogBody} from "next/dist/client/components/react-dev-overlay/ui/components/dialog";
 import {Textarea} from "@/components/ui/textarea";
+import {formatResponse} from "@/utils/format-response";
 
 export default function RegisterForm() {
     const [isPending, startTransition] = useTransition()
@@ -73,7 +74,7 @@ export default function RegisterForm() {
             } catch (error) {
                 toast({
                     title: 'Registration failed',
-                    description: `${error instanceof Error ? error.message : 'An unknown error occurred'}`,
+                    description: `${error instanceof Error ? formatResponse(error.message) : 'An unknown error occurred'}`,
                     variant: 'destructive',
                 });
             }

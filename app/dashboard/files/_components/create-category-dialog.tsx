@@ -14,6 +14,7 @@ import {Input} from '@/components/ui/input';
 import {Label} from '@/components/ui/label';
 import {useCreateCategoryMutation} from '@/hooks/repository/use-resources';
 import {useToast} from '@/hooks/use-toast';
+import {formatResponse} from "@/utils/format-response";
 
 interface CreateCategoryDialogProps {
     open: boolean;
@@ -55,8 +56,8 @@ export function CreateCategoryDialog({ open, onOpenChangeAction }: CreateCategor
             onOpenChangeAction(false);
         } catch (error) {
             toast({
-                title: 'Error',
-                description: 'Failed to create category',
+                title: 'Create Error',
+                description: `${error instanceof Error ? formatResponse(error.message) : 'Unknown error'}`,
                 variant: 'destructive',
             });
         }

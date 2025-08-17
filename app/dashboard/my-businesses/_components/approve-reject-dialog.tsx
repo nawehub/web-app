@@ -1,6 +1,5 @@
 import {
-    AlertDialog,
-    AlertDialogAction,
+    AlertDialog, AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
@@ -11,9 +10,12 @@ import {
 import {IfAllowed} from "@/components/auth/IfAllowed";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Textarea} from "@/components/ui/textarea";
-import {MouseEvent, useState, useTransition} from "react";
+import {useState, useTransition} from "react";
 import {useApproveRejectBusinessMutation} from "@/hooks/repository/use-business";
 import {useToast} from "@/hooks/use-toast";
+import {Button} from "@/components/ui/button";
+import {formatResponse} from "@/utils/format-response";
+import {error} from "next/dist/build/output/log";
 
 interface ApproveRejectDialogProps {
     businessId: string;
@@ -28,8 +30,7 @@ export function ApproveRejectDialog({businessId, action, openAlert, openAlertAct
     const approveRejectMutation = useApproveRejectBusinessMutation();
     const {toast} = useToast();
 
-    const handleApproveReject = async (e: MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        e.preventDefault();
+    const handleApproveReject = async () => {
         startTransition(async () => {
             try {
                 await approveRejectMutation.mutateAsync({
@@ -47,7 +48,7 @@ export function ApproveRejectDialog({businessId, action, openAlert, openAlertAct
             } catch (e) {
                 toast({
                     title: `${action} Error`,
-                    description: `${e instanceof Error ? e.message : 'An unknown error occurred'}`,
+                    description: `${e instanceof Error ? formatResponse(e.message) : 'An unknown error occurred'}`,
                     variant: 'destructive'
                 })
             }
@@ -83,8 +84,15 @@ export function ApproveRejectDialog({businessId, action, openAlert, openAlertAct
                 )}
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
-                    <AlertDialogAction disabled={isPending} onClick={() => handleApproveReject}>
-                        {action}
+                    {/*<Button disabled={isPending} onClick={(e) => {*/}
+                    {/*    e.preventDefault()*/}
+                    {/*    handleApproveReject().then()*/}
+                    {/*}}>{action}</Button>*/}
+                    <AlertDialogAction disabled={isPending} onClick={(e) => {
+                        e.preventDefault()
+                        handleApproveReject().then()
+                    }}>
+                        {isPending ? "Processing..." : action}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

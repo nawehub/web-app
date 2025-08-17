@@ -20,6 +20,7 @@ import {useRegisterMutation} from "@/hooks/repository/use-auth";
 import {RegisterResponse} from "@/store/auth";
 import {Form, FormField} from "@/components/ui/form";
 import {Logo} from "@/components/logo";
+import {formatResponse} from "@/utils/format-response";
 
 export default function Register() {
     const { status } = useSession();
@@ -73,11 +74,11 @@ export default function Register() {
                 sessionStorage.setItem('registeredUserId', response.user.id);
                 sessionStorage.setItem("registeredUserEmail", response.user.email);
                 router.push('/verify-otp');
-            } catch (error) {
-                setError(error instanceof Error ? error.message : "An error occurred");
+            } catch (err) {
+                setError(err instanceof Error ? formatResponse(err.message) : "An error occurred");
                 toast({
                     title: 'Registration failed',
-                    description: 'An error occurred',
+                    description: error,
                     variant: 'destructive',
                 });
             } finally {

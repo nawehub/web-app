@@ -372,7 +372,7 @@ export default function AllBusinesses() {
                     )}
                 </div>
             )}
-            <ApproveRejectDialog businessId={''} action={selectedStatus as "Approve" | "Reject"} openAlert={showAlert} openAlertAction={setShowAlert} />
+            <ApproveRejectDialog businessId={viewBusiness?.id!} action={selectedStatus as "Approve" | "Reject"} openAlert={showAlert} openAlertAction={setShowAlert} />
         </div>
     )
 

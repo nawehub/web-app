@@ -20,6 +20,7 @@ import {createMinimalOpp} from "@/lib/services/funding";
 import {useToast} from "@/hooks/use-toast";
 import {Icons} from "@/components/ui/icon";
 import QuillEditor from "@/components/QuillEditor";
+import {formatResponse} from "@/utils/format-response";
 
 const initialFormData: createMinimalOpp = {
     title: "",
@@ -90,7 +91,7 @@ export default function CreateFundingOpportunity() {
             } catch (error) {
                 toast({
                     title: 'Registration failed',
-                    description: `${error instanceof Error ? error.message : 'An unknown error occurred'}`,
+                    description: `${error instanceof Error ? formatResponse(error.message) : 'An unknown error occurred'}`,
                     variant: 'destructive',
                 });
             }

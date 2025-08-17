@@ -33,6 +33,7 @@ import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/compo
 import {Checkbox} from "@/components/ui/checkbox";
 import { steps, BusinessFormData, initData, getDate15YearsAgo } from "@/types/business";
 import {Textarea} from "@/components/ui/textarea";
+import {formatResponse} from "@/utils/format-response";
 
 export const NewBizDialog = () => {
     const {toast} = useToast();
@@ -105,7 +106,7 @@ export const NewBizDialog = () => {
                 console.log({error})
                 toast({
                     title: 'Registration failed',
-                    description: `${error instanceof Error ? error.message : 'An unknown error occurred'}`,
+                    description: `${error instanceof Error ? formatResponse(error.message) : 'An unknown error occurred'}`,
                     variant: 'destructive',
                 });
             } finally {

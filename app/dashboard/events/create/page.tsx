@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import QuillEditor from "@/components/QuillEditor";
 import {EventMetadata} from "@/types/event";
+import {formatResponse} from "@/utils/format-response";
 
 export default function CreateEventPage() {
     const [title, setTitle] = useState('');
@@ -114,7 +115,7 @@ export default function CreateEventPage() {
         } catch (error) {
             toast({
                 title: 'Error',
-                description: `${error instanceof Error ? error.message : 'Failed to upload file'}`,
+                description: `${error instanceof Error ? formatResponse(error.message) : 'Failed to upload file'}`,
                 variant: 'destructive',
             });
         }

@@ -21,6 +21,7 @@ import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useToast} from "@/hooks/use-toast";
 import {Icons} from "@/components/ui/icon";
+import {formatResponse} from "@/utils/format-response";
 
 const providerTypes = ["Government", "NGO", "Private", "Foundation", "Bank", "Corporate", "Individual", "Other"]
 
@@ -68,7 +69,7 @@ export default function CreateProviderModal() {
             } catch (error) {
                 toast({
                     title: 'Registration failed',
-                    description: `${error instanceof Error ? error.message : 'An unknown error occurred'}`,
+                    description: `${error instanceof Error ? formatResponse(error.message) : 'An unknown error occurred'}`,
                     variant: 'destructive',
                 });
             } finally {

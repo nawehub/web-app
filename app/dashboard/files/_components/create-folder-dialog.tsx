@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {useCreateFolderMutation} from '@/hooks/repository/use-resources';
 import { useToast } from '@/hooks/use-toast';
+import {formatResponse} from "@/utils/format-response";
 
 interface CreateFolderDialogProps {
     open: boolean;
@@ -53,8 +54,8 @@ export function CreateFolderDialog({ open, onOpenChangeAction }: CreateFolderDia
             onOpenChangeAction(false);
         } catch (error) {
             toast({
-                title: 'Error',
-                description: 'Failed to create folder',
+                title: 'Create Error',
+                description: `${error instanceof Error ? formatResponse(error.message) : 'Unknown error'}`,
                 variant: 'destructive',
             });
         }

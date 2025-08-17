@@ -1,22 +1,34 @@
-import {useMutation, useQuery} from "@tanstack/react-query";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {z} from "zod";
 import {approveOrRejectBizForm, businessService, registerBizForm} from "@/lib/services/business";
 
 export function useRegisterBusinessMutation() {
+    const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (data: z.infer<typeof registerBizForm>) => businessService().business.registerBiz(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['businesses'] }).then();
+        },
     });
 }
 
 export function useRegisterPublicBusinessMutation() {
+    const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (data: z.infer<typeof registerBizForm>) => businessService().business.registerPublicBiz(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['businesses'] }).then();
+        },
     });
 }
 
 export function useApproveRejectBusinessMutation() {
+    const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (data: z.infer<typeof approveOrRejectBizForm>) => businessService().business.approveOrReject(data),
+        onSuccess: (_, variables) => {
+            queryClient.invalidateQueries({ queryKey: ['businesses', 'business', variables.businessId] }).then();
+        },
     });
 }
 
