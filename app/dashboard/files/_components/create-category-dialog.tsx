@@ -8,18 +8,21 @@ import {
     DialogDescription,
     DialogFooter,
     DialogHeader,
-    DialogTitle, DialogTrigger,
+    DialogTitle,
 } from '@/components/ui/dialog';
 import {Input} from '@/components/ui/input';
 import {Label} from '@/components/ui/label';
 import {useCreateCategoryMutation} from '@/hooks/repository/use-resources';
 import {useToast} from '@/hooks/use-toast';
-import {Plus} from "lucide-react";
 
-export function CreateCategoryDialog() {
+interface CreateCategoryDialogProps {
+    open: boolean;
+    onOpenChangeAction: (open: boolean) => void;
+}
+
+export function CreateCategoryDialog({ open, onOpenChangeAction }: CreateCategoryDialogProps) {
     const [categoryName, setCategoryName] = useState('');
     const [description, setDescription] = useState('');
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
     const {toast} = useToast();
 
     const categoryMutation = useCreateCategoryMutation();
@@ -49,7 +52,7 @@ export function CreateCategoryDialog() {
 
             setCategoryName('');
             setDescription('');
-            setIsDialogOpen(false);
+            onOpenChangeAction(false);
         } catch (error) {
             toast({
                 title: 'Error',
@@ -60,13 +63,7 @@ export function CreateCategoryDialog() {
     };
 
     return (
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-                <Button>
-                    <Plus className="h-4 w-4 mr-2"/>
-                    Create New Category
-                </Button>
-            </DialogTrigger>
+        <Dialog open={open} onOpenChange={onOpenChangeAction}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>Create New Category</DialogTitle>
@@ -103,7 +100,7 @@ export function CreateCategoryDialog() {
                         <Button
                             type="button"
                             variant="outline"
-                            onClick={() => setIsDialogOpen(false)}
+                            onClick={() => onOpenChangeAction(false)}
                         >
                             Cancel
                         </Button>

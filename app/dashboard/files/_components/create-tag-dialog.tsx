@@ -14,11 +14,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {useCreateTagMutation} from '@/hooks/repository/use-resources';
 import { useToast } from '@/hooks/use-toast';
-import {Plus} from "lucide-react";
 
-export function CreateTagDialog() {
+interface CreateTagDialogProps {
+    open: boolean;
+    onOpenChangeAction: (open: boolean) => void;
+}
+
+export function CreateTagDialog({ open, onOpenChangeAction }: CreateTagDialogProps) {
     const [tagName, setTagName] = useState('');
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
     const { toast } = useToast();
 
     const tagMutation = useCreateTagMutation();
@@ -46,7 +49,7 @@ export function CreateTagDialog() {
             });
 
             setTagName('');
-            setIsDialogOpen(false);
+            onOpenChangeAction(false);
         } catch (error) {
             toast({
                 title: 'Error',
@@ -57,13 +60,7 @@ export function CreateTagDialog() {
     };
 
     return (
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-                <Button>
-                    <Plus className="h-4 w-4 mr-2"/>
-                    Create New Tag
-                </Button>
-            </DialogTrigger>
+        <Dialog open={open} onOpenChange={onOpenChangeAction}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>Create New Tag</DialogTitle>
@@ -88,7 +85,7 @@ export function CreateTagDialog() {
                         <Button
                             type="button"
                             variant="outline"
-                            onClick={() => setIsDialogOpen(false)}
+                            onClick={() => onOpenChangeAction(false)}
                         >
                             Cancel
                         </Button>
