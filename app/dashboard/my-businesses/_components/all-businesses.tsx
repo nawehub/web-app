@@ -18,7 +18,6 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {Button} from "@/components/ui/button";
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {useListBusinessQuery} from "@/hooks/repository/use-business";
-import Loading from "@/components/loading";
 import {useEffect, useMemo, useState} from "react";
 import {BusinessData} from "@/lib/services/business";
 import {categories} from "@/types/business";
@@ -26,6 +25,8 @@ import {Badge} from "@/components/ui/badge";
 import {NewBizDialog} from "@/app/dashboard/my-businesses/_components/NewBizDialog";
 import {usePermissions} from "@/hooks/use-permissions";
 import {IfAllowed} from "@/components/auth/IfAllowed";
+import {Icons} from "@/components/ui/icon";
+import {ApproveRejectDialog} from "@/app/dashboard/my-businesses/_components/approve-reject-dialog";
 
 export default function AllBusinesses() {
     const [searchTerm, setSearchTerm] = useState("");
@@ -35,6 +36,8 @@ export default function AllBusinesses() {
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
     const [viewBusiness, setViewBusiness] = useState<BusinessData | null>(null);
     const [viewMode, setViewMode] = useState<"all" | "own">("own");
+    const [selectedStatus, setSelectedStatus] = useState<"Approve" | "Reject">();
+    const [showAlert, setShowAlert] = useState(false);
 
     const { hasPermission, isAdmin } = usePermissions();
 
@@ -176,7 +179,9 @@ export default function AllBusinesses() {
 
             {/* Business Cards */}
             {isLoading && (
-                <Loading/>
+                <div className="flex flex-col items-center justify-center h-96">
+                    <Icons.spinner className="h-10 w-10 mx-auto mt-8 animate-spin" />
+                </div>
             )}
             {!isLoading && data && data.businesses.length === 0 && (
                 <div className="flex flex-col items-center justify-center h-96">
@@ -259,10 +264,49 @@ export default function AllBusinesses() {
                         <Dialog open={!!viewBusiness} onOpenChange={() => setViewBusiness(null)}>
                             <DialogContent className="max-w-2xl">
                                 <DialogHeader>
-                                    <DialogTitle className="text-2xl font-bold">{viewBusiness?.businessName}</DialogTitle>
-                                    <DialogDescription>
-                                        Complete business registration details
-                                    </DialogDescription>
+                                    <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+                                        <div>
+                                            <DialogTitle className="text-2xl font-bold">{viewBusiness?.businessName}</DialogTitle>
+                                            <DialogDescription>
+                                                Complete business registration details
+                                            </DialogDescription>
+                                        </div>
+                                        <div className="flex space-x-2">
+                                            {viewBusiness?.status.state === "Pending" && (
+                                                <IfAllowed permission={"full:access"}>
+                                                    <>
+                                                        <Button
+                                                            size="sm"
+                                                            variant="outline"
+                                                            className="text-green-600 hover:text-green-700 bg-transparent"
+                                                            onClick={(e) => {
+                                                                e.preventDefault()
+                                                                setSelectedStatus("Approve")
+                                                                setShowAlert(true)
+                                                            }}
+                                                        >
+                                                            <CheckCircle className="h-4 w-4 mr-1"/>
+                                                            Approve
+                                                        </Button>
+                                                        <Button
+                                                            size="sm"
+                                                            variant="outline"
+                                                            className="text-red-600 hover:text-red-700 bg-transparent"
+                                                            onClick={(e) => {
+                                                                e.preventDefault()
+                                                                setSelectedStatus("Reject")
+                                                                setShowAlert(true)
+                                                            }}
+                                                        >
+                                                            <XCircle className="h-4 w-4 mr-1"/>
+                                                            Reject
+                                                        </Button>
+                                                    </>
+                                                </IfAllowed>
+                                            )}
+                                        </div>
+                                    </div>
+
                                 </DialogHeader>
 
                                 {viewBusiness && (
@@ -328,6 +372,7 @@ export default function AllBusinesses() {
                     )}
                 </div>
             )}
+            <ApproveRejectDialog businessId={''} action={selectedStatus as "Approve" | "Reject"} openAlert={showAlert} openAlertAction={setShowAlert} />
         </div>
     )
 
