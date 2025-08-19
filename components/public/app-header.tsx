@@ -38,7 +38,7 @@ export default function AppHeader({isVisible}: AppHeaderProps) {
     return (
         <header
             className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60 transition-all duration-300">
-            <div className="container flex h-16 items-center justify-between py-4">
+            <div className="container container--header flex h-16 items-center justify-between py-4">
                 <div
                     className={`flex items-center gap-2 transition-all duration-700 ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'}`}>
                     <div className="items-center h-16 mb-8 pt-5">
