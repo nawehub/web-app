@@ -28,7 +28,7 @@ export default function ContactUsSection() {
 
     return (
         <section className="w-full bg-white dark:bg-gray-950 py-24 border-t border-gray-200 dark:border-gray-800">
-            <div className="container mx-auto px-8">
+            <div className="container container--contact-us mx-auto px-8">
                 <motion.p
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}

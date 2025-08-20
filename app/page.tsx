@@ -221,7 +221,7 @@ export default function Home() {
                 <div
                     className={`py-20 transition-all duration-1000 delay-400 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
                     <div
-                        className="register-business-wrap bg-gradient-to-r from-slate-50 to-blue-50 -mx-4 px-4 py-16 rounded-3xl border border-slate-200/50 shadow-xl">
+                        className="register-business-wrap bg-gradient-to-r from-slate-50 to-blue-50 px-4 py-16 rounded-3xl border border-slate-200/50 shadow-xl">
                         <div className="max-w-5xl mx-auto text-center">
                             <div
                                 className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-lg mb-8">
@@ -322,7 +322,7 @@ export default function Home() {
                     </div>
 
                     <div
-                        // className="relative overflow-hidden bg-gradient-to-r from-slate-50 to-blue-50 py-12"
+                        className="overflow-hidden"
                     >
 
                         <ScrollPartners />
@@ -334,7 +334,7 @@ export default function Home() {
                 <div
                     className={`py-20 text-center transition-all duration-1000 delay-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
                     <div
-                        className="bg-gradient-to-br from-slate-50 to-blue-50 -mx-4 px-4 py-16 border border-slate-200/50 shadow-xl">
+                        className="bg-gradient-to-br from-slate-50 to-blue-50 px-4 py-16 border border-slate-200/50 shadow-xl">
                         <div className="max-w-4xl mx-auto">
                             <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
                                 Ready to Get Started?
