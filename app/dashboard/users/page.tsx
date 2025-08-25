@@ -120,11 +120,6 @@ const initialUsers: User[] = [
 ];
 
 const userTypes = ["entrepreneur", "donor", "government", "partner"];
-const districts = [
-    "Bo", "Bombali", "Bonthe", "Falaba", "Kailahun", "Kambia", "Karene",
-    "Kenema", "Koinadugu", "Kono", "Moyamba", "Port Loko", "Pujehun",
-    "Tonkolili", "Western Area Rural", "Western Area Urban", "Freetown", "Makeni"
-];
 
 export default function UsersPage() {
     const [users, setUsers] = useState<User[]>(initialUsers);
@@ -210,7 +205,7 @@ export default function UsersPage() {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 mt-6">
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
@@ -221,27 +216,6 @@ export default function UsersPage() {
                         Manage platform users and their access permissions
                     </p>
                 </div>
-
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <DialogTrigger asChild>
-                        <Button className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                            <UserPlus className="h-4 w-4 mr-2" />
-                            Add User
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-2xl">
-                        <DialogHeader>
-                            <DialogTitle className="text-2xl font-bold">Add New User</DialogTitle>
-                            <DialogDescription>
-                                Create a new user account for the platform
-                            </DialogDescription>
-                        </DialogHeader>
-                        <div className="text-center py-8">
-                            <UserPlus className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                            <p className="text-muted-foreground">User creation form would be implemented here</p>
-                        </div>
-                    </DialogContent>
-                </Dialog>
             </div>
 
             {/* Stats Cards */}
