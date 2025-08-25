@@ -138,7 +138,10 @@ export default function ContactPage() {
                                         </div>
                                         <div>
                                             <h3 className="font-semibold text-gray-900">Email</h3>
-                                            <p className="text-gray-600">{appMetadata.Authors.email}</p>
+                                            <a
+                                                className="text-gray-600"
+                                                href={"mailto:" + appMetadata.Authors.email}
+                                            >{appMetadata.Authors.email}</a>
                                         </div>
                                     </div>
 
@@ -148,7 +151,10 @@ export default function ContactPage() {
                                         </div>
                                         <div>
                                             <h3 className="font-semibold text-gray-900">Phone</h3>
-                                            <p className="text-gray-600">{appMetadata.Authors.phone}</p>
+                                            <a
+                                                className="text-gray-600"
+                                                href={'tel:' + appMetadata.Authors.phone}
+                                            >{appMetadata.Authors.phone}</a>
                                         </div>
                                     </div>
 
