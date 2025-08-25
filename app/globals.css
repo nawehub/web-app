@@ -150,6 +150,10 @@ header nav a.underline span {
     width: 100%;
 }
 
+.custom-chart {
+    width: 100%;
+}
+
 /*--------------------------- dark ------------------------------*/
 .dark header,
 .dark .head-wrap,
