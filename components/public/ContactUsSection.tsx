@@ -28,8 +28,8 @@ export default function ContactUsSection() {
 
     return (
         <section className="w-full bg-white dark:bg-gray-950 py-24 border-t border-gray-200 dark:border-gray-800">
-            <div className="container mx-auto px-8">
-                <motion.p
+            <div className="container container--contact-us mx-auto px-8">
+                {/*<motion.p
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
@@ -37,7 +37,7 @@ export default function ContactUsSection() {
                     className="text-primary text-sm font-medium mb-2"
                 >
                     Contact us
-                </motion.p>
+                </motion.p>*/}
                 <motion.h2
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}

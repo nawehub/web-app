@@ -92,6 +92,34 @@
         font-size: 0.8rem;
         text-wrap: auto;
     }
+
+    .container--header {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .py-20 {
+        padding-bottom: 1rem;
+        padding-top: 1rem;
+    }
+
+    .container--contact-us .p-8 {
+        padding: 0;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .container--contact-us {
+        padding: 0;
+    }
+}
+
+@media only screen and (min-width: 767px) and (max-width: 1024px) and (orientation:portrait) {
+    /* For portrait layouts only */
+
+    .container--contact-us .p-8 {
+        padding: 0;
+    }
 }
 
 .left-sidebar {
@@ -122,6 +150,10 @@ header nav a.underline span {
     width: 100%;
 }
 
+.custom-chart {
+    width: 100%;
+}
+
 /*--------------------------- dark ------------------------------*/
 .dark header,
 .dark .head-wrap,
@@ -134,22 +166,46 @@ header nav a.underline span {
     border: 1px solid var(--input-border-gray);
 }
 
+.dark .text-gray-900,
 .dark .text-slate-800,
+.dark .text-gray-700,
 .dark .to-slate-600,
+.dark .text-gray-600,
 .dark .text-slate-600,
 .dark .head-wrap .user-name,
 .dark .hover\:bg-accent:hover svg {
     color: var(--text-white);
 }
 
+.dark .search-question__wrap,
+.dark .to-purple-50,
+.dark .from-white,
+.dark .to-white,
 .dark .feedback-wrap,
+.dark .backdrop-blur-sm,
 .dark .button-dark-transparent:hover,
 .dark .register-business-wrap,
 .dark .dashboard-slider,
+.dark .haw-can-we-help__wrap,
+.dark .main-resource__wrap,
 .dark .bg-gradient-to-br {
     background: transparent;
 }
 
 .dark .dashboard-slider .slider-item {
     background: var(--text-white);
+}
+
+.dark .search-question__wrap,
+.dark .haw-can-we-help__wrap {
+    border-bottom: 1px solid var(--input-border-gray);
+    border-top: 1px solid var(--input-border-gray);
+}
+
+.dark .rounded-lg {
+    border: 1px solid var(--input-border-gray);
+}
+
+.dark .shadow-xl {
+    box-shadow: 0 20px 25px -5px rgb(255 255 255 / 0.1), 0 8px 10px -6px rgb(255 255 255 / 0.1);
 }

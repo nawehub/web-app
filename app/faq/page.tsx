@@ -71,7 +71,7 @@ export default function FAQPage() {
             </section>
 
             {/* Search and Filter Section */}
-            <section className="py-12 bg-white/50">
+            <section className="search-question__wrap py-12 bg-white/50">
                 <div className="container">
                     <div className="mx-auto max-w-4xl space-y-8">
                         {/* Search Bar */}

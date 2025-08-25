@@ -16,7 +16,7 @@ const partners = [
 export default function ScrollPartners() {
     return (
         <div className="dashboard-slider flex items-center">
-            <div className="w-full inline-flex flex-nowrap overflow-scroll"
+            <div className="w-full inline-flex flex-nowrap"
                  style={{maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)'}}>
                 <ul className="flex items-center justify-center md:justify-start [&amp;_img]:max-w-none animate-scroll animate-marquee">
                     {partners.map((partner, idx) => (
@@ -33,14 +33,6 @@ export default function ScrollPartners() {
             </div>
 
             <style jsx>{`
-               
-                .marquee {
-                    animation: marqueeScroll 35s linear infinite
-                }
-                
-                .marquee:hover {
-                    animation-play-state: paused
-                }
 
                 @keyframes marqueeScroll {
                     from {

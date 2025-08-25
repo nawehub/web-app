@@ -79,7 +79,7 @@ export default function ContactPage() {
             </section>
 
             {/* Contact Reasons */}
-            <section className="py-16 bg-white/50">
+            <section className="haw-can-we-help__wrap py-16 bg-white/50">
                 <div className="container">
                     <div className="mx-auto max-w-2xl text-center mb-12">
                         <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-4">
@@ -138,7 +138,10 @@ export default function ContactPage() {
                                         </div>
                                         <div>
                                             <h3 className="font-semibold text-gray-900">Email</h3>
-                                            <p className="text-gray-600">{appMetadata.Authors.email}</p>
+                                            <a
+                                                className="text-gray-600"
+                                                href={"mailto:" + appMetadata.Authors.email}
+                                            >{appMetadata.Authors.email}</a>
                                         </div>
                                     </div>
 
@@ -148,7 +151,10 @@ export default function ContactPage() {
                                         </div>
                                         <div>
                                             <h3 className="font-semibold text-gray-900">Phone</h3>
-                                            <p className="text-gray-600">{appMetadata.Authors.phone}</p>
+                                            <a
+                                                className="text-gray-600"
+                                                href={'tel:' + appMetadata.Authors.phone}
+                                            >{appMetadata.Authors.phone}</a>
                                         </div>
                                     </div>
 

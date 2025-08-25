@@ -88,7 +88,7 @@ export default function DashboardLayout({children}: { children: ReactNode }) {
                 </div>
 
                 {/* Page Content */}
-                <main className="flex-1 bg-background p-6 overflow-y-auto mt-10">
+                <main className="min-h-screen flex-1 bg-background p-6 overflow-y-auto mt-10">
                     {children}
                 </main>
             </div>
