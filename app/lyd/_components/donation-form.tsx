@@ -125,6 +125,7 @@ export function DonationForm({onSubmitAction, onCancelAction}: DonationFormProps
                     currency: formData.currency as MakeDonationRequest["currency"],
                     targetValue: formData.targetValue
                 }
+                console.log({ donationData})
                 const response = await donate.mutateAsync(donationData)
                 toast({
                     title: "Development Contribution",
@@ -132,9 +133,8 @@ export function DonationForm({onSubmitAction, onCancelAction}: DonationFormProps
                     className: "bg-green-50 dark:bg-green-900",
                 })
                 onSubmitAction(donationData)
-                console.log({ donationData})
             } catch (e) {
-                console.error({e})
+                console.log({e})
                 toast({
                     title: "Development Contribution",
                     description: e instanceof Error ? formatResponse(e.message) : "An error occurred",
@@ -182,13 +182,12 @@ export function DonationForm({onSubmitAction, onCancelAction}: DonationFormProps
                 setFormData({
                     ...formData,
                     profile: {
-                        ...formData.profile,
                         firstName: result.data.firstName,
                         lastName: result.data.lastName,
                         phoneNumber: result.data.phoneNumber,
                         email: result.data.email,
                         nationality: result.data.nationality,
-                        isAnonymous: result.data.isAnonymous,
+                        isAnonymous: result.data.isAnonymous || false,
                         gender: result.data.gender,
                     },
                     currency: result.data.currency,
