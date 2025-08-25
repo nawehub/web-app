@@ -2,7 +2,7 @@ export interface LYDProfile {
     id: string
     firstName: string
     lastName: string
-    gender: "Male" | "Female" | "Prefer_Not_To_Say"
+    gender: "Male" | "Female" | "Prefer_Not_To_Say" | ""
     phoneNumber: string
     email: string
     nationality: string

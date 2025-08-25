@@ -5,7 +5,7 @@ export async function GET(_: Request, { params }: { params: { email_or_phone: st
     try {
         const { email_or_phone } = await params;
 
-        const response = await api4Public("/lyd/profile/" + email_or_phone + "/with-contribution", {
+        const response = await api4Public("/lyd/profile/" + email_or_phone + "/wit-contribution", {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         })

@@ -19,12 +19,6 @@ import { useToast } from '@/hooks/use-toast';
 import dynamic from 'next/dynamic';
 import QuillEditor from "@/components/QuillEditor";
 
-// Dynamically import ReactQuill to avoid SSR issues
-
-// import ReactQuill from 'react-quill';
-// import 'react-quill/dist/quill.snow.css';
-
-
 interface CreateEventDialogProps {
     open: boolean;
     onOpenChangeAction: (open: boolean) => void;

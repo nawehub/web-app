@@ -112,28 +112,6 @@ export function DonationHistoryComponent({ onCloseAction }: DonationHistoryProps
                                 />
                             </div>
                             <div className="flex flex-col justify-end">
-                                <div className="flex border rounded-md mb-1">
-                                    <Button
-                                        variant={searchType === "email" ? "default" : "ghost"}
-                                        size="sm"
-                                        onClick={() => setSearchType("email")}
-                                        className="rounded-r-none"
-                                    >
-                                        <Mail className="h-4 w-4 mr-1" />
-                                        Email
-                                    </Button>
-                                    <Button
-                                        variant={searchType === "phone" ? "default" : "ghost"}
-                                        size="sm"
-                                        onClick={() => setSearchType("phone")}
-                                        className="rounded-l-none"
-                                    >
-                                        <Phone className="h-4 w-4 mr-1" />
-                                        Phone
-                                    </Button>
-                                </div>
-                            </div>
-                            <div className="flex flex-col justify-end">
                                 <Button onClick={handleSearch} disabled={!searchTerm || isLoading} className="bg-primary">
                                     {isLoading ? (
                                         <>

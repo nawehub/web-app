@@ -25,13 +25,9 @@ export const exploreMenuItems = [
 export const documentMenuItems = [
     { name: "File Manager", href: "/dashboard/files", icon: Folder },
     { name: "Users", href: "/dashboard/users", icon: Users },
-    { name: "App Settings", href: "/dashboard/settings", icon: Settings },
-    // { name: "Reports", href: "/dashboard/reports", icon: Copy },
-    { name: "System Logs", href: "/dashboard/audit-logs", icon: Logs },
 ];
 
 export const bottomMenuItems = [
     { name: "User Settings", href: "/dashboard/user-settings", icon: Settings, action: () => void{} },
-    // { name: "Get Help", href: "/dashboard/file-manager", icon: HelpCircle },
     { name: "Search", href: "#", icon: Search, action: () => void{} }
 ];

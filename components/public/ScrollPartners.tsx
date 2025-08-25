@@ -17,7 +17,7 @@ export default function ScrollPartners() {
     return (
         <div className="dashboard-slider flex items-center">
             <div className="w-full inline-flex flex-nowrap overflow-scroll"
-                 style={{maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent);'}}>
+                 style={{maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)'}}>
                 <ul className="flex items-center justify-center md:justify-start [&amp;_img]:max-w-none animate-scroll animate-marquee">
                     {partners.map((partner, idx) => (
                         <li key={idx} className="py-1 px-10 flex-shrink-0 position-relative">
