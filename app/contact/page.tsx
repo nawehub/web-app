@@ -90,7 +90,7 @@ export default function ContactPage() {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                         {contactReasons.map((reason, index) => (
                             <Card
                                 key={index}
@@ -115,7 +115,7 @@ export default function ContactPage() {
             </section>
 
             {/* Contact Form & Info */}
-            <section className="py-20">
+            <section className="pb-20 pt-6">
                 <div className="container">
                     <div className="grid gap-12 lg:grid-cols-3">
                         {/* Contact Form */}
