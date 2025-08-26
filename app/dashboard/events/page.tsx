@@ -18,12 +18,23 @@ import Link from 'next/link';
 import {formatDate} from "@/types/funding";
 import {useRouter} from "next/navigation";
 import {IfAllowed} from "@/components/auth/IfAllowed";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue
+} from "@/components/ui/select";
+import {useIsMobile} from "@/hooks/use-mobile";
 
 export default function EventsPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [showCreateEvent, setShowCreateEvent] = useState(false);
     const [statusFilter, setStatusFilter] = useState<'open' | 'closed' | 'all'>('open');
     const router = useRouter();
+    const isMobile = useIsMobile()
 
     const {data: allEvents, isLoading} = useEventsQuery();
 
@@ -86,16 +97,16 @@ export default function EventsPage() {
                     </p>
                 </div>
                 <IfAllowed permission={"funding:create"}>
-                    <Button onClick={() => router.push('/dashboard/events/create')}>
-                        <Plus className="h-4 w-4 mr-2"/>
-                        Create Event
+                    <Button onClick={() => router.push('/dashboard/events/create')} className={'text-white'}>
+                        <Plus className="h-4 w-4 "/>
+                        Create {isMobile ? '' : 'New Event'}
                     </Button>
                 </IfAllowed>
             </div>
 
             {/* Search and Filters */}
             <div className="flex items-center gap-4">
-                <div className="relative flex-1 max-w-sm">
+                <div className="relative flex-1 items-center ">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"/>
                     <Input
                         placeholder="Search events..."
@@ -105,29 +116,19 @@ export default function EventsPage() {
                     />
                 </div>
 
-                <div className="flex gap-2">
-                    <Button
-                        variant={statusFilter === 'open' ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setStatusFilter('open')}
-                    >
-                        Open Events
-                    </Button>
-                    <Button
-                        variant={statusFilter === 'closed' ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setStatusFilter('closed')}
-                    >
-                        Past Events
-                    </Button>
-                    <Button
-                        variant={statusFilter === 'all' ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setStatusFilter('all')}
-                    >
-                        All Events
-                    </Button>
-                </div>
+                <Select value={statusFilter} onValueChange={(val) => setStatusFilter(val as 'open' | 'closed' | 'all')}>
+                    <SelectTrigger className={isMobile ? 'w-32' : 'w-48'}>
+                        <SelectValue placeholder="Select status"/>
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectLabel>Filters</SelectLabel>
+                            <SelectItem value="open">Open Events</SelectItem>
+                            <SelectItem value="closed">Past Events</SelectItem>
+                            <SelectItem value="all">All Events</SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
             </div>
 
             {/* Events Grid */}

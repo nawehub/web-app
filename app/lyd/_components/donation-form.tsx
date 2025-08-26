@@ -8,7 +8,7 @@ import {Input} from "@/components/ui/input"
 import {Label} from "@/components/ui/label"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
 import {Checkbox} from "@/components/ui/checkbox"
-import {Heart, ChevronLeft, ChevronRight, MapPin, Users, CreditCard, CheckCircle, Search} from "lucide-react"
+import {Heart, ChevronLeft, ChevronRight, MapPin, Users, CreditCard, CheckCircle, Search, XIcon} from "lucide-react"
 import {paymentProviders, currencies} from "@/lib/lyd-data"
 import type {LYDProfile, LYDDonation, MakeDonationRequest} from "@/types/lyd"
 import {allDistricts} from "@/types/demographs";
@@ -21,6 +21,7 @@ import {countries} from "@/utils/countries";
 import {CustomCombobox} from "@/components/ui/combobox";
 import {formatResponse} from "@/utils/format-response";
 import {NotFoundConfirmDialog} from "@/app/lyd/_components/NotFoundConfirmDialog";
+import {useIsMobile} from "@/hooks/use-mobile";
 
 interface DonationFormProps {
     onSubmitAction: (donation: Partial<LYDDonation>) => void
@@ -79,6 +80,7 @@ export function DonationForm({onSubmitAction, onCancelAction}: DonationFormProps
     const [isNewContribConfirm, setIsNewContribConfirm] = useState(false)
     const [isInit, setIsInit] = useState(true)
     const [open404Dialog, setOpen404Dialog] = useState(false)
+    const isMobile = useIsMobile()
 
     const updateFormData = (field: string, value: any) => {
         if (field.startsWith("profile.")) {
@@ -711,21 +713,22 @@ export function DonationForm({onSubmitAction, onCancelAction}: DonationFormProps
                     <CardContent>
                         <AnimatePresence mode="wait">{renderStepContent()}</AnimatePresence>
 
-                        <div className="flex justify-between mt-8">
+                        <div className="flex justify-between mt-8 space-x-2">
                             <div className="flex space-x-2">
                                 <Button variant="outline" onClick={onCancelAction}>
-                                    Cancel
+                                    {isMobile ? (<XIcon className="mr-2 h-4 w-4"/>
+                                    ): (<span>Cancel</span>)}
                                 </Button>
                                 <Button variant="outline" onClick={prevStep} disabled={currentStep === 1}>
-                                    <ChevronLeft className="mr-2 h-4 w-4"/>
-                                    Previous
+                                    <ChevronLeft className={isMobile ? "mr-1 h-2 w-2" : "mr-2 h-4 w-4"}/>
+                                    {isMobile ? (<span>Back</span>): (<span>Previous</span>)}
                                 </Button>
                             </div>
 
                             {currentStep === steps.length ? (
                                 <Button onClick={handleSubmit} disabled={!isStepValid(currentStep) || isPending} className="bg-primary">
-                                    <Heart className="mr-2 h-4 w-4"/>
-                                    Make Contribution
+                                    <Heart className={isMobile ? "mr-1 h-2 w-2" : "mr-2 h-4 w-4"} />
+                                    {isMobile ? 'Contribute' : 'Make Contribution'}
                                 </Button>
                             ) : (
                                 <Button onClick={nextStep} disabled={!isStepValid(currentStep)}>
