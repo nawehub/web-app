@@ -77,7 +77,7 @@ export default function AppHeader({isVisible}: AppHeaderProps) {
                         isVisible ? "translate-x-0 opacity-100" : "-translate-x-10 opacity-0"
                     }`}
                 >
-                    <div className="items-center h-16 mb-8 pt-5">
+                    <div className="items-center">
                         <Link href={"/"}>
                             <img src={"/images/wehub-sample-logo.png"} alt="Logo" className="h-10 w-auto mr-2" />
                         </Link>

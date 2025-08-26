@@ -238,13 +238,16 @@ export default function Home() {
                                 toward gaining recognition, protection, and growth opportunities.
                             </p>
 
-                            <Link href="/business-registration">
-                                <Button size="lg"
-                                        className="px-12 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 text-lg">
+                            <Link href="/business-registration" className="block w-full sm:w-auto">
+                                <Button
+                                    size="lg"
+                                    className="w-full sm:w-auto px-6 py-4 text-base sm:text-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
+                                >
                                     Register Your Business Now
-                                    <ArrowRight className="ml-2 h-5 w-5"/>
+                                    <ArrowRight className="ml-2 h-5 w-5" />
                                 </Button>
                             </Link>
+
                         </div>
                     </div>
                 </div>
