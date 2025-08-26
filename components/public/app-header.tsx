@@ -69,7 +69,7 @@ export default function AppHeader({isVisible}: AppHeaderProps) {
     }, [mobileOpen, mounted]);
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60 transition-all duration-300">
+        <header className="fixed top-0 z-50 w-full border-b bg-white/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60 transition-all duration-300">
             <div className="container container--header flex h-16 items-center justify-between py-4">
                 {/* Logo */}
                 <div
