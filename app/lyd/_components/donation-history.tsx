@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Search, Calendar, DollarSign, MapPin, Phone, Mail, Filter } from "lucide-react"
+import { Search, Calendar, DollarSign, MapPin, Filter } from "lucide-react"
 import { currencies } from "@/lib/lyd-data"
 import {LYDDonation} from "@/types/lyd";
 import {allDistricts} from "@/types/demographs";
@@ -27,11 +27,12 @@ type SearchResults = {
 
 export function DonationHistoryComponent({ onCloseAction }: DonationHistoryProps) {
     const [searchTerm, setSearchTerm] = useState("")
-    const [searchType, setSearchType] = useState<"email" | "phone">("email")
     const [searchResults, setSearchResults] = useState<SearchResults | null>(null)
-    const { data, refetch, isLoading} = useListProfileDonationsQuery(searchTerm);
+    const { refetch} = useListProfileDonationsQuery(searchTerm);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSearch = async () => {
+        setIsLoading(true);
         if (!searchTerm) return;
 
         try {
@@ -46,9 +47,11 @@ export function DonationHistoryComponent({ onCloseAction }: DonationHistoryProps
                     totalDonations: result.data.totalCount,
                 });
             }
+            setIsLoading(false);
         } catch (error) {
             // Handle error appropriately
             console.error('Failed to fetch donations:', error);
+            setIsLoading(false);
         }
     };
 
@@ -101,18 +104,18 @@ export function DonationHistoryComponent({ onCloseAction }: DonationHistoryProps
                     <CardContent>
                         <div className="flex flex-col md:flex-row gap-4">
                             <div className="flex-1">
-                                <Label htmlFor="searchTerm">{searchType === "email" ? "Email Address" : "Phone Number"}</Label>
+                                <Label htmlFor="searchTerm">Phone Number</Label>
                                 <Input
                                     id="searchTerm"
-                                    type={searchType === "email" ? "email" : "tel"}
+                                    type="tel"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    placeholder={searchType === "email" ? "your.email@example.com" : "+232 XX XXX XXX"}
+                                    placeholder={"+232 XX XXX XXX"}
                                     className="mt-1"
                                 />
                             </div>
                             <div className="flex flex-col justify-end">
-                                <Button onClick={handleSearch} disabled={!searchTerm || isLoading} className="bg-primary">
+                                <Button onClick={handleSearch} disabled={!searchTerm || isLoading} className="bg-primary text-white">
                                     {isLoading ? (
                                         <>
                                             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
@@ -138,7 +141,7 @@ export function DonationHistoryComponent({ onCloseAction }: DonationHistoryProps
                     <div className="grid gap-4 md:grid-cols-3">
                         <Card>
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">Total Donations</CardTitle>
+                                <CardTitle className="text-sm font-medium">Total Contributions</CardTitle>
                                 <DollarSign className="h-4 w-4 text-muted-foreground" />
                             </CardHeader>
                             <CardContent>
@@ -246,8 +249,7 @@ export function DonationHistoryComponent({ onCloseAction }: DonationHistoryProps
                                     <Filter className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                                     <h3 className="text-lg font-semibold mb-2">No contributions found</h3>
                                     <p className="text-muted-foreground">
-                                        No contribution history was found for the provided{" "}
-                                        {searchType === "email" ? "email address" : "phone number"}.
+                                        No contribution history was found for the provided phone number.
                                     </p>
                                 </div>
                             )}

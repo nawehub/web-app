@@ -18,11 +18,11 @@ export const exploreMenuItems = [
     { name: "My Business", href: "/dashboard/my-businesses", icon: Building2 },
     // { name: "Network", href: "/dashboard/network", icon: Network },
     // { name: "Discussion Forums", href: "/dashboard/forums", icon: Network },
-    { name: "Funding Providers", href: "/dashboard/funding-providers", icon: Briefcase },
     { name: "Resource Library", href: "/dashboard/resources", icon: BookOpen },
 ];
 
 export const documentMenuItems = [
+    { name: "Funding Providers", href: "/dashboard/funding-providers", icon: Briefcase },
     { name: "File Manager", href: "/dashboard/files", icon: Folder },
     { name: "Users", href: "/dashboard/users", icon: Users },
 ];
