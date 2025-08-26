@@ -63,13 +63,12 @@ export default function SettingsPage() {
                                 <div className="space-y-2">
                                     <Label htmlFor="firstName">First name</Label>
                                     <Input id="firstName" value={user.firstName}
-                                           defaultValue={user.firstName || ""}
                                            onChange={(e) => setUser((prev) => ({...prev, firstName: e.target.value}))}
                                     />
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="lastName">Last name</Label>
-                                    <Input id="lastName" defaultValue={user.lastName || ""}
+                                    <Input id="lastName"
                                            value={user.lastName}
                                            onChange={(e) => setUser((prev) => ({...prev, lastName: e.target.value}))}
                                     />
@@ -83,7 +82,7 @@ export default function SettingsPage() {
 
                             <div className="space-y-2">
                                 <Label htmlFor="phone">Phone number</Label>
-                                <Input id="phone" type="tel" defaultValue={user.phone}
+                                <Input id="phone" type="tel" value={user.phone}
                                        onChange={(e) => setUser((prev) => ({...prev, phone: e.target.value}))}
                                 />
                             </div>

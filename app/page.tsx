@@ -23,7 +23,6 @@ import {
 } from 'lucide-react';
 import {Footer} from "@/components/public/footer";
 import AppHeader from "@/components/public/app-header";
-import Testimonials from "@/components/public/testiminials";
 import ContactUsSection from "@/components/public/ContactUsSection";
 import ScrollPartners from "@/components/public/ScrollPartners";
 import Testimonies from "@/components/public/testimonies";
