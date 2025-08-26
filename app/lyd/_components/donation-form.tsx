@@ -196,6 +196,7 @@ export function DonationForm({onSubmitAction, onCancelAction}: DonationFormProps
                 })
                 getPayMethod(result.data.paymentMethod)
                 getPayProvider(result.data.paymentProvider)
+                updateFormData("profile.isAnonymous", result.data.isAnonymous || false)
 
                 setIsExistingContributory(true)
                 setIsNewContribConfirm(false)
