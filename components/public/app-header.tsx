@@ -165,11 +165,11 @@ export default function AppHeader({isVisible}: AppHeaderProps) {
                     id="mobile-menu"
                     role="dialog"
                     aria-modal="true"
-                    className={`absolute right-0 top-0 h-[100dvh] w-[85%] max-w-xs bg-white shadow-xl border-l flex flex-col transition-transform duration-300 ${
+                    className={`dashboard-mobile-menu absolute right-0 top-0 h-[100dvh] w-[85%] max-w-xs bg-white shadow-xl border-l flex flex-col transition-transform duration-300 ${
                         mobileOpen ? "translate-x-0" : "translate-x-full"
                     }`}
                 >
-                    <div className="flex items-center justify-between px-4 py-3 border-b">
+                    <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b">
                         <Link href="/" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
                             <img src={"/images/wehub-sample-logo.png"} alt="Logo" className="h-8 w-auto"/>
                         </Link>
@@ -193,7 +193,7 @@ export default function AppHeader({isVisible}: AppHeaderProps) {
                                         <Link
                                             href={item.link}
                                             onClick={() => setMobileOpen(false)}
-                                            className={`block rounded-md px-3 py-2 text-base transition ${
+                                            className={`dashboard-mobile-menu__item block rounded-md px-3 py-2 text-base transition ${
                                                 active
                                                     ? "text-emerald-700 bg-emerald-50 font-semibold"
                                                     : "text-slate-700 hover:bg-slate-100"

@@ -157,6 +157,7 @@ header nav a.underline span {
 /*--------------------------- dark ------------------------------*/
 .dark header,
 .dark .head-wrap,
+.dark .dashboard-mobile-menu,
 .dark .left-sidebar {
     background-color: hsl(var(--background));
 }
@@ -173,6 +174,7 @@ header nav a.underline span {
 .dark .text-gray-600,
 .dark .text-slate-600,
 .dark .head-wrap .user-name,
+.dark .dashboard-mobile-menu__item:not(.text-emerald-700),
 .dark .hover\:bg-accent:hover svg {
     color: var(--text-white);
 }
