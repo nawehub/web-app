@@ -12,8 +12,6 @@ export const Footer = () => {
                         <div className="items-center h-16 mb-8 pt-5">
                            <Link href={"/"}>
                                <img src={"/images/wehub-sample-logo.png"} alt="Logo" className="h-10 w-auto mr-2"/>
-                               <span
-                                   className="font-light text-xs -mt-5 ml-4 tracking-tight text-zinc-100 dark:text-white">Salone Success</span>
                            </Link>
                         </div>
                         <p className="text-gray-400">Empowering businesses and building communities across Sierra
@@ -82,7 +80,7 @@ export const Footer = () => {
                     </div>
                 </div>
                 <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-                    <p>&copy; 2025 NaWeHub SL. All rights reserved.</p>
+                    <p>&copy; 2025 eWomen SL. All rights reserved.</p>
                 </div>
             </div>
         </footer>

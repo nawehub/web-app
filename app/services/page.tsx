@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import Navbar from "@/components/public/navbar";
 import dynamic from "next/dynamic";
 import {Footer} from "@/components/public/footer";
 import AppHeader from "@/components/public/app-header";

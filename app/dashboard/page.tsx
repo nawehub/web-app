@@ -8,8 +8,11 @@ import {StatsCards} from "@/components/dashboard/StatsCards";
 import {UserActivity} from "@/components/dashboard/UserActivity";
 import {FeaturedOpportunities} from "@/components/dashboard/featured-opportunities";
 import {IfAllowed} from "@/components/auth/IfAllowed";
+import {useState} from "react";
+import {FundingOpportunityDto} from "@/types/funding";
 
 export default function Dashboard() {
+    const [opportunities, setOpportunities] = useState<FundingOpportunityDto[]>([]);
     return (
         <TooltipProvider>
             <div className="flex items-center justify-between space-y-2 pt-6">
@@ -35,9 +38,9 @@ export default function Dashboard() {
                     }}
                 >
                     {/* stats */}
-                    <StatsCards />
+                    <StatsCards opportunities={opportunities.length} users={100} businesses={10} />
                     <UserActivity />
-                    <FeaturedOpportunities />
+                    <FeaturedOpportunities setOpportunities={setOpportunities} />
                 </motion.div>
 
             </div>

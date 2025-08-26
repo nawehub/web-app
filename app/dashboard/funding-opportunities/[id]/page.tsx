@@ -110,7 +110,7 @@ export default function FundingOpportunityDetail({params}: PageProps) {
                                         <div className="space-y-2">
                                             <div className="flex items-center space-x-2">
                                                 <Badge
-                                                    variant={getStatusColor(!isApplicationDeadlinePassed ? "Open" : "Closed") as any}>{isApplicationDeadlinePassed ? "Open" : "Closed"}</Badge>
+                                                    variant={getStatusColor(!isApplicationDeadlinePassed ? "Open" : "Closed") as any}>{!isApplicationDeadlinePassed ? "Open" : "Closed"}</Badge>
                                             </div>
                                             <CardTitle className="text-2xl">{remoteOpportunity?.title}</CardTitle>
                                             <CardDescription className="text-base">Provided
