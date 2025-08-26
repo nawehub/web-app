@@ -265,11 +265,16 @@ export default function Home() {
                             and start solving!
                         </p>
 
-                        <Button variant="outline" size="lg"
-                                className="button-dark-transparent px-12 py-4 border-2 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 hover:border-purple-300 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 text-lg group">
-                            Turn Problems into Opportunities
-                            <Zap className="ml-2 h-5 w-5 group-hover:text-purple-600 transition-colors duration-300"/>
-                        </Button>
+                        <Link href="#" className="block w-full sm:w-auto">
+                            <Button
+                                size="lg"
+                                variant={'outline'}
+                                className="w-full sm:w-auto px-6 py-4 text-base sm:text-lg button-dark-transparent border-2 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 hover:border-purple-300 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
+                            >
+                                Turn Problems into Opportunities
+                                <Zap className="ml-2 h-5 w-5" />
+                            </Button>
+                        </Link>
                     </div>
                 </div>
 
@@ -347,9 +352,9 @@ export default function Home() {
                                 stronger Sierra Leone.
                             </p>
 
-                            <Link href="/register">
+                            <Link href="/register" className={'block w-full sm:w-auto'}>
                                 <Button size="lg"
-                                        className="px-12 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 text-lg group">
+                                        className="px-6 py-4 sm:w-auto bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 text-lg group">
                                     Entrepreneur Register
                                     <ArrowRight
                                         className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300"/>

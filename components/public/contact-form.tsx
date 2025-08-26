@@ -156,7 +156,7 @@ export default function ContactForm() {
                         <Button
                             type="submit"
                             disabled={isSubmitting}
-                            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 py-3 text-lg"
+                            className="w-full bg-gradient-to-r from-blue-600 text-white to-purple-600 hover:from-blue-700 hover:to-purple-700 py-3 text-lg"
                         >
                             {isSubmitting ? (
                                 <>
