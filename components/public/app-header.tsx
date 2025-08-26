@@ -148,7 +148,7 @@ export default function AppHeader({isVisible}: AppHeaderProps) {
 
             {/* Mobile drawer + backdrop */}
             <div
-                className={`fixed inset-0 z-[60] md:hidden ${mobileOpen ? "pointer-events-auto" : "pointer-events-none"}`}
+                className={`fixed inset-0 z-[60] md:hidden overflow-hidden ${mobileOpen ? "pointer-events-auto" : "pointer-events-none"}`}
                 aria-hidden={!mobileOpen}
             >
                 {/* Backdrop */}
@@ -165,7 +165,7 @@ export default function AppHeader({isVisible}: AppHeaderProps) {
                     id="mobile-menu"
                     role="dialog"
                     aria-modal="true"
-                    className={`absolute right-0 top-0 h-[100dvh] w-[85%] max-w-xs bg-white shadow-xl border-l flex flex-col transition-transform duration-300 ${
+                    className={`absolute right-0 top-0 h-[100dvh] w-[85%] max-w-xs bg-white shadow-xl border-l flex flex-col transition-transform duration-300 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] overscroll-contain ${
                         mobileOpen ? "translate-x-0" : "translate-x-full"
                     }`}
                 >

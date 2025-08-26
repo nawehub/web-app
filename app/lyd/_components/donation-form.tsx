@@ -177,7 +177,6 @@ export function DonationForm({onSubmitAction, onCancelAction}: DonationFormProps
         if (!searchTerm) return;
         try {
             const result = await refetch();
-            console.log({result})
             if (result.data) {
                 setFormData({
                     ...formData,
@@ -208,8 +207,6 @@ export function DonationForm({onSubmitAction, onCancelAction}: DonationFormProps
             }
             setIsLoading(false)
         } catch (error) {
-            // Handle error appropriately
-            console.error('Failed to fetch donations:', error);
             setIsLoading(false)
         }
     };
