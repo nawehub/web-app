@@ -42,7 +42,7 @@ export default function FAQPage() {
     });
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+        <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50">
             {/* Header */}
             <AppHeader isVisible={true} />
 

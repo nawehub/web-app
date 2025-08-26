@@ -36,6 +36,22 @@ export default function AppHeader({isVisible}: AppHeaderProps) {
         setMobileOpen(false);
     }, [pathname]);
 
+    // Globally prevent horizontal scroll on mobile (and desktop) for the page
+    useEffect(() => {
+        if (!mounted) return;
+        const html = document.documentElement;
+        const prevHtmlOverflowX = html.style.overflowX;
+        const prevBodyOverflowX = document.body.style.overflowX;
+
+        html.style.overflowX = "hidden";
+        document.body.style.overflowX = "hidden";
+
+        return () => {
+            html.style.overflowX = prevHtmlOverflowX;
+            document.body.style.overflowX = prevBodyOverflowX;
+        };
+    }, [mounted]);
+
     // Prevent body scroll when menu is open
     useEffect(() => {
         if (!mounted) return;

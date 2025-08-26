@@ -64,13 +64,13 @@ export default function Home() {
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+        <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50">
             {/* Header */}
             <AppHeader isVisible={isVisible}/>
 
             <main className="px-4 py-8">
                 {/* Hero Section */}
-                <div className="text-center space-y-8 py-16">
+                <div className="relative overflow-x-hidden text-center space-y-8 py-16">
                     <div
                         className={`transition-all duration-1000 delay-300 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
                         <Badge variant="secondary"

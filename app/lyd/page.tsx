@@ -71,7 +71,7 @@ export default function LYDPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-800">
+        <div className="min-h-screen overflow-x-hidden bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-800">
             {/* Navigation */}
             <AppHeader isVisible={true}/>
             <div className="flex-1 space-y-6 p-4 md:p-8 pt-6">
