@@ -190,7 +190,7 @@ export default function AppHeader({isVisible}: AppHeaderProps) {
                                                 className={`block rounded-md px-3 py-2 text-base transition ${
                                                     active
                                                         ? "text-emerald-700 bg-emerald-50 font-semibold"
-                                                        : "text-slate-200 hover:bg-slate-100"
+                                                        : "text-slate-700 : dark:text-slate-200 hover:bg-slate-100"
                                                 }`}
                                             >
                                                 {item.name}
