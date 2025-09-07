@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import {StatsCards} from "@/components/dashboard/StatsCards";
 import {UserActivity} from "@/components/dashboard/UserActivity";
 import {FeaturedOpportunities} from "@/components/dashboard/featured-opportunities";
-import {IfAllowed} from "@/components/auth/IfAllowed";
+import {IfDevPartner} from "@/components/auth/IfAllowed";
 import {useState} from "react";
 import {FundingOpportunityDto} from "@/types/funding";
 
@@ -18,11 +18,11 @@ export default function Dashboard() {
             <div className="flex items-center justify-between space-y-2 pt-6">
                 <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
                 <div className="flex items-center space-x-2">
-                    <IfAllowed permission={"funding:create"}>
+                    <IfDevPartner>
                         <Link href="/dashboard/funding-opportunities/create">
                             <Button>Create Opportunity</Button>
                         </Link>
-                    </IfAllowed>
+                    </IfDevPartner>
                 </div>
             </div>
             <div className="space-y-10">

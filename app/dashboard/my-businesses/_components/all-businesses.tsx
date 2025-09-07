@@ -1,22 +1,13 @@
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {
-    Building,
-    Building2,
+    Building, Building2,
     Calendar, CheckCircle, Clock,
-    Edit,
-    Eye,
-    Filter,
-    MapPin,
-    Phone,
-    Search,
-    SortAsc,
-    SortDesc,
-    User, XCircle
+    Eye, Filter, MapPin, Phone,
+    Search, SortAsc, SortDesc, User, XCircle
 } from "lucide-react";
 import {Input} from "@/components/ui/input";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
-import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {useListBusinessQuery} from "@/hooks/repository/use-business";
 import {useEffect, useMemo, useState} from "react";
 import {BusinessData} from "@/lib/services/business";
@@ -24,9 +15,11 @@ import {categories} from "@/types/business";
 import {Badge} from "@/components/ui/badge";
 import {NewBizDialog} from "@/app/dashboard/my-businesses/_components/NewBizDialog";
 import {usePermissions} from "@/hooks/use-permissions";
-import {IfAllowed} from "@/components/auth/IfAllowed";
+import {IfAllowed, IfEntrepreneur} from "@/components/auth/IfAllowed";
 import {Icons} from "@/components/ui/icon";
 import {ApproveRejectDialog} from "@/app/dashboard/my-businesses/_components/approve-reject-dialog";
+import {useIsMobile} from "@/hooks/use-mobile";
+import {BusinessDetailsModal} from "@/app/dashboard/my-businesses/_components/business-details-modal";
 
 export default function AllBusinesses() {
     const [searchTerm, setSearchTerm] = useState("");
@@ -34,20 +27,25 @@ export default function AllBusinesses() {
     const [categoryFilter, setCategoryFilter] = useState<string>("all");
     const [sortBy, setSortBy] = useState<string>("registerDate");
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-    const [viewBusiness, setViewBusiness] = useState<BusinessData | null>(null);
-    const [viewMode, setViewMode] = useState<"all" | "own">("own");
+    const [viewBusinessOpen, setViewBusinessOpen] = useState<boolean>(false);
+    const [selectedBusiness, setSelectedBusiness] = useState<BusinessData | null>(null);
+    // const [viewMode, setViewMode] = useState<"all" | "own">("own");
     const [selectedStatus, setSelectedStatus] = useState<"Approve" | "Reject">();
     const [showAlert, setShowAlert] = useState(false);
+    const isMobile = useIsMobile();
 
-    const { hasPermission, isAdmin } = usePermissions();
-
+    const {hasPermission, isAdmin} = usePermissions();
     const {data, isLoading} = useListBusinessQuery(viewMode);
 
-    useEffect(() => {
-        if (isAdmin() || hasPermission("business:read-all")){
-            setViewMode("all");
-        }
-    }, [viewMode]);
+    // useEffect(() => {
+    //     if (isAdmin()) {
+    //         setViewMode("all");
+    //         setStatusFilter("all");
+    //     } else if (!isAdmin() && hasPermission("business:read-approved")) {
+    //         setViewMode("all");
+    //         setStatusFilter("Approved");
+    //     }
+    // }, [viewMode]);
 
     const filteredAndSortedBusinesses = useMemo(() => {
         let filtered = data?.businesses.filter(business => {
@@ -124,55 +122,58 @@ export default function AllBusinesses() {
                                 className="pl-10"
                             />
                         </div>
+                        {!isMobile && (
+                            <div className="flex flex-col sm:flex-row gap-3">
+                                <IfAllowed>
+                                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                                        <SelectTrigger className="w-full sm:w-[150px]">
+                                            <Filter className="h-4 w-4 mr-2"/>
+                                            <SelectValue/>
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="all">All Status</SelectItem>
+                                            <SelectItem value="Approved">Approved</SelectItem>
+                                            <SelectItem value="Pending">Pending</SelectItem>
+                                            <SelectItem value="Rejected">Rejected</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </IfAllowed>
 
-                        <div className="flex flex-col sm:flex-row gap-3">
-                            <Select value={statusFilter} onValueChange={setStatusFilter}>
-                                <SelectTrigger className="w-full sm:w-[150px]">
-                                    <Filter className="h-4 w-4 mr-2"/>
-                                    <SelectValue/>
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">All Status</SelectItem>
-                                    <SelectItem value="Approved">Approved</SelectItem>
-                                    <SelectItem value="Pending">Pending</SelectItem>
-                                    <SelectItem value="Rejected">Rejected</SelectItem>
-                                </SelectContent>
-                            </Select>
+                                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                                    <SelectTrigger className="w-full sm:w-[180px]">
+                                        <Building className="h-4 w-4 mr-2"/>
+                                        <SelectValue/>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Categories</SelectItem>
+                                        {categories.map((category) => (
+                                            <SelectItem key={category.name} value={category.name}>
+                                                {category.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
 
-                            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                                <SelectTrigger className="w-full sm:w-[180px]">
-                                    <Building className="h-4 w-4 mr-2"/>
-                                    <SelectValue/>
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">All Categories</SelectItem>
-                                    {categories.map((category) => (
-                                        <SelectItem key={category.name} value={category.name}>
-                                            {category.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-
-                            <Select value={`${sortBy}-${sortOrder}`} onValueChange={(value) => {
-                                const [field, order] = value.split('-');
-                                setSortBy(field);
-                                setSortOrder(order as "asc" | "desc");
-                            }}>
-                                <SelectTrigger className="w-full sm:w-[180px]">
-                                    {sortOrder === "asc" ? <SortAsc className="h-4 w-4 mr-2"/> :
-                                        <SortDesc className="h-4 w-4 mr-2"/>}
-                                    <SelectValue/>
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="createdAt-desc">Newest First</SelectItem>
-                                    <SelectItem value="createdAt-asc">Oldest First</SelectItem>
-                                    <SelectItem value="businessName-asc">Name A-Z</SelectItem>
-                                    <SelectItem value="businessName-desc">Name Z-A</SelectItem>
-                                    <SelectItem value="status.state-asc">Status A-Z</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
+                                <Select value={`${sortBy}-${sortOrder}`} onValueChange={(value) => {
+                                    const [field, order] = value.split('-');
+                                    setSortBy(field);
+                                    setSortOrder(order as "asc" | "desc");
+                                }}>
+                                    <SelectTrigger className="w-full flex sm:w-[180px]">
+                                        {sortOrder === "asc" ? <SortAsc className="h-4 w-4 mr-2"/> :
+                                            <SortDesc className="h-4 w-4 mr-2"/>}
+                                        <SelectValue  placeholder="Sort by"/>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="createdAt-desc">Newest First</SelectItem>
+                                        <SelectItem value="createdAt-asc">Oldest First</SelectItem>
+                                        <SelectItem value="businessName-asc">Name A-Z</SelectItem>
+                                        <SelectItem value="businessName-desc">Name Z-A</SelectItem>
+                                        <SelectItem value="status.state-asc">Status A-Z</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        )}
                     </div>
                 </CardContent>
             </Card>
@@ -180,7 +181,7 @@ export default function AllBusinesses() {
             {/* Business Cards */}
             {isLoading && (
                 <div className="flex flex-col items-center justify-center h-96">
-                    <Icons.spinner className="h-10 w-10 mx-auto mt-8 animate-spin" />
+                    <Icons.spinner className="h-10 w-10 mx-auto mt-8 animate-spin"/>
                 </div>
             )}
             {!isLoading && data && data.businesses.length === 0 && (
@@ -188,7 +189,7 @@ export default function AllBusinesses() {
                     <div className="flex flex-col items-center">
                         <Building2 className="h-16 w-16 text-slate-400"/>
                         <p className="text-lg font-bold text-slate-400">No businesses found</p>
-                        <NewBizDialog />
+                        <IfEntrepreneur> <NewBizDialog/> </IfEntrepreneur>
                     </div>
                 </div>
             )}
@@ -228,7 +229,7 @@ export default function AllBusinesses() {
 
                                         <div className="flex items-center gap-2 text-muted-foreground">
                                             <Calendar className="h-4 w-4"/>
-                                            <span>Registered: {new Date(business.registerDate).toLocaleDateString()}</span>
+                                            <span>Created: {new Date(business.registerDate).toLocaleDateString()}</span>
                                         </div>
 
                                         <div className="flex items-center gap-2 text-muted-foreground">
@@ -242,112 +243,26 @@ export default function AllBusinesses() {
                                             variant="outline"
                                             size="sm"
                                             className="flex-1 hover:bg-emerald-50 hover:border-emerald-300"
-                                            onClick={() => setViewBusiness(business)}
+                                            onClick={() => {
+                                                setSelectedBusiness(business)
+                                                setViewBusinessOpen(true)
+                                            }}
                                         >
                                             <Eye className="h-4 w-4 mr-1"/>
                                             View
                                         </Button>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            className="flex-1 hover:bg-blue-50 hover:border-blue-300"
-                                        >
-                                            <Edit className="h-4 w-4 mr-1"/>
-                                            Edit
-                                        </Button>
+                                        {/*<Button*/}
+                                        {/*    variant="outline"*/}
+                                        {/*    size="sm"*/}
+                                        {/*    className="flex-1 hover:bg-blue-50 hover:border-blue-300"*/}
+                                        {/*>*/}
+                                        {/*    <Edit className="h-4 w-4 mr-1"/>*/}
+                                        {/*    Edit*/}
+                                        {/*</Button>*/}
                                     </div>
                                 </CardContent>
                             </Card>
                         ))}
-
-                        {/* View Business Dialog */}
-                        <Dialog open={!!viewBusiness} onOpenChange={() => setViewBusiness(null)}>
-                            <DialogContent className="max-w-2xl">
-                                <DialogHeader>
-                                    <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
-                                        <div>
-                                            <DialogTitle className="text-2xl font-bold">{viewBusiness?.businessName}</DialogTitle>
-                                            <DialogDescription>
-                                                Complete business registration details
-                                            </DialogDescription>
-                                        </div>
-                                        <div className="flex space-x-2">
-                                            {viewBusiness?.status.state === "Pending" && (
-                                                <IfAllowed permission={"full:access"}>
-                                                    <>
-                                                        <Button
-                                                            size="sm"
-                                                            variant="outline"
-                                                            className="text-green-600 hover:text-green-700 bg-transparent"
-                                                            onClick={(e) => {
-                                                                e.preventDefault()
-                                                                setSelectedStatus("Approve")
-                                                                setShowAlert(true)
-                                                            }}
-                                                        >
-                                                            <CheckCircle className="h-4 w-4 mr-1"/>
-                                                            Approve
-                                                        </Button>
-                                                        <Button
-                                                            size="sm"
-                                                            variant="outline"
-                                                            className="text-red-600 hover:text-red-700 bg-transparent"
-                                                            onClick={(e) => {
-                                                                e.preventDefault()
-                                                                setSelectedStatus("Reject")
-                                                                setShowAlert(true)
-                                                            }}
-                                                        >
-                                                            <XCircle className="h-4 w-4 mr-1"/>
-                                                            Reject
-                                                        </Button>
-                                                    </>
-                                                </IfAllowed>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                </DialogHeader>
-
-                                {viewBusiness && (
-                                    <div className="space-y-6">
-                                        <div className="flex justify-between items-center">
-                                            <h3 className="text-lg font-semibold">Registration Status</h3>
-                                            {getStatusBadge(viewBusiness.status.state)}
-                                        </div>
-
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <div className="space-y-4">
-                                                <h4 className="font-semibold text-emerald-600">Business Information</h4>
-                                                <div className="space-y-2 text-sm">
-                                                    <div><strong>Name:</strong> {viewBusiness.businessName}</div>
-                                                    <div><strong>Category:</strong> {viewBusiness.category}</div>
-                                                    <div><strong>Address:</strong> {viewBusiness.businessAddress}</div>
-                                                    <div><strong>Registration
-                                                        Date:</strong> {new Date(viewBusiness.registerDate).toLocaleDateString()}
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="space-y-4">
-                                                <h4 className="font-semibold text-emerald-600">Owner Information</h4>
-                                                <div className="space-y-2 text-sm">
-                                                    <div><strong>Name:</strong> {viewBusiness.ownerName}</div>
-                                                    <div><strong>Date of
-                                                        Birth:</strong> {viewBusiness.dateOfBirth ? new Date(viewBusiness.dateOfBirth).toLocaleDateString() : 'N/A'}
-                                                    </div>
-                                                    <div><strong>Place of Birth:</strong> {viewBusiness.placeOfBirth}</div>
-                                                    <div><strong>Mother's Name:</strong> {viewBusiness.mothersName}</div>
-                                                    <div><strong>Address:</strong> {viewBusiness.ownerAddress}</div>
-                                                    <div><strong>Contact:</strong> {viewBusiness.contactNumber}</div>
-                                                    <div><strong>Email:</strong> {viewBusiness.email}</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-                            </DialogContent>
-                        </Dialog>
 
                     </div>
                     {filteredAndSortedBusinesses?.length === 0 && (
@@ -362,9 +277,9 @@ export default function AllBusinesses() {
                                 </p>
                                 {
                                     !searchTerm && statusFilter === "all" && categoryFilter === "all" && (
-                                        <IfAllowed permission={"user:read"} >
-                                            <NewBizDialog />
-                                        </IfAllowed>
+                                        <IfEntrepreneur>
+                                            <NewBizDialog/>
+                                        </IfEntrepreneur>
                                     )
                                 }
                             </CardContent>
@@ -372,8 +287,9 @@ export default function AllBusinesses() {
                     )}
                 </div>
             )}
-            <ApproveRejectDialog businessId={viewBusiness?.id!} action={selectedStatus as "Approve" | "Reject"} openAlert={showAlert} openAlertAction={setShowAlert} />
+            <ApproveRejectDialog businessId={selectedBusiness?.id!} action={selectedStatus as "Approve" | "Reject"}
+                                 openAlert={showAlert} openAlertAction={setShowAlert}/>
+            <BusinessDetailsModal open={viewBusinessOpen} onOpenChange={setViewBusinessOpen} business={selectedBusiness} showAlert={setShowAlert} onStatusChange={setSelectedStatus} />
         </div>
     )
-
 }

@@ -42,23 +42,15 @@ export function Sidebar({isSidebarOpen, toggleSidebar, pathname}: SidebarProps) 
                 </div>
             </div>
 
-            {/* Quickly Create Button */}
-            <div className="p-4">
-                <Button className="w-full bg-[#6366f1] hover:bg-[#5855eb] text-white rounded-lg">
-                    <Zap className="w-4 h-4 mr-2"/>
-                    Quick Create
-                </Button>
-            </div>
-
             {/* Navigation */}
-            <nav className="px-4 space-y-1">
+            <nav className="px-4 space-y-1 py-4">
                 {exploreMenuItems.map((item, i) => (
                     <SidebarItem
                         key={i}
                         href={item.href}
                         icon={<item.icon className="w-4 h-4"/>}
                         title={item.name}
-                        isActive={pathname === item.href}
+                        isActive={pathname === item.href || pathname.includes(item.href)}
                     />
                 ))}
             </nav>
@@ -74,7 +66,7 @@ export function Sidebar({isSidebarOpen, toggleSidebar, pathname}: SidebarProps) 
                                 href={item.href}
                                 icon={<item.icon className="w-4 h-4"/>}
                                 title={item.name}
-                                isActive={pathname === item.href}
+                                isActive={pathname === item.href || pathname.includes(item.href)}
                             />
                         ))}
                     </div>

@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { signOut, useSession } from 'next-auth/react';
-import {useToast} from "@/hooks/use-toast";
+import {useToast} from "@/components/ui/use-toast";
 
 export function AuthErrorBoundary({ children }: { children: React.ReactNode }) {
     const { data: session } = useSession();

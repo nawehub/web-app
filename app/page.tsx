@@ -26,6 +26,8 @@ import AppHeader from "@/components/public/app-header";
 import ContactUsSection from "@/components/public/ContactUsSection";
 import ScrollPartners from "@/components/public/ScrollPartners";
 import Testimonies from "@/components/public/testimonies";
+import Benefits from "@/components/public/benefit";
+import {useToast} from "@/hooks/use-toast";
 
 export default function Home() {
     const [isVisible, setIsVisible] = useState(false);
@@ -74,25 +76,46 @@ export default function Home() {
                     <div
                         className={`transition-all duration-1000 delay-300 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
                         <Badge variant="secondary"
-                               className="bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 transition-all duration-300 hover:scale-105 shadow-sm">
+                               className="bg-emerald-50 text-xs text-emerald-700 border-emerald-200 hover:bg-emerald-100 transition-all duration-300 hover:scale-105 shadow-sm">
                             <Star className="w-3 h-3 mr-1"/>
-                            Supporting Startups, Early-Stage Innovators and SMEs Across Sierra Leone
+                            NaWeHub: An Entire Ecosystem in the Hands of Entrepreneurs
                         </Badge>
+                    </div>
+
+                    {/* New Hero CTAs */}
+                    <div
+                        className={`transition-all duration-1000 delay-900 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                            <Link href="/lyd" className="block w-full sm:w-auto">
+                                <Button
+                                    size="lg"
+                                    className="w-full sm:w-auto px-6 py-4 text-base sm:text-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
+                                >
+                                    Put Your Money To Work
+                                    <DollarSign className="ml-2 h-5 w-5" />
+                                </Button>
+                            </Link>
+
+                            <Link href="/register" className="block w-full sm:w-auto">
+                                <Button
+                                    size="lg"
+                                    variant="outline"
+                                    className="w-full sm:w-auto px-6 py-4 text-base sm:text-lg button-dark-transparent border-2 hover:bg-slate-50 hover:border-slate-300 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
+                                >
+                                    Get Funding For Your Business
+                                    <ArrowRight className="ml-2 h-5 w-5" />
+                                </Button>
+                            </Link>
+                        </div>
                     </div>
 
                     <div
                         className={`transition-all duration-1000 delay-500 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-                        <h1 className="text-5xl md:text-5xl font-bold tracking-tight max-w-5xl mx-auto leading-tight">
-                            Empowering Startups, Early-Stage Innovators <br/> And SMEs Across{' '}
+                        <h1 className="text-2xl md:text-5xl font-bold tracking-tight max-w-5xl mx-auto leading-tight">
+                            Connecting Entrepreneurs with {' '}
                             <span
                                 className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent animate-pulse">
-                                Sierra Leone
-                            </span>
-                            <br/>
-                            <span className="text-emerald-600 relative">
-                                Building Districts.
-                                <div
-                                    className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full transform scale-x-0 animate-[scaleX_2s_ease-in-out_2s_forwards]"></div>
+                                Resources, Partners, and Funding
                             </span>
                         </h1>
                     </div>
@@ -114,6 +137,9 @@ export default function Home() {
                     <div
                         className="absolute bottom-20 left-20 w-12 h-12 bg-gradient-to-r from-pink-400 to-rose-400 rounded-full opacity-10 animate-bounce delay-2000"></div>
                 </div>
+
+                {/* Benefits Section */}
+                <Benefits />
 
                 {/* Two Platforms Section */}
                 <div className="py-20">
@@ -253,30 +279,35 @@ export default function Home() {
                 </div>
 
                 {/* Problem-Solving Section */}
-                <div
-                    className={`py-20 text-center transition-all duration-1000 delay-600 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-                    <div className="max-w-4xl mx-auto">
-                        <h2 className="text-4xl font-bold mb-8 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                            Solve a Problem
-                        </h2>
+                {/*<div*/}
+                {/*    className={`py-20 text-center transition-all duration-1000 delay-600 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>*/}
+                {/*    <div className="max-w-4xl mx-auto">*/}
+                {/*        <h2 className="text-4xl font-bold mb-8 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">*/}
+                {/*            Solve a Problem*/}
+                {/*        </h2>*/}
 
-                        <p className="text-xl text-slate-600 mb-10 leading-relaxed">
-                            Discover how one great solution can spark a business - click to play the Fractal Grid game
-                            and start solving!
-                        </p>
+                {/*        <p className="text-xl text-slate-600 mb-10 leading-relaxed">*/}
+                {/*            Discover how one great solution can spark a business - click to play the Fractal Grid game*/}
+                {/*            and start solving!*/}
+                {/*        </p>*/}
 
-                        <Link href="#" className="block w-full sm:w-auto">
-                            <Button
-                                size="lg"
-                                variant={'outline'}
-                                className="w-full sm:w-auto px-6 py-4 text-base sm:text-lg button-dark-transparent border-2 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 hover:border-purple-300 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
-                            >
-                                Turn Problems into Opportunities
-                                <Zap className="ml-2 h-5 w-5" />
-                            </Button>
-                        </Link>
-                    </div>
-                </div>
+                {/*        <Button*/}
+                {/*            onClick={() => toast("", {*/}
+                {/*                description: "We",*/}
+                {/*                position: "top-right",*/}
+                {/*                duration: 5000,*/}
+                {/*                isClosable: true,*/}
+                {/*                variant: "default"*/}
+                {/*            })}*/}
+                {/*            size="lg"*/}
+                {/*            variant={'outline'}*/}
+                {/*            className="w-full sm:w-auto px-6 py-4 text-base sm:text-lg button-dark-transparent border-2 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 hover:border-purple-300 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"*/}
+                {/*        >*/}
+                {/*            Turn Problems into Opportunities*/}
+                {/*            <Zap className="ml-2 h-5 w-5" />*/}
+                {/*        </Button>*/}
+                {/*    </div>*/}
+                {/*</div>*/}
 
                 {/* Stats Section */}
                 <section

@@ -1,6 +1,7 @@
 import {apiRequest} from "@/lib/api";
 import {NextResponse} from "next/server";
-import {ApplyForm} from "@/lib/services/funding";
+import {ApplyForm, approveOrRejectOpportunityForm} from "@/lib/services/funding";
+import {z} from "zod";
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
     try {
@@ -18,11 +19,28 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     }
 }
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request) {
     try {
         const body: ApplyForm = await req.json();
         const response = await apiRequest("/funding/opportunities/apply", {
             method: 'POST',
+            body: JSON.stringify(body),
+        })
+
+        const data = await response.json();
+        return NextResponse.json(data, {status: response.status});
+    } catch (error) {
+        return NextResponse.json({message: 'Internal server error'}, {status: 500});
+    }
+}
+
+export async function PUT(request: Request, { params }: { params: { id: string } }) {
+    try {
+        const { id } = await params;
+        const body: z.infer<typeof approveOrRejectOpportunityForm> = await request.json();
+        const response = await apiRequest(`/funding/opportunities/${id}/approve-reject`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(body),
         })
 

@@ -1,5 +1,12 @@
 import {useSession} from "next-auth/react";
-import {hasAllPermissions, hasAnyPermission, hasPermission, hasRole, isAdmin} from "@/hooks/use-permissions";
+import {
+    hasAllPermissions,
+    hasAnyPermission,
+    hasPermission,
+    hasRole,
+    isAdmin, isDevPartner,
+    isEntrepreneur
+} from "@/hooks/use-permissions";
 import React from "react";
 
 type IfAllowedProps = {
@@ -22,4 +29,16 @@ export function IfAllowed(props: IfAllowedProps) {
         (allOf ? hasAllPermissions(session?.user, allOf) : false);
 
     return <>{allowed ? children : fallback}</>;
+}
+
+export function IfEntrepreneur(props: { fallback?: React.ReactNode; children: React.ReactNode }) {
+    const { data: session } = useSession();
+    const allowed = isEntrepreneur(session?.user);
+    return <>{allowed ? props.children : props.fallback}</>;
+}
+
+export function IfDevPartner(props: { fallback?: React.ReactNode; children: React.ReactNode }) {
+    const { data: session } = useSession();
+    const allowed = isDevPartner(session?.user);
+    return <>{allowed ? props.children : props.fallback}</>;
 }

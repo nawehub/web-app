@@ -1,5 +1,11 @@
 import {api4app, api4FileUpload} from "@/lib/api4app";
 import {CreateEventResponse, EventDto, EventListResponse} from "@/types/event";
+import {z} from "zod";
+
+export const approveOrRejectEventForm = z.object({
+    rejectionReason: z.string().optional(),
+    action: z.enum(['Approve', 'Reject'], {message: "action is required"})
+})
 
 export const eventService = () => {
     return {
@@ -25,6 +31,13 @@ export const eventService = () => {
             createEvent: async (data: FormData) => {
                 const response = await api4FileUpload('/events', {
                     method: 'POST',
+                    body: data,
+                })
+                return response as Promise<CreateEventResponse>
+            },
+            approveRejectEvent: async (eventId: string, data: approveOrRejectEventForm) => {
+                const response = await api4app('/events/' + eventId, {
+                    method: 'PUT',
                     body: data,
                 })
                 return response as Promise<CreateEventResponse>

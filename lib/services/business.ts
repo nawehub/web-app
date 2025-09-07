@@ -1,11 +1,11 @@
-import { z } from 'zod'
+import {z} from 'zod'
 import {registerForm} from "@/lib/services/use-auth";
 import {ApiErrorResponse} from "@/lib/auth-response";
 import {api4app} from "@/lib/api4app";
 
 export const registerBizForm = z.object({
     businessName: z.string({message: "business name is required"}).min(3, {message: "business name must be at least 3 chars long"})
-        .max(100, { message: "business name must be at most 100 chars long" }),
+        .max(100, {message: "business name must be at most 100 chars long"}),
     businessAddress: z.string({message: "business address is required"}),
     businessActivities: z.string({message: "business activities is required"}),
     businessEntityType: z.string({message: "business entity type is required"}),
@@ -13,27 +13,31 @@ export const registerBizForm = z.object({
     ownerAddress: z.string({message: "owner's address is required"}),
     placeOfBirth: z.string({message: "owner's place of birth is required"}),
     dateOfBirth: z.date({message: "owner's date of birth is required"}),
-    gender: z.enum(['Male', 'Female'], { message: "owner's gender is required" }),
+    gender: z.enum(['Male', 'Female'], {message: "owner's gender is required"}),
     nationality: z.string({message: "owner's nationality is required"}),
     mothersName: z.string({message: "owner's mother's name required"}),
     contactNumber: z.string({message: "owner's contact number is required"}),
     email: z.string({message: "email is required"}).email({message: "owner's email must be a valid email address"}),
     category: z.string({message: "business category is required"}),
     registerDate: z.date({message: "register date must be valid"}).optional(),
+    registrationNumber: z.string({message: "registration number is required"}).optional(),
     isAlreadyRegistered: z.boolean(),
     isPublicRegister: z.boolean(),
 })
 
 export const approveOrRejectBizForm = z.object({
-    businessId: z.string({ message: "business id is required"}),
+    businessId: z.string({message: "business id is required"}),
+    registrationNumber: z.string({message: "registration number is required"}).optional(),
     rejectionReason: z.string().optional(),
-    action: z.enum(['Approve', 'Reject'], { message: "action is required" })
+    action: z.enum(['Approve', 'Reject'], {message: "action is required"})
 })
 
 export type BusinessData = {
     id: string;
     businessName: string;
     businessAddress: string;
+    businessActivities: string;
+    businessEntityType: string;
     ownerName: string;
     ownerAddress: string;
     placeOfBirth: string;
@@ -45,6 +49,7 @@ export type BusinessData = {
     email: string;
     category: string;
     registerDate: string;
+    registrationNumber: string;
     status: {
         state: string;
         rejectionReason: string;
@@ -91,23 +96,35 @@ export const businessService = () => {
                     },
                     body: JSON.stringify(req),
                 }),
-            listAll: async (type: string) => {
-                const response = await api4app('/businesses/discover?type=' + type, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                    })
-
-                return response as Promise<BusinessListResponse>
-            },
-            getOne: async (id: string) =>
-                api4app('/businesses/discover/' + id, {
+            listAll: async () => {
+                const response = await api4app('/businesses/discover', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                }),
+                })
+
+                return response as Promise<BusinessListResponse>
+            },
+            listAllApproved: async () => {
+                const response = await api4app('/businesses/discover/approved', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+
+                return response as Promise<BusinessListResponse>
+            },
+            getOne: async (id: string) => {
+                const resp = api4app('/businesses/discover/' + id, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                return resp as Promise<BusinessData>
+            }
         }
     }
 }

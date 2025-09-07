@@ -16,7 +16,7 @@ import {
     useMakeDonationMutation,
     useProfileWithContributionQuery
 } from "@/hooks/repository/use-lyd";
-import {useToast} from "@/hooks/use-toast";
+import {useToast} from "@/components/ui/use-toast";
 import {countries} from "@/utils/countries";
 import {CustomCombobox} from "@/components/ui/combobox";
 import {formatResponse} from "@/utils/format-response";

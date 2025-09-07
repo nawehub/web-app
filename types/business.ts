@@ -16,6 +16,7 @@ export type BusinessFormData = {
     mothersName: string
     email: string
     registerDate?: Date
+    registrationNumber?: string
     isAlreadyRegistered: boolean
     isPublicRegister: boolean
 }
@@ -36,6 +37,7 @@ export const initData: BusinessFormData = {
     mothersName: '',
     email: '',
     registerDate: undefined,
+    registrationNumber: undefined,
     isAlreadyRegistered: false,
     isPublicRegister: false,
 }

@@ -17,7 +17,7 @@ import {useEventsQuery} from '@/hooks/repository/use-events';
 import Link from 'next/link';
 import {formatDate} from "@/types/funding";
 import {useRouter} from "next/navigation";
-import {IfAllowed} from "@/components/auth/IfAllowed";
+import {IfAllowed, IfDevPartner} from "@/components/auth/IfAllowed";
 import {
     Select,
     SelectContent,
@@ -87,7 +87,7 @@ export default function EventsPage() {
     };
 
     return (
-        <div className="space-y-6 mt-5">
+        <div className={`space-y-6 ${isMobile ? 'pt-8' : 'pt-16'}`}>
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
@@ -96,12 +96,12 @@ export default function EventsPage() {
                         Discover and manage business events and workshops
                     </p>
                 </div>
-                <IfAllowed permission={"funding:create"}>
+                <IfDevPartner>
                     <Button onClick={() => router.push('/dashboard/events/create')} className={'text-white'}>
                         <Plus className="h-4 w-4 "/>
                         Create {isMobile ? '' : 'New Event'}
                     </Button>
-                </IfAllowed>
+                </IfDevPartner>
             </div>
 
             {/* Search and Filters */}
@@ -145,12 +145,14 @@ export default function EventsPage() {
                             {searchQuery ? 'No events match your search.' : 'No events available at the moment.'}
                         </p>
                         {!searchQuery && (
-                            <Link href="/dashboard/events/create">
-                                <Button>
-                                    <Plus className="h-4 w-4 mr-2"/>
-                                    Create First Event
-                                </Button>
-                            </Link>
+                            <IfAllowed permission={"funding:create"}>
+                                <Link href="/dashboard/events/create">
+                                    <Button>
+                                        <Plus className="h-4 w-4 mr-2"/>
+                                        Create First Event
+                                    </Button>
+                                </Link>
+                            </IfAllowed>
                         )}
                     </div>
                 ) : (

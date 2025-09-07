@@ -19,7 +19,7 @@ import {BusinessFormData, steps, initData, getDate15YearsAgo, categories, busine
 import {useRouter} from "next/navigation";
 import {RegisterResponse} from "@/store/auth";
 import {useRegisterPublicBusinessMutation} from "@/hooks/repository/use-business";
-import {useToast} from "@/hooks/use-toast";
+import {useToast} from "@/components/ui/use-toast";
 import {
     Dialog,
     DialogContent,

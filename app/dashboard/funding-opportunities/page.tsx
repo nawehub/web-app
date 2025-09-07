@@ -5,20 +5,31 @@ import {Button} from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import {dehydrate, HydrationBoundary, QueryClient} from "@tanstack/react-query";
-import {fundingService} from "@/lib/services/funding";
+import {filterType, fundingService} from "@/lib/services/funding";
 import FundingList from "@/app/dashboard/funding-opportunities/_components/funding-list";
-import CreateProviderModal from "@/app/dashboard/funding-providers/_components/CreateProviderModal";
-import {IfAllowed} from "@/components/auth/IfAllowed";
+import {IfAllowed, IfDevPartner} from "@/components/auth/IfAllowed";
+import {useSession} from "next-auth/react";
+import {isAdmin} from "@/hooks/use-permissions";
+import {OpportunitiesGrid} from "@/app/dashboard/funding-opportunities/_components/new-styled-opps";
+import {useRouter} from "next/navigation";
 
 export default function FundingOpportunitiesPage() {
+    const [viewType, setViewType] = useState<filterType>("Open");
     const queryClient = new QueryClient();
     const [client, setClient] = useState<QueryClient>(queryClient);
+    const {data: session} = useSession();
+    const router = useRouter();
 
     useEffect(() => {
+        if (session && session.user) {
+            if (isAdmin(session?.user)) {
+                setViewType("All");
+            }
+        }
         async function fetchData() {
             await queryClient.prefetchQuery({
                 queryKey: ['opportunities'],
-                queryFn: () => fundingService().opportunities.listAll(),
+                queryFn: () => fundingService().opportunities.listAll(viewType),
             });
 
             setClient(queryClient);
@@ -40,7 +51,7 @@ export default function FundingOpportunitiesPage() {
                     </p>
                 </div>
 
-                <IfAllowed permission={"funding:create"}>
+                <IfDevPartner>
                     <Link href="/dashboard/funding-opportunities/create">
                         <Button
                             className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
@@ -48,12 +59,11 @@ export default function FundingOpportunitiesPage() {
                             Add Opportunity
                         </Button>
                     </Link>
-                </IfAllowed>
-
+                </IfDevPartner>
             </div>
 
             <HydrationBoundary state={dehydrate(client!)}>
-                <FundingList />
+                <OpportunitiesGrid viewType={viewType} onView={(op) => router.push(`/dashboard/funding-opportunities/${op?.id}`)} />
             </HydrationBoundary>
         </div>
     );

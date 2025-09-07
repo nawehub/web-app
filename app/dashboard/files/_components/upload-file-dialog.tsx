@@ -17,7 +17,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { X, Upload } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import {
     useListCategoriesQuery,
     useListTagsQuery,
@@ -89,7 +89,6 @@ export function UploadFileDialog({ open, onOpenChangeAction, folderId }: UploadF
                 categoryId,
                 folderId: folderId || '',
                 fileName: file.name,
-                isFeatured: isFeatured,
                 accessLevel: accessLevel || 'Public',
             };
 

@@ -6,7 +6,8 @@ import {businessService} from "@/lib/services/business";
 import {NewBizDialog} from "@/app/dashboard/my-businesses/_components/NewBizDialog";
 import {HydrationBoundary, QueryClient, dehydrate} from "@tanstack/react-query";
 import AllBusinesses from "@/app/dashboard/my-businesses/_components/all-businesses";
-import {IfAllowed} from "@/components/auth/IfAllowed";
+import {IfAllowed, IfEntrepreneur} from "@/components/auth/IfAllowed";
+import Businesses from "@/app/dashboard/my-businesses/_components/businesses";
 
 export default function MyBusinessesPage() {
     const queryClient = new QueryClient();
@@ -16,7 +17,7 @@ export default function MyBusinessesPage() {
         async function fetchData() {
             await queryClient.prefetchQuery({
                 queryKey: ['businesses'],
-                queryFn: () => businessService().business.listAll(""),
+                queryFn: () => businessService().business.listAll(),
             });
 
             setClient(queryClient);
@@ -26,7 +27,7 @@ export default function MyBusinessesPage() {
     }, []);
 
     return (
-        <div className="space-y-6 py-12">
+        <div className="space-y-6 py-6">
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
@@ -37,12 +38,10 @@ export default function MyBusinessesPage() {
                         Manage your registered businesses and track their status
                     </p>
                 </div>
-                <IfAllowed permission={"user:read"}>
-                    <NewBizDialog />
-                </IfAllowed>
+                <IfEntrepreneur><NewBizDialog /></IfEntrepreneur>
             </div>
             <HydrationBoundary state={dehydrate(client!)}>
-                <AllBusinesses />
+               <Businesses />
             </HydrationBoundary>
         </div>
     );

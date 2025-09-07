@@ -1,5 +1,6 @@
 import {Category, CreateFolderTagRequest, FileListResponse, FolderData, Resource, Tag} from "@/types/files";
 import {api4app, api4FileUpload} from "@/lib/api4app";
+import {z} from "zod";
 
 export type FolderCreateResponse = {
     message: string
@@ -20,6 +21,13 @@ export type CreateTagResponse = {
     message: string
     tag: Tag
 }
+
+export const approveOrRejectResourceForm = z.object({
+    resourceId: z.string({message: "resource id is required"}),
+    isFeatured: z.boolean(),
+    rejectionReason: z.string().optional(),
+    action: z.enum(['Approve', 'Reject'], {message: "action is required"})
+})
 
 export type UploadResponse = {
     message: string

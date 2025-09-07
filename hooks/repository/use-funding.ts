@@ -2,7 +2,7 @@ import {useMutation, useQuery} from "@tanstack/react-query";
 import {
     ApplyForm,
     ApproveOrRejectForm, createMinimalOpp,
-    createProviderForm,
+    createProviderForm, filterType,
     fundingService
 } from "@/lib/services/funding";
 import {z} from "zod";
@@ -20,10 +20,10 @@ export function useCreateProviderMutation() {
     });
 }
 
-export const useListOpportunitiesQuery = () => {
+export const useListOpportunitiesQuery = (filter: filterType) => {
     return useQuery({
-        queryKey: ['opportunities'],
-        queryFn: async () => await fundingService().opportunities.listAll()
+        queryKey: ['opportunities', filter],
+        queryFn: async () => await fundingService().opportunities.listAll(filter)
     });
 }
 

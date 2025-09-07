@@ -11,6 +11,11 @@ export interface EventDto {
     startDate: Date;
     endDate: Date;
     hostWebsite?: string;
+    status: {
+        state: string;
+        rejectionReason: string;
+        statusActionDate: string;
+    }
     createdAt: string;
     updatedAt: string;
 }

@@ -230,7 +230,7 @@ export default function AllProviders() {
                                             <span className="text-xs">{sortOrder === "asc" ? "↑" : "↓"}</span>}
                                     </div>
                                 </TableHead>
-                                <IfAllowed permission={"full:access"}><TableHead>Actions</TableHead></IfAllowed>
+                                <IfAllowed><TableHead>Actions</TableHead></IfAllowed>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -294,7 +294,7 @@ export default function AllProviders() {
                                                     <span>{formatDate(new Date(provider.createdAt))}</span>
                                                 </div>
                                             </TableCell>
-                                            <IfAllowed permission={"full:access"}>
+                                            <IfAllowed>
                                                 <TableCell>
                                                     <div className="flex items-center space-x-1">
                                                         <Button variant="ghost" size="sm">

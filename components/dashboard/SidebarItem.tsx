@@ -17,7 +17,7 @@ export function SidebarItem({href, icon, title, isActive}: SidebarItemProps) {
                 variant="ghost"
                 className={cn(
                     "w-full justify-start gap-2",
-                    isActive && "bg-muted font-medium"
+                    isActive && "bg-primary font-medium text-primary-foreground dark:text-white"
                 )}
             >
                 {icon}

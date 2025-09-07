@@ -10,7 +10,7 @@ import {Button} from "@/components/ui/button";
 import {ChevronLeft, ChevronRight, Plus, PlusCircleIcon} from "lucide-react";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
-import {useToast} from "@/hooks/use-toast";
+import {useToast} from "@/components/ui/use-toast";
 import {useRegisterBusinessMutation} from "@/hooks/repository/use-business";
 import React, {useState, useTransition} from "react";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
@@ -31,7 +31,7 @@ import {Icons} from "@/components/ui/icon";
 import {Progress} from "@/components/ui/progress";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Checkbox} from "@/components/ui/checkbox";
-import { steps, BusinessFormData, initData, getDate15YearsAgo } from "@/types/business";
+import {steps, BusinessFormData, initData, getDate15YearsAgo} from "@/types/business";
 import {Textarea} from "@/components/ui/textarea";
 import {formatResponse} from "@/utils/format-response";
 
@@ -67,7 +67,7 @@ export const NewBizDialog = () => {
 
     function validateRegisterDate() {
         if (formData.isAlreadyRegistered) {
-            return formData.registerDate !== null && formData.registerDate !== undefined;
+            return formData.registerDate !== null && formData.registerDate !== undefined && formData.registrationNumber !== null && formData.registrationNumber !== undefined;
         }
         return true;
     }
@@ -76,7 +76,7 @@ export const NewBizDialog = () => {
         switch (step) {
             case 1:
                 return formData.businessName && formData.category && formData.businessAddress && formData.businessEntityType && formData.businessActivities
-                && validateRegisterDate()
+                    && validateRegisterDate()
             case 2:
                 return formData.ownerName && formData.ownerAddress && formData.placeOfBirth && formData.dateOfBirth
                     && formData.nationality && formData.mothersName && formData.email && formData.contactNumber && formData.gender
@@ -145,7 +145,7 @@ export const NewBizDialog = () => {
                                 control={form.control}
                                 render={({field}) => (
                                     <div className="space-y-2">
-                                        <Label htmlFor="category">Business Category</Label>
+                                        <Label htmlFor="category">Business Category *</Label>
                                         <CustomCombobox
                                             {...field}
                                             placeholder="Select your business category"
@@ -167,7 +167,7 @@ export const NewBizDialog = () => {
                             control={form.control}
                             render={({field}) => (
                                 <div className="space-y-2">
-                                    <Label htmlFor="businessAddress">Business Address</Label>
+                                    <Label htmlFor="businessAddress">Business Address *</Label>
                                     <Input
                                         id="businessAddress"
                                         {...field}
@@ -185,7 +185,7 @@ export const NewBizDialog = () => {
                             control={form.control}
                             render={({field}) => (
                                 <div className="space-y-2">
-                                    <Label htmlFor="category">Business Entity Type</Label>
+                                    <Label htmlFor="category">Business Entity Type *</Label>
                                     <CustomCombobox
                                         {...field}
                                         placeholder="Select your business category"
@@ -240,18 +240,31 @@ export const NewBizDialog = () => {
                                 control={form.control}
                                 render={() => (
                                     <div className="space-y-2">
+                                        <Label htmlFor="isAlreadyRegistered">Is this business already registered</Label>
                                         <div className="flex items-center space-x-2">
-                                            <Checkbox
-                                                id="isAlreadyRegistered"
-                                                checked={formData.isAlreadyRegistered}
-                                                onCheckedChange={(checked) => updateFormData("isAlreadyRegistered", checked as boolean)}
-                                            />
-                                            <Label htmlFor="isAlreadyRegistered">Business Already Registered</Label>
+                                            <div className={'flex items-center space-x-2'}>
+                                                <Checkbox
+                                                    id="isAlreadyRegistered"
+                                                    checked={formData.isAlreadyRegistered}
+                                                    onCheckedChange={(checked) => updateFormData("isAlreadyRegistered", true)}
+                                                />
+                                                <Label htmlFor="isAlreadyRegistered">Yes</Label>
+                                            </div>
+                                            <div className={'flex items-center space-x-2'}>
+                                                <Checkbox
+                                                    id="isAlreadyRegistered"
+                                                    checked={!formData.isAlreadyRegistered}
+                                                    onCheckedChange={(checked) => updateFormData("isAlreadyRegistered", false)}
+                                                />
+                                                <Label htmlFor="isAlreadyRegistered">No</Label>
+                                            </div>
                                         </div>
                                     </div>
                                 )}
                             />
-                            {formData.isAlreadyRegistered && (
+                        </div>
+                        {formData.isAlreadyRegistered && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <FormField
                                     name={'registerDate'}
                                     control={form.control}
@@ -272,8 +285,26 @@ export const NewBizDialog = () => {
                                         </div>
                                     )}
                                 />
-                            )}
-                        </div>
+                                <FormField
+                                    name={'registrationNumber'}
+                                    control={form.control}
+                                    render={({field}) => (
+                                        <div className="space-y-2">
+                                            <Label htmlFor="registrationNumber">Registration Number *</Label>
+                                            <Input
+                                                id="registrationNumber"
+                                                {...field}
+                                                value={formData.registrationNumber}
+                                                onChange={(e) => updateFormData('registrationNumber', e.target.value)}
+                                                required
+                                                type={'text'}
+                                                placeholder="Enter business registration number"
+                                            />
+                                        </div>
+                                    )}
+                                />
+                            </div>
+                        )}
                     </div>
                 )
             case 2:
@@ -356,7 +387,8 @@ export const NewBizDialog = () => {
                                 name="gender"
                                 render={({field}) => (
                                     <FormItem>
-                                        <Label>Gender → <br/> <span className={"text-xs pb-4"}>Select owner gender</span></Label>
+                                        <Label>Gender → <br/> <span
+                                            className={"text-xs pb-4"}>Select owner gender</span></Label>
                                         <FormControl>
                                             <RadioGroup
                                                 onValueChange={(e) => {

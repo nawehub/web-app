@@ -10,7 +10,6 @@ export interface FileUploadMetadata {
     categoryId?: string // ID of the category
     folderId: string | null // ID of the folder it belongs to, null for root
     fileName: string // Original file name
-    isFeatured: boolean // True if content is restricted
     accessLevel: AccessLevel // Public, Private, Restricted
 }
 

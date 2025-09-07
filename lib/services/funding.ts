@@ -1,6 +1,7 @@
 import {z} from "zod";
 import {FundingApplication, FundingOpportunity, FundingOpportunityDto, FundingProvider} from "@/types/funding";
 import {api4app} from "@/lib/api4app";
+import {approveOrRejectBizForm} from "@/lib/services/business";
 
 export const createProviderForm = z.object({
     name: z.string({message: "provider name is required"}),
@@ -24,13 +25,23 @@ export type ApplyForm = {
     applicationStatus: string
 }
 
+export const approveOrRejectOpportunityForm = z.object({
+    isFeatured: z.boolean(),
+    rejectionReason: z.string().optional(),
+    action: z.enum(['Approve', 'Reject'], {message: "action is required"})
+})
+
 export type ApproveOrRejectForm = {
     applicationId: string
     rejectionReason: string
     action: "Review" | "Approve" | "Reject"
 }
 
-export type createOpportunityForm = Omit<FundingOpportunity, "id" | "provider" | "totalApplications" | "createdAt" | "updatedAt"> & {
+export type filterType = "All" | "Open" | "Featured"
+
+export type createOpportunityForm =
+    Omit<FundingOpportunity, "id" | "provider" | "totalApplications" | "createdAt" | "updatedAt">
+    & {
     providerId: string
 }
 
@@ -90,8 +101,8 @@ export const fundingService = () => {
             }
         },
         opportunities: {
-            listAll: async () => {
-                const response = await api4app('/funding/opportunity', {
+            listAll: async (filter: filterType) => {
+                const response = await api4app('/funding/opportunity/filter/' + filter, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -119,6 +130,16 @@ export const fundingService = () => {
                     body: JSON.stringify(req),
                 })
 
+                return resp as Promise<MinimalOpportunityResponse>
+            },
+            approveOrReject: async (id: string, req: z.infer<typeof approveOrRejectOpportunityForm>) => {
+                const resp = api4app('/funding/opportunity/' + id, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(req),
+                })
                 return resp as Promise<MinimalOpportunityResponse>
             }
         },

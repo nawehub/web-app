@@ -33,6 +33,7 @@ import {UploadFileDialog} from '@/app/dashboard/files/_components/upload-file-di
 import {useListFolderResourcesQuery, useListFoldersQuery} from "@/hooks/repository/use-resources";
 import {FolderData} from "@/types/files";
 import {SettingsMenu} from "@/app/dashboard/files/_components/SettingsMenu";
+import {IfDevPartner} from "@/components/auth/IfAllowed";
 
 interface Selection {
     files: Set<string>;
@@ -51,7 +52,6 @@ export default function FilesPage() {
     const [selection, setSelection] = useState<Selection>({ files: new Set(), folders: new Set() });
     // const [lastSelectedItem, setLastSelectedItem] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
-
 
     const {data: folders = [], isLoading: foldersLoading} = useListFoldersQuery();
     let {data: files, refetch, isLoading: filesLoading} = useListFolderResourcesQuery(currentFolderId ?? '');
@@ -160,10 +160,12 @@ export default function FilesPage() {
                         Sort
                     </Button>
                     <SettingsMenu />
-                    <Button onClick={() => setShowUploadFile(true)}>
-                        <Upload className="h-4 w-4 mr-2"/>
-                        Upload File
-                    </Button>
+                    <IfDevPartner>
+                        <Button onClick={() => setShowUploadFile(true)}>
+                            <Upload className="h-4 w-4 mr-2"/>
+                            Upload File
+                        </Button>
+                    </IfDevPartner>
                 </div>
             </div>
 

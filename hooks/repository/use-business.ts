@@ -32,11 +32,19 @@ export function useApproveRejectBusinessMutation() {
     });
 }
 
-export const useListBusinessQuery = (type: string) => {
-    const businessQueryKey = ['businesses', type];
+export const useListBusinessQuery = () => {
+    const businessQueryKey = ['businesses'];
     return useQuery({
         queryKey: businessQueryKey,
-        queryFn: async () => await businessService().business.listAll(type)
+        queryFn: async () => await businessService().business.listAll()
+    });
+}
+
+export const useListApprovedBusinessesQuery = () => {
+    const businessQueryKey = ['approved-businesses'];
+    return useQuery({
+        queryKey: businessQueryKey,
+        queryFn: async () => await businessService().business.listAllApproved()
     });
 }
 

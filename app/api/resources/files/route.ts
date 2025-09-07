@@ -1,17 +1,19 @@
 import {apiRequest, apiRequest4ResourceUpload} from "@/lib/api";
 import {NextResponse} from "next/server";
+import {z} from "zod";
+import {approveOrRejectOpportunityForm} from "@/lib/services/funding";
 
 export async function GET(_: Request) {
     try {
         const response = await apiRequest("/resources/all", {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
+            headers: {'Content-Type': 'application/json'}
         })
 
         const data = await response.json();
-        return NextResponse.json(data, { status: response.status });
+        return NextResponse.json(data, {status: response.status});
     } catch (error) {
-        return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+        return NextResponse.json({message: 'Internal server error'}, {status: 500});
     }
 }
 
@@ -28,8 +30,8 @@ export async function POST(request: Request) {
 
         if (!metadataStr || !file) {
             return NextResponse.json(
-                { error: 'Missing required fields' },
-                { status: 400 }
+                {error: 'Missing required fields'},
+                {status: 400}
             );
         }
 
@@ -40,16 +42,32 @@ export async function POST(request: Request) {
 
         const response = await apiRequest4ResourceUpload(`/resources`, {
             method: 'POST',
-            headers: { 'Content-Type': 'multipart/form-data' },
+            headers: {'Content-Type': 'multipart/form-data'},
             body: gatewayFormData,
         });
 
         const data = await response.json();
-        return NextResponse.json(data, { status: response.status });
+        return NextResponse.json(data, {status: response.status});
     } catch (error) {
         return NextResponse.json(
-            { error: 'Failed to upload file' },
-            { status: 500 }
+            {error: 'Failed to upload file'},
+            {status: 500}
         );
+    }
+}
+
+export async function PUT(request: Request) {
+    try {
+        const body: z.infer<typeof approveOrRejectOpportunityForm> = await request.json();
+        const response = await apiRequest(`/resources/approve-reject`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(body),
+        })
+
+        const data = await response.json();
+        return NextResponse.json(data, {status: response.status});
+    } catch (error) {
+        return NextResponse.json({message: 'Internal server error'}, {status: 500});
     }
 }

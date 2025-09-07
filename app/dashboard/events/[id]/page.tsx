@@ -13,10 +13,13 @@ import {
 import { useEventQuery } from '@/hooks/repository/use-events';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import {IfAllowed} from "@/components/auth/IfAllowed";
+import {useIsMobile} from "@/hooks/use-mobile";
 
 export default function EventDetailPage() {
     const params = useParams();
     const eventId = params.id as string;
+    const isMobile = useIsMobile();
 
     const { data: event, isLoading, error } = useEventQuery(eventId);
 
@@ -50,7 +53,7 @@ export default function EventDetailPage() {
 
     if (isLoading) {
         return (
-            <div className="space-y-6">
+            <div className={`space-y-6 ${isMobile ? 'pt-8' : 'pt-16'}`}>
                 <div className="flex items-center gap-4">
                     <Link href="/dashboard/events">
                         <Button variant="ghost" size="sm">
@@ -88,7 +91,7 @@ export default function EventDetailPage() {
     }
 
     return (
-        <div className="space-y-6">
+        <div className={`space-y-6 ${isMobile ? 'pt-4' : 'pt-8'}`}>
             {/* Header */}
             <div className="flex items-center gap-4">
                 <Link href="/dashboard/events">
@@ -150,7 +153,7 @@ export default function EventDetailPage() {
                         </CardHeader>
                         <CardContent>
                             <div
-                                className="prose prose-sm max-w-none dark:prose-invert"
+                                className="prose prose-sm max-w-none dark:prose-invert dark:text-muted-foreground"
                                 dangerouslySetInnerHTML={{ __html: event.about }}
                             />
                         </CardContent>
@@ -230,9 +233,14 @@ export default function EventDetailPage() {
                                 </Button>
                             )}
 
-                            <Button variant="outline" className="w-full">
-                                Share Event
-                            </Button>
+                            <IfAllowed>
+                                <Button variant="outline" className="w-full text-white hover:bg-green-700 bg-green-600">
+                                    Approve Event
+                                </Button>
+                                <Button variant="outline" className="w-full text-white hover:bg-red-700 bg-red-600">
+                                    Reject Event
+                                </Button>
+                            </IfAllowed>
 
                             <Button variant="outline" className="w-full">
                                 Add to Calendar

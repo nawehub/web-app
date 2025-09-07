@@ -20,6 +20,7 @@ import {QueryClient} from "@tanstack/react-query";
 import {fundingService} from "@/lib/services/funding";
 import {Icons} from "@/components/ui/icon";
 import { formatCurrency } from "@/utils/formatters";
+import {IfAllowed} from "@/components/auth/IfAllowed";
 
 interface PageProps {
     params: Promise<{
@@ -188,12 +189,24 @@ export default function FundingOpportunityDetail({params}: PageProps) {
                                 </CardHeader>
                                 <CardContent className="space-y-3">
                                     {canApply ? (
-                                        <Button className="w-full" size="lg"
-                                                onClick={() => window.open(remoteOpportunity?.applyLink, "_blank")}
-                                        >
-                                            <Send className="mr-2 h-4 w-4"/>
-                                            Apply Now
-                                        </Button>
+                                        <div className="flex flex-col items-center space-y-3">
+                                            <Button className="w-full" size="lg"
+                                                    onClick={() => window.open(remoteOpportunity?.applyLink, "_blank")}
+                                            >
+                                                <Send className="mr-2 h-4 w-4"/>
+                                                Apply Now
+                                            </Button>
+                                            {remoteOpportunity?.status.state === "Pending_Approval" && (
+                                                <IfAllowed>
+                                                    <Button variant="outline" className="w-full text-white hover:bg-green-700 bg-green-600">
+                                                        Approve Funding Opportunity
+                                                    </Button>
+                                                    <Button variant="outline" className="w-full text-white hover:bg-red-700 bg-red-600">
+                                                        Reject This Opportunity
+                                                    </Button>
+                                                </IfAllowed>
+                                            )}
+                                        </div>
                                     ) : (
                                         <Button className="w-full" size="lg" disabled>
                                             {isApplicationDeadlinePassed
@@ -201,11 +214,6 @@ export default function FundingOpportunityDetail({params}: PageProps) {
                                                 :  "Applications Opened"}
                                         </Button>
                                     )}
-                                    {/*<Link href={`/dashboard/funding-opportunities/${remoteOpportunity?.id}/applicants`}>*/}
-                                    {/*    <Button variant="outline" className="w-full bg-transparent">*/}
-                                    {/*        View All Applications*/}
-                                    {/*    </Button>*/}
-                                    {/*</Link>*/}
                                 </CardContent>
                             </Card>
                         </div>

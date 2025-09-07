@@ -34,6 +34,12 @@ const collectPermissionIds = (user: UserLike): Set<string> => {
 export const isAdmin = (user: UserLike): boolean =>
     !!user?.roles?.some(r => norm(r?.id) === 'admin' || norm(r?.name) === 'admin');
 
+export const isEntrepreneur = (user: UserLike): boolean =>
+    !!user?.roles?.some(r => norm(r?.id) === 'entrepreneur' || norm(r?.name) === 'entrepreneur');
+
+export const isDevPartner = (user: UserLike): boolean =>
+    !!user?.roles?.some(r => norm(r?.id) === 'development-partner' || norm(r?.name) === 'development-partner');
+
 export const hasRole = (user: UserLike, roleIdOrName: string): boolean => {
     if (!user?.roles?.length) return false;
     if (isAdmin(user)) return true; // admin shortcut

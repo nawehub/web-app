@@ -44,6 +44,12 @@ export interface FundingOpportunityDto {
     amountMax: number
     applicationDeadline: Date
     applyLink: string
+    isFeatured: boolean
+    status: {
+        state: string;
+        rejectionReason: string;
+        statusActionDate: string;
+    }
     createdAt: Date
     updatedAt: Date
 }

@@ -13,7 +13,7 @@ interface FundingOpportunitiesProps {
 }
 
 export const FeaturedOpportunities = ({ setOpportunities }: FundingOpportunitiesProps) => {
-    const { data, isLoading } = useListOpportunitiesQuery()
+    const { data, isLoading } = useListOpportunitiesQuery("Featured")
 
     useEffect(() => {
         setOpportunities(data?.opportunities || [])
@@ -54,7 +54,9 @@ export const FeaturedOpportunities = ({ setOpportunities }: FundingOpportunities
                                             <Badge variant='default'>
                                                 Open
                                             </Badge>
-                                            <Button variant="link" onClick={() => window.open(opportunity.applyLink)}>Apply Now</Button>
+                                            {opportunity.applyLink && (
+                                                <Button variant="link" onClick={() => window.open(opportunity.applyLink)}>Apply Now</Button>
+                                            )}
                                         </div>
                                         <CardTitle className="text-lg">{opportunity.title}</CardTitle>
                                         <CardDescription

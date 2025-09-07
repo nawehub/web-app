@@ -8,7 +8,7 @@ import {
     Logs, MessageSquare, Network,
     PartyPopper, Rocket, Search,
     Settings,
-    Users
+    Users, Workflow
 } from "lucide-react";
 
 export const exploreMenuItems = [
@@ -18,6 +18,7 @@ export const exploreMenuItems = [
     { name: "My Business", href: "/dashboard/my-businesses", icon: Building2 },
     // { name: "Network", href: "/dashboard/network", icon: Network },
     // { name: "Discussion Forums", href: "/dashboard/forums", icon: Network },
+    { name: "Community Projects", href: "/dashboard/projects", icon: Workflow },
     { name: "Resource Library", href: "/dashboard/resources", icon: BookOpen },
 ];
 

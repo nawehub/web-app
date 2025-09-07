@@ -39,9 +39,9 @@ export default function FundingProvidersPage() {
                     <p className="text-muted-foreground">Manage and browse funding providers</p>
                 </div>
 
-                <IfAllowed permission={"funding:create"}>
-                    <CreateProviderModal />
-                </IfAllowed>
+                {/*<IfAllowed permission={"funding:create"}>*/}
+                {/*    <CreateProviderModal />*/}
+                {/*</IfAllowed>*/}
 
             </motion.div>
 

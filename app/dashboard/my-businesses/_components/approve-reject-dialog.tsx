@@ -12,10 +12,9 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Textarea} from "@/components/ui/textarea";
 import {useState, useTransition} from "react";
 import {useApproveRejectBusinessMutation} from "@/hooks/repository/use-business";
-import {useToast} from "@/hooks/use-toast";
-import {Button} from "@/components/ui/button";
+import {useToast} from "@/components/ui/use-toast";
 import {formatResponse} from "@/utils/format-response";
-import {error} from "next/dist/build/output/log";
+import {Input} from "@/components/ui/input";
 
 interface ApproveRejectDialogProps {
     businessId: string;
@@ -26,6 +25,7 @@ interface ApproveRejectDialogProps {
 
 export function ApproveRejectDialog({businessId, action, openAlert, openAlertAction}: ApproveRejectDialogProps) {
     const [rejectionReason, setRejectionReason] = useState("");
+    const [registrationNumber, setRegistrationNumber] = useState("");
     const [isPending, startTransition] = useTransition();
     const approveRejectMutation = useApproveRejectBusinessMutation();
     const {toast} = useToast();
@@ -35,15 +35,17 @@ export function ApproveRejectDialog({businessId, action, openAlert, openAlertAct
             try {
                 await approveRejectMutation.mutateAsync({
                     businessId,
+                    registrationNumber,
                     action,
                     rejectionReason,
                 })
                 toast({
                     title: `${action} Business`,
-                    description: `Business ${action == "Approve" ? 'approved' : 'rejected' } successfully`,
+                    description: `Business ${action == "Approve" ? 'approved' : 'rejected'} successfully`,
                     variant: 'default'
                 })
                 setRejectionReason("")
+                setRegistrationNumber("")
                 openAlertAction(false)
             } catch (e) {
                 toast({
@@ -60,16 +62,19 @@ export function ApproveRejectDialog({businessId, action, openAlert, openAlertAct
                 <AlertDialogHeader>
                     <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        This action cannot be undone. This will permanently {action === "Approve" ? "approve" : "reject"} this business.
+                        This action cannot be undone. This will
+                        permanently {action === "Approve" ? "approve" : "reject"} this business.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
-                {action === "Reject" && (
-                    <IfAllowed permission="full:access" fallback={null}>
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="text-lg">Rejection Reason</CardTitle>
-                            </CardHeader>
-                            <CardContent>
+
+                <IfAllowed permission="full:access" fallback={null}>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle
+                                className="text-lg">{action === "Approve" ? "Registration Number *" : "Rejection Reason"}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            {action === "Reject" ? (
                                 <div className="space-y-3">
                                     <Textarea
                                         placeholder="Add your rejection reason here..."
@@ -78,10 +83,18 @@ export function ApproveRejectDialog({businessId, action, openAlert, openAlertAct
                                         rows={4}
                                     />
                                 </div>
-                            </CardContent>
-                        </Card>
-                    </IfAllowed>
-                )}
+                            ) : (
+                                <div className="space-y-3">
+                                    <Input
+                                        placeholder="Provide business registration number..."
+                                        value={registrationNumber}
+                                        onChange={(e) => setRegistrationNumber(e.target.value)}
+                                    />
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+                </IfAllowed>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
                     {/*<Button disabled={isPending} onClick={(e) => {*/}

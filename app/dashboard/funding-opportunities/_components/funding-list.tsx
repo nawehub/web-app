@@ -27,8 +27,12 @@ import {fundingTypes} from "@/types/funding";
 import {useRouter} from "next/navigation";
 import { IfAllowed } from "@/components/auth/IfAllowed";
 
-export default function FundingList() {
-    const { data, isLoading } = useListOpportunitiesQuery()
+interface FundingListProps {
+    viewType: string;
+}
+
+export default function FundingList({ viewType }: FundingListProps) {
+    const { data, isLoading } = useListOpportunitiesQuery(viewType)
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState<string>("all");
     const [typeFilter, setTypeFilter] = useState<string>("all");
