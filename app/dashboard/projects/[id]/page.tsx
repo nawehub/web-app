@@ -14,7 +14,6 @@ import {
     Calendar,
     DollarSign,
     Users,
-    ThumbsUp,
     MessageCircle,
     Eye,
     Share2,
@@ -23,7 +22,9 @@ import {
     CheckCircle,
     Clock,
     AlertCircle,
-    Send
+    Send,
+    Check,
+    X
 } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
@@ -39,9 +40,8 @@ const sampleProject = {
     category: 'Infrastructure',
     targetAmount: 1000000,
     raisedAmount: 750000,
-    status: 'APPROVED - IMPLEMENTATION ONGOING',
+    status: 'UNDER REVIEW',
     priority: 'High',
-    votes: 245,
     comments: 18,
     views: 1250,
     createdAt: '2024-01-15',
@@ -66,39 +66,21 @@ const sampleProject = {
     timeline: [
         { phase: 'Planning & Design', status: 'completed', date: '2024-01-15' },
         { phase: 'Community Consultation', status: 'completed', date: '2024-02-01' },
-        { phase: 'Construction Phase 1', status: 'in-progress', date: '2024-03-01' },
+        { phase: 'Construction Phase 1', status: 'pending', date: '2024-03-01' },
         { phase: 'Construction Phase 2', status: 'pending', date: '2024-06-01' },
         { phase: 'Final Inspection', status: 'pending', date: '2024-11-01' },
         { phase: 'Project Completion', status: 'pending', date: '2024-12-31' }
     ]
 };
 
-const sampleComments = [
-    {
-        id: '1',
-        author: 'Fatmata Sesay',
-        avatar: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
-        content: 'This is exactly what our market needs! The current conditions are really challenging for vendors.',
-        timestamp: '2024-02-15T10:30:00Z',
-        likes: 12
-    },
-    {
-        id: '2',
-        author: 'Mohamed Kamara',
-        avatar: 'https://images.pexels.com/photos/3184338/pexels-photo-3184338.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
-        content: 'Great initiative! I hope the construction will not disrupt business too much during implementation.',
-        timestamp: '2024-02-14T15:45:00Z',
-        likes: 8
-    },
-    {
-        id: '3',
-        author: 'Aminata Bangura',
-        avatar: 'https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
-        content: 'How can local businesses contribute to this project? We want to support our community.',
-        timestamp: '2024-02-13T09:20:00Z',
-        likes: 15
-    }
-];
+interface Comment {
+    id: string;
+    author: string;
+    avatar: string;
+    content: string;
+    timestamp: string;
+    likes: number;
+}
 
 const getStatusColor = (status: string) => {
     switch (status) {
@@ -127,6 +109,8 @@ const getStatusIcon = (status: string) => {
             return <Eye className="h-3 w-3" />;
         case 'COMPLETED':
             return <CheckCircle className="h-3 w-3" />;
+        case 'REJECTED':
+            return <X className="h-3 w-3" />;
         default:
             return <Clock className="h-3 w-3" />;
     }
@@ -148,11 +132,37 @@ const getTimelineStatus = (status: string) => {
 export default function ProjectDetailPage() {
     const params = useParams();
     const { toast } = useToast();
-    const [hasVoted, setHasVoted] = useState(false);
+    const [projectStatus, setProjectStatus] = useState(sampleProject.status);
     const [newComment, setNewComment] = useState('');
     const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+    const [comments, setComments] = useState<Comment[]>([
+        {
+            id: '1',
+            author: 'Fatmata Sesay',
+            avatar: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
+            content: 'This is exactly what our market needs! The current conditions are really challenging for vendors.',
+            timestamp: '2024-02-15T10:30:00Z',
+            likes: 12
+        },
+        {
+            id: '2',
+            author: 'Mohamed Kamara',
+            avatar: 'https://images.pexels.com/photos/3184338/pexels-photo-3184338.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
+            content: 'Great initiative! I hope the construction will not disrupt business too much during implementation.',
+            timestamp: '2024-02-14T15:45:00Z',
+            likes: 8
+        },
+        {
+            id: '3',
+            author: 'Aminata Bangura',
+            avatar: 'https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
+            content: 'How can local businesses contribute to this project? We want to support our community.',
+            timestamp: '2024-02-13T09:20:00Z',
+            likes: 15
+        }
+    ]);
 
-    const project = sampleProject; // In real app, fetch by params.id
+    const project = { ...sampleProject, status: projectStatus };
 
     const formatCurrency = (amount: number) => {
         return `Le ${amount.toLocaleString()}`;
@@ -170,20 +180,20 @@ export default function ProjectDetailPage() {
         return Math.round((raised / target) * 100);
     };
 
-    const handleVote = () => {
-        if (hasVoted) {
-            toast({
-                title: 'Already voted',
-                description: 'You have already voted for this project.',
-                variant: 'destructive',
-            });
-            return;
-        }
-
-        setHasVoted(true);
+    const handleApprove = () => {
+        setProjectStatus('APPROVED - IMPLEMENTATION ONGOING');
         toast({
-            title: 'Vote submitted',
-            description: 'Thank you for supporting this project!',
+            title: 'Project Approved',
+            description: 'The project has been approved and is now ready for implementation.',
+        });
+    };
+
+    const handleReject = () => {
+        setProjectStatus('REJECTED');
+        toast({
+            title: 'Project Rejected',
+            description: 'The project has been rejected and will not proceed.',
+            variant: 'destructive',
         });
     };
 
@@ -203,6 +213,16 @@ export default function ProjectDetailPage() {
 
         // Simulate API call
         setTimeout(() => {
+            const newCommentObj: Comment = {
+                id: Date.now().toString(),
+                author: 'Current User',
+                avatar: 'https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
+                content: newComment.trim(),
+                timestamp: new Date().toISOString(),
+                likes: 0
+            };
+
+            setComments(prev => [newCommentObj, ...prev]);
             setIsSubmittingComment(false);
             setNewComment('');
             toast({
@@ -217,7 +237,9 @@ export default function ProjectDetailPage() {
         const now = new Date();
         const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
 
-        if (diffInHours < 24) {
+        if (diffInHours < 1) {
+            return 'Just now';
+        } else if (diffInHours < 24) {
             return `${diffInHours}h ago`;
         } else {
             const diffInDays = Math.floor(diffInHours / 24);
@@ -225,11 +247,13 @@ export default function ProjectDetailPage() {
         }
     };
 
+    const canApproveReject = projectStatus === 'PENDING APPROVAL' || projectStatus === 'UNDER REVIEW';
+
     return (
         <div className="space-y-6">
             {/* Header */}
             <div className="flex items-center gap-4">
-                <Link href="/dashboard/projects">
+                <Link href="/dashboard/lyd/projects">
                     <Button variant="ghost" size="sm">
                         <ArrowLeft className="h-4 w-4 mr-2" />
                         Back to Projects
@@ -274,6 +298,36 @@ export default function ProjectDetailPage() {
                         </CardHeader>
                     </Card>
 
+                    {/* Admin Actions */}
+                    {canApproveReject && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Project Actions</CardTitle>
+                                <CardDescription>
+                                    Review and take action on this project
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="flex gap-3">
+                                    <Button
+                                        onClick={handleApprove}
+                                        className="bg-green-600 hover:bg-green-700"
+                                    >
+                                        <Check className="h-4 w-4 mr-2" />
+                                        Approve Project
+                                    </Button>
+                                    <Button
+                                        onClick={handleReject}
+                                        variant="destructive"
+                                    >
+                                        <X className="h-4 w-4 mr-2" />
+                                        Reject Project
+                                    </Button>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
+
                     {/* Funding Progress */}
                     <Card>
                         <CardHeader>
@@ -303,8 +357,8 @@ export default function ProjectDetailPage() {
                                     <p className="text-sm text-muted-foreground">Supporters</p>
                                 </div>
                                 <div className="text-center">
-                                    <div className="text-2xl font-bold text-blue-600">{project.votes}</div>
-                                    <p className="text-sm text-muted-foreground">Votes</p>
+                                    <div className="text-2xl font-bold text-blue-600">{comments.length}</div>
+                                    <p className="text-sm text-muted-foreground">Comments</p>
                                 </div>
                                 <div className="text-center">
                                     <div className="text-2xl font-bold text-purple-600">{project.updates}</div>
@@ -389,7 +443,7 @@ export default function ProjectDetailPage() {
                     {/* Comments Section */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>Community Comments ({sampleComments.length})</CardTitle>
+                            <CardTitle>Community Comments ({comments.length})</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             {/* Add Comment Form */}
@@ -423,7 +477,7 @@ export default function ProjectDetailPage() {
 
                             {/* Comments List */}
                             <div className="space-y-4">
-                                {sampleComments.map((comment) => (
+                                {comments.map((comment) => (
                                     <div key={comment.id} className="flex gap-3">
                                         <Avatar className="w-8 h-8">
                                             <AvatarImage src={comment.avatar} alt={comment.author} />
@@ -439,7 +493,7 @@ export default function ProjectDetailPage() {
                                             <p className="text-sm text-gray-700">{comment.content}</p>
                                             <div className="flex items-center gap-2">
                                                 <Button variant="ghost" size="sm" className="h-6 px-2 text-xs">
-                                                    <ThumbsUp className="h-3 w-3 mr-1" />
+                                                    <Heart className="h-3 w-3 mr-1" />
                                                     {comment.likes}
                                                 </Button>
                                                 <Button variant="ghost" size="sm" className="h-6 px-2 text-xs">
@@ -462,31 +516,8 @@ export default function ProjectDetailPage() {
                             <CardTitle>Support This Project</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <Button
-                                onClick={handleVote}
-                                disabled={hasVoted}
-                                className={cn(
-                                    "w-full",
-                                    hasVoted
-                                        ? "bg-green-500 hover:bg-green-600"
-                                        : "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                                )}
-                            >
-                                {hasVoted ? (
-                                    <>
-                                        <CheckCircle className="h-4 w-4 mr-2" />
-                                        Voted
-                                    </>
-                                ) : (
-                                    <>
-                                        <ThumbsUp className="h-4 w-4 mr-2" />
-                                        Vote for Project
-                                    </>
-                                )}
-                            </Button>
-
                             <Link href="/dashboard/lyd/donate" className="w-full block">
-                                <Button variant="outline" className="w-full">
+                                <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
                                     <DollarSign className="h-4 w-4 mr-2" />
                                     Contribute Funds
                                 </Button>
@@ -536,7 +567,7 @@ export default function ProjectDetailPage() {
 
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">Comments:</span>
-                                    <span>{project.comments}</span>
+                                    <span>{comments.length}</span>
                                 </div>
                             </div>
                         </CardContent>
