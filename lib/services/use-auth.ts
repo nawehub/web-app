@@ -1,4 +1,4 @@
-import {z} from "zod";
+import {string, z} from "zod";
 
 import {api4app} from "@/lib/api4app";
 
@@ -7,9 +7,16 @@ export const registerForm = z.object({
     lastName: z.string().min(2, {message: 'lastName is required'}),
     email: z.string().email({message: 'must be a valid email'}),
     phoneNumber: z.string().min(10, {message: 'phone is required'}),
-    username: z.string().min(5, {message: 'username is required'}),
     gender: z.enum(['Male', 'Female'], { message: 'gender is required' }),
-    role: z.enum(['entrepreneur', 'development-partner'], { message: 'role is required' }),
+    role: z.enum(['Entrepreneur', 'DevelopmentPartner'], { message: 'role is required' }),
+    devPartner: z.object({
+        name: z.string({message: 'partner required'}),
+        description: z.string().optional(),
+        websiteUrl: z.string().optional(),
+        contactEmail: z.string().email({message: 'partner email must be a valid email'}),
+        contactPhone: string().min(9, {message: 'partner phone is required'}),
+        providerType: z.enum(["Government", "NGO", "Private", "Foundation", "Bank", "Corporate", "Individual", "Other"]),
+    }).optional(),
 });
 
 export const loginForm = z.object({

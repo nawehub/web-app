@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { ArrowLeft, Shield } from 'lucide-react';
 import Link from 'next/link';
 import {useAuth} from "@/hooks/context/AuthContext";
@@ -18,7 +18,6 @@ export default function VerifyOTPPage() {
     const [isPending, startTransition] = useTransition();
     const [timeLeft, setTimeLeft] = useState(1800); // 30 minutes in seconds
     const router = useRouter();
-    const { toast } = useToast();
     const { setAuthData } = useAuth();
     const verifyOtp = useVerifyOtpMutation();
 
@@ -58,10 +57,8 @@ export default function VerifyOTPPage() {
         e.preventDefault();
 
         if (otp.length !== 8) {
-            toast({
-                title: 'Invalid OTP',
-                description: 'Please enter the complete 8-digit OTP.',
-                variant: 'destructive',
+            toast('Invalid OTP', {
+                description: 'Please enter the complete 8-digit OTP.'
             });
             return;
         }
@@ -72,18 +69,15 @@ export default function VerifyOTPPage() {
                     userId,
                     otp: otp,
                 });
-                toast({
-                    title: 'Email verified successfully',
+                toast('Email verified successfully', {
                     description: 'Please create your password to complete registration.',
                 });
                 console.log({response})
                 setAuthData(response.accessToken, response.refreshToken, response.user);
                 router.push('/set-password');
             } catch (error) {
-                toast({
-                    title: 'Verification failed',
+                toast('Verification failed', {
                     description: 'Invalid or expired OTP. Please try again.',
-                    variant: 'destructive',
                 });
             }
         });
@@ -91,8 +85,7 @@ export default function VerifyOTPPage() {
 
     const handleResendOTP = () => {
         // In a real app, you'd call an API to resend OTP
-        toast({
-            title: 'OTP Resent',
+        toast('OTP Resent', {
             description: 'A new OTP has been sent to your email.',
         });
         setTimeLeft(1800); // Reset timer

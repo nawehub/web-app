@@ -19,7 +19,7 @@ import {createProviderForm} from "@/lib/services/funding";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {useToast} from "@/hooks/use-toast";
+import {toast} from "sonner";
 import {Icons} from "@/components/ui/icon";
 import {formatResponse} from "@/utils/format-response";
 
@@ -29,7 +29,6 @@ export default function CreateProviderModal() {
     const [openModal, setOpenModal] = React.useState(false);
     const [isPending, startTransition] = useTransition();
     const [loading, setLoading] = useState(false);
-    const {toast} = useToast();
 
     const createProvider = useCreateProviderMutation();
     const form = useForm<z.infer<typeof createProviderForm>>({
@@ -59,18 +58,14 @@ export default function CreateProviderModal() {
         startTransition(async () => {
             try {
                 const response = await createProvider.mutateAsync(values);
-                toast({
-                    title: 'Provider Created',
-                    description: response.message,
-                    variant: 'default',
+                toast('Provider Created',{
+                    description: response.message
                 });
                 form.reset();
                 setOpenModal(false);
             } catch (error) {
-                toast({
-                    title: 'Registration failed',
+                toast('Registration failed', {
                     description: `${error instanceof Error ? formatResponse(error.message) : 'An unknown error occurred'}`,
-                    variant: 'destructive',
                 });
             } finally {
                 setLoading(false);

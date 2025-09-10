@@ -6,7 +6,7 @@ import {Button} from '@/components/ui/button';
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from '@/components/ui/card';
 import {Input} from '@/components/ui/input';
 import {Label} from '@/components/ui/label';
-import {useToast} from '@/hooks/use-toast';
+import {toast} from 'sonner';
 import {ArrowLeft, Key, Eye, EyeOff, Check, X} from 'lucide-react';
 import Link from 'next/link';
 import {useAuth} from "@/hooks/context/AuthContext";
@@ -20,7 +20,6 @@ export default function SetPasswordPage() {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isPending, startTransition] = useTransition();
     const router = useRouter();
-    const {toast} = useToast();
     const {token, setAuthData, user} = useAuth();
     const createPassword = useSetPasswordMutation();
 
@@ -48,19 +47,15 @@ export default function SetPasswordPage() {
         e.preventDefault();
 
         if (!isPasswordValid) {
-            toast({
-                title: 'Invalid password',
+            toast('Invalid password', {
                 description: 'Please ensure your password meets all requirements.',
-                variant: 'destructive',
             });
             return;
         }
 
         if (!doPasswordsMatch) {
-            toast({
-                title: 'Passwords do not match',
+            toast('Passwords do not match', {
                 description: 'Please ensure both passwords are identical.',
-                variant: 'destructive',
             });
             return;
         }
@@ -85,17 +80,14 @@ export default function SetPasswordPage() {
                     throw new Error(result.error);
                 }
 
-                toast({
-                    title: 'Password created successfully',
+                toast('Password created successfully', {
                     description: 'Your account is now ready. Please sign in.',
                 });
                 setAuthData(response.accessToken, response.refreshToken, response.user);
                 router.push('/dashboard');
             } catch (error) {
-                toast({
-                    title: 'Password setup failed',
+                toast('Password setup failed', {
                     description: 'Please try again or contact support.',
-                    variant: 'destructive',
                 });
             }
         });

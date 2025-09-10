@@ -14,6 +14,13 @@ export const useListProvidersQuery = () => {
     });
 }
 
+export const useGetProviderQuery = (id: string) => {
+    return useQuery({
+        queryKey: ['provider', id],
+        queryFn: async () => await fundingService().providers.getOne(id)
+    });
+}
+
 export function useCreateProviderMutation() {
     return useMutation({
         mutationFn: (data: z.infer<typeof createProviderForm>) => fundingService().providers.create(data),

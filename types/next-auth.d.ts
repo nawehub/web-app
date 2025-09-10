@@ -17,6 +17,9 @@ declare module "next-auth" {
             phone: string
             gender: string
             status: string
+            approved: boolean
+            devPartnerId: string,
+            devPartnerName: string,
             roles: Array<{
                 id: string
                 name: string
@@ -42,6 +45,9 @@ declare module "next-auth" {
         phone: string
         gender: string
         status: string
+        approved: boolean
+        devPartnerId: string,
+        devPartnerName: string,
         roles: Array<{
             id: string
             name: string
@@ -70,6 +76,9 @@ declare module "next-auth/jwt" {
             phone: string
             gender: string
             status: string
+            approved: boolean
+            devPartnerId: string,
+            devPartnerName: string,
             roles: Array<{
                 id: string
                 name: string

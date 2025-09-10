@@ -88,6 +88,16 @@ export const fundingService = () => {
 
                 return response as Promise<ProviderListResponse>
             },
+            getOne: async (id: string) => {
+                const response = await api4app('/funding/providers/' + id, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+
+                return response as Promise<FundingProvider>
+            },
             create: async (req: z.infer<typeof createProviderForm>) => {
                 const resp = await api4app('/funding/providers', {
                     method: 'POST',

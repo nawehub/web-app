@@ -6,7 +6,7 @@ import {Providers} from "@/lib/providers/providers";
 import {AuthProvider} from "@/hooks/context/AuthContext";
 import {AuthErrorBoundary} from "@/components/AuthErrorBoundary";
 import {ThemeProvider} from "@/components/theme-provider";
-import {Toaster} from "@/components/ui/toaster";
+import {Toaster} from "@/components/ui/sonner";
 
 const inter = Inter({subsets: ["latin"]});
 
@@ -32,7 +32,7 @@ export default function RootLayout({
                         </AuthErrorBoundary>
                     </Providers>
                 </AuthProvider>
-                <Toaster/>
+                <Toaster />
             </ThemeProvider>
             </body>
         </html>

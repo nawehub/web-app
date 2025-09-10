@@ -13,6 +13,7 @@ const HeaderNavs = [
     { name: "Home", link: "/" },
     { name: "Love Your District", link: "/lyd" },
     { name: "Services", link: "/services" },
+    { name: "LYD Projects", link: "/lyd-projects" },
     { name: "Contact Us", link: "/contact" },
     { name: "FAQ", link: "/faq" },
 ];

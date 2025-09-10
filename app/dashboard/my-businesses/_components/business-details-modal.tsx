@@ -337,7 +337,9 @@ export function BusinessDetailsModal({
                                         className="text-green-600 hover:text-green-700 bg-transparent"
                                         onClick={(e) => {
                                             e.preventDefault()
-                                            onStatusChange("Approve")
+                                            if (onStatusChange) {
+                                                onStatusChange("Approve")
+                                            }
                                             showAlert(true)
                                         }}
                                     >
@@ -350,7 +352,9 @@ export function BusinessDetailsModal({
                                         className="text-red-600 hover:text-red-700 bg-transparent"
                                         onClick={(e) => {
                                             e.preventDefault()
-                                            onStatusChange("Reject")
+                                            if (onStatusChange) {
+                                                onStatusChange("Reject")
+                                            }
                                             showAlert(true)
                                         }}
                                     >

@@ -97,10 +97,6 @@ export function ApproveRejectDialog({businessId, action, openAlert, openAlertAct
                 </IfAllowed>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
-                    {/*<Button disabled={isPending} onClick={(e) => {*/}
-                    {/*    e.preventDefault()*/}
-                    {/*    handleApproveReject().then()*/}
-                    {/*}}>{action}</Button>*/}
                     <AlertDialogAction disabled={isPending} onClick={(e) => {
                         e.preventDefault()
                         handleApproveReject().then()

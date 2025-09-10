@@ -55,6 +55,7 @@ export const authOptions: NextAuthOptions = {
                             phone: data.user.phone as string,
                             gender: data.user.gender as string,
                             status: data.user.status as string,
+                            approved: data.user.approved, // important
                             roles: data.user.roles as [],
                             accessToken: data.accessToken as string,
                             refreshToken: data.refreshToken as string,
@@ -82,30 +83,41 @@ export const authOptions: NextAuthOptions = {
             return true;
         },
         jwt: async function ({token, user}) {
+            // On initial sign-in, mirror user + approved to top-level token
             if (user) {
                 return {
                     ...token,
-                    accessToken: user.accessToken,
-                    refreshToken: user.refreshToken,
-                    expiresIn: user.expiresIn,
-                    user: user,
-                }
+                    accessToken: (user as any).accessToken,
+                    refreshToken: (user as any).refreshToken,
+                    expiresIn: (user as any).expiresIn,
+                    user: user as any,
+                    approved: Boolean((user as any).approved), // add top-level approved
+                };
             }
 
-            // Return the previous token if the access token has not expired
-            if (Date.now() < token.expiresIn) {
+            // If the access token hasn't expired, keep the token as-is
+            if (Date.now() < (token.expiresIn as number)) {
                 return token;
             }
 
-            // Access token expired, try to refresh it
-            return refreshAccessToken(token);
+            // Access token expired, try to refresh it and preserve approved + user
+            const refreshed = await refreshAccessToken(token);
+            return {
+                ...refreshed,
+                approved: (token as any).approved,
+                user: (token as any).user,
+            };
         },
         async session({ session, token }) {
-            session.accessToken = token.accessToken;
-            session.refreshToken = token.refreshToken
-            session.expiresIn = token.expiresIn
-            session.user = token.user
-            session.error = token.error
+            session.accessToken = token.accessToken as string;
+            session.refreshToken = token.refreshToken as string;
+            session.expiresIn = token.expiresIn as number;
+            session.user = token.user as any;
+            // ensure session.user.approved matches token.approved
+            if (session.user) {
+                (session.user as any).approved = Boolean((token as any).approved ?? (session.user as any).approved);
+            }
+            session.error = (token as any).error;
             return session;
         },
     },
@@ -114,7 +126,6 @@ export const authOptions: NextAuthOptions = {
         maxAge: 30 * 24 * 60 * 60, // 30 days
     },
 };
-
 
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
