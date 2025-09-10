@@ -7,7 +7,7 @@ export const services = [
         subTitle: "(what they gain)",
         badge: "Providers",
         description: "A centralized platform to reach vetted entrepreneurs, track impact, and channel resources more effectively for sustainable development.",
-        illustration: "/images/benefit/dev-partners.png"
+        illustration: "/images/benefit/partner-img.jpeg"
     },
     {
         icon: Brain,
@@ -15,7 +15,7 @@ export const services = [
         subTitle: "(what they get)",
         badge: "Brains",
         description: "Access to funding opportunities, business resources, registration support, and increased visibility to investors and partners.",
-        illustration: "/images/benefit/entrepreneur.png"
+        illustration: "/images/benefit/entre-img.jpeg"
     },
     {
         icon: Heart,
@@ -23,6 +23,6 @@ export const services = [
         subTitle: "(why they should contribute)",
         badge: "Lovers",
         description: "An easy, transparent way to fund local projects, strengthen home-district development, and gain recognition as contributors/taxpayers driving positive change.",
-        illustration: "/images/benefit/love.png"
+        illustration: "/images/benefit/love-img.jpeg"
     },
 ];
