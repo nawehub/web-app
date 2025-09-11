@@ -134,14 +134,14 @@ export default function Login() {
                     </div>
                     {/* SSO Buttons */}
                     <div className="mt-6 space-y-2">
-                        <Button
-                            variant="outline"
-                            className="w-full flex items-center justify-center gap-2 bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-lg py-2.5 text-base font-normal"
-                            onClick={() => handleSocialLogin("google")}
-                        >
-                            <FcGoogle className="h-5 w-5"/>
-                            Continue with Google
-                        </Button>
+                        {/*<Button*/}
+                        {/*    variant="outline"*/}
+                        {/*    className="w-full flex items-center justify-center gap-2 bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-lg py-2.5 text-base font-normal"*/}
+                        {/*    onClick={() => handleSocialLogin("google")}*/}
+                        {/*>*/}
+                        {/*    <FcGoogle className="h-5 w-5"/>*/}
+                        {/*    Continue with Google*/}
+                        {/*</Button>*/}
                         {/*<Button*/}
                         {/*    variant="outline"*/}
                         {/*    className="w-full flex items-center justify-center gap-2 bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-lg py-2.5 text-base font-normal"*/}
