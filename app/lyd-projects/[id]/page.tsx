@@ -28,6 +28,7 @@ import {toast} from 'sonner';
 import {cn} from '@/lib/utils';
 import AppHeader from "@/components/public/app-header";
 import {useIsMobile} from "@/hooks/use-mobile";
+import {getSampleProject} from "@/types/project";
 
 // Sample project data - in real app this would come from API
 const sampleProject = {
@@ -128,7 +129,7 @@ const getTimelineStatus = (status: string) => {
 };
 
 export default function ProjectDetailPage() {
-    const params = useParams();
+    const { id } = useParams();
     const [projectStatus, setProjectStatus] = useState(sampleProject.status);
     const [newComment, setNewComment] = useState('');
     const [isSubmittingComment, setIsSubmittingComment] = useState(false);
@@ -136,31 +137,15 @@ export default function ProjectDetailPage() {
     const [comments, setComments] = useState<Comment[]>([
         {
             id: '1',
-            author: 'Fatmata Sesay',
+            author: 'James Ramsey',
             avatar: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
             content: 'This is exactly what our market needs! The current conditions are really challenging for vendors.',
             timestamp: '2024-02-15T10:30:00Z',
             likes: 12
         },
-        {
-            id: '2',
-            author: 'Mohamed Kamara',
-            avatar: 'https://images.pexels.com/photos/3184338/pexels-photo-3184338.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
-            content: 'Great initiative! I hope the construction will not disrupt business too much during implementation.',
-            timestamp: '2024-02-14T15:45:00Z',
-            likes: 8
-        },
-        {
-            id: '3',
-            author: 'Aminata Bangura',
-            avatar: 'https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
-            content: 'How can local businesses contribute to this project? We want to support our community.',
-            timestamp: '2024-02-13T09:20:00Z',
-            likes: 15
-        }
     ]);
 
-    const project = {...sampleProject, status: projectStatus};
+    const project = getSampleProject(id as string);
 
     const formatCurrency = (amount: number) => {
         return `Le ${amount.toLocaleString()}`;
@@ -262,9 +247,9 @@ export default function ProjectDetailPage() {
                             <CardHeader>
                                 <div className="flex items-start justify-between">
                                     <div className="flex-1">
-                                        <CardTitle className="text-2xl mb-2">{project.title}</CardTitle>
+                                        <CardTitle className="text-2xl mb-2">{project?.title}</CardTitle>
                                         <CardDescription className="text-base leading-relaxed">
-                                            {project.description}
+                                            {project?.description}
                                         </CardDescription>
                                     </div>
                                     <div className="flex gap-2 ml-4">
@@ -280,12 +265,12 @@ export default function ProjectDetailPage() {
                                 <div className="flex items-center gap-4 mt-4">
                                     <div className="flex items-center gap-1 text-sm text-muted-foreground">
                                         <MapPin className="h-4 w-4"/>
-                                        <span>{project.district} District</span>
+                                        <span>{project?.district} District</span>
                                     </div>
-                                    <Badge variant="outline">{project.category}</Badge>
-                                    <Badge className={cn("text-white", getStatusColor(project.status))}>
-                                        {getStatusIcon(project.status)}
-                                        <span className="ml-1">{project.status}</span>
+                                    <Badge variant="outline">{project?.category}</Badge>
+                                    <Badge className={cn("text-white", getStatusColor(project?.status!))}>
+                                        {getStatusIcon(project?.status!)}
+                                        <span className="ml-1">{project?.status}</span>
                                     </Badge>
                                 </div>
                             </CardHeader>
@@ -301,22 +286,22 @@ export default function ProjectDetailPage() {
                                     <div className="flex justify-between text-sm">
                                         <span className="font-medium">Progress</span>
                                         <span className="text-muted-foreground">
-                                        {getProgressPercentage(project.raisedAmount, project.targetAmount)}%
+                                        {getProgressPercentage(project?.raisedAmount!, project?.targetAmount!)}%
                                     </span>
                                     </div>
                                     <Progress
-                                        value={getProgressPercentage(project.raisedAmount, project.targetAmount)}
+                                        value={getProgressPercentage(project?.raisedAmount!, project?.targetAmount!)}
                                         className="h-3"
                                     />
                                     <div className="flex justify-between text-sm text-muted-foreground">
-                                        <span>{formatCurrency(project.raisedAmount)} raised</span>
-                                        <span>of {formatCurrency(project.targetAmount)} goal</span>
+                                        <span>{formatCurrency(project?.raisedAmount!)} raised</span>
+                                        <span>of {formatCurrency(project?.targetAmount!)} goal</span>
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-3 gap-4 pt-4 border-t">
                                     <div className="text-center">
-                                        <div className="text-2xl font-bold text-green-600">{project.supporters}</div>
+                                        <div className="text-2xl font-bold text-green-600">{project?.supporters}</div>
                                         <p className="text-sm text-muted-foreground">Supporters</p>
                                     </div>
                                     <div className="text-center">
@@ -324,7 +309,7 @@ export default function ProjectDetailPage() {
                                         <p className="text-sm text-muted-foreground">Comments</p>
                                     </div>
                                     <div className="text-center">
-                                        <div className="text-2xl font-bold text-purple-600">{project.updates}</div>
+                                        <div className="text-2xl font-bold text-purple-600">{project?.updates}</div>
                                         <p className="text-sm text-muted-foreground">Updates</p>
                                     </div>
                                 </div>
@@ -340,7 +325,7 @@ export default function ProjectDetailPage() {
                                 <div>
                                     <h3 className="font-semibold mb-3">Objectives</h3>
                                     <ul className="space-y-2">
-                                        {project.objectives.map((objective, index) => (
+                                        {project?.objectives.map((objective, index) => (
                                             <li key={index} className="flex items-start gap-2">
                                                 <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0"/>
                                                 <span className="text-sm">{objective}</span>
@@ -354,7 +339,7 @@ export default function ProjectDetailPage() {
                                 <div>
                                     <h3 className="font-semibold mb-3">Expected Outcomes</h3>
                                     <ul className="space-y-2">
-                                        {project.expectedOutcomes.map((outcome, index) => (
+                                        {project?.expectedOutcomes.map((outcome, index) => (
                                             <li key={index} className="flex items-start gap-2">
                                                 <TrendingUp className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0"/>
                                                 <span className="text-sm">{outcome}</span>
@@ -372,7 +357,7 @@ export default function ProjectDetailPage() {
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-4">
-                                    {project.timeline.map((phase, index) => (
+                                    {project?.timeline?.map((phase, index) => (
                                         <div key={index} className="flex items-center gap-4">
                                             <div className={cn(
                                                 "w-4 h-4 rounded-full flex-shrink-0",
@@ -382,8 +367,8 @@ export default function ProjectDetailPage() {
                                                 <div className="flex items-center justify-between">
                                                     <span className="font-medium">{phase.phase}</span>
                                                     <span className="text-sm text-muted-foreground">
-                          {formatDate(phase.date)}
-                        </span>
+                                                        {formatDate(phase.date)}
+                                                    </span>
                                                 </div>
                                                 <Badge
                                                     variant="outline"
@@ -450,8 +435,8 @@ export default function ProjectDetailPage() {
                                                 <div className="flex items-center gap-2">
                                                     <span className="font-medium text-sm">{comment.author}</span>
                                                     <span className="text-xs text-muted-foreground">
-                          {timeAgo(comment.timestamp)}
-                        </span>
+                                                        {timeAgo(comment.timestamp)}
+                                                    </span>
                                                 </div>
                                                 <p className="text-sm text-gray-700">{comment.content}</p>
                                                 <div className="flex items-center gap-2">
@@ -479,13 +464,13 @@ export default function ProjectDetailPage() {
                                 <CardTitle>Support This Project</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <Link href="/dashboard/lyd/donate" className="w-full block">
-                                    <Button
+                                <div className="w-full block">
+                                    <Button onClick={() => window.alert('Supporting this project is coming soon!')}
                                         className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
                                         <DollarSign className="h-4 w-4 mr-2"/>
                                         Contribute Funds
                                     </Button>
-                                </Link>
+                                </div>
                             </CardContent>
                         </Card>
 
@@ -498,36 +483,31 @@ export default function ProjectDetailPage() {
                                 <div className="space-y-3 text-sm">
                                     <div className="flex justify-between">
                                         <span className="text-muted-foreground">Created by:</span>
-                                        <span className="font-medium">{project.createdBy}</span>
+                                        <span className="font-medium">{project?.createdBy}</span>
                                     </div>
 
                                     <div className="flex justify-between">
                                         <span className="text-muted-foreground">Created:</span>
-                                        <span>{formatDate(project.createdAt)}</span>
+                                        <span>{formatDate(project?.createdAt!)}</span>
                                     </div>
 
                                     <div className="flex justify-between">
                                         <span className="text-muted-foreground">Deadline:</span>
-                                        <span>{formatDate(project.deadline)}</span>
+                                        <span>{formatDate(project?.deadline!)}</span>
                                     </div>
 
                                     <div className="flex justify-between">
                                         <span className="text-muted-foreground">Priority:</span>
                                         <Badge variant="outline" className={cn(
-                                            project.priority === 'High' && "border-red-500 text-red-700",
-                                            project.priority === 'Medium' && "border-yellow-500 text-yellow-700",
-                                            project.priority === 'Low' && "border-green-500 text-green-700"
+                                            project?.priority === 'High' && "border-red-500 text-red-700",
+                                            project?.priority === 'Medium' && "border-yellow-500 text-yellow-700",
+                                            project?.priority === 'Low' && "border-green-500 text-green-700"
                                         )}>
-                                            {project.priority}
+                                            {project?.priority}
                                         </Badge>
                                     </div>
 
                                     <Separator/>
-
-                                    <div className="flex justify-between">
-                                        <span className="text-muted-foreground">Views:</span>
-                                        <span>{project.views.toLocaleString()}</span>
-                                    </div>
 
                                     <div className="flex justify-between">
                                         <span className="text-muted-foreground">Comments:</span>
@@ -542,7 +522,7 @@ export default function ProjectDetailPage() {
                             <CardHeader>
                                 <CardTitle>Related Projects</CardTitle>
                                 <CardDescription>
-                                    Other projects in {project.district}
+                                    Other projects in {project?.district}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>

@@ -1,6 +1,7 @@
 import NextAuth from "next-auth"
 import { DefaultSession } from "next-auth";
 import {User} from "@/types/api-types";
+import {UserRole} from "@/types/user";
 
 declare module "next-auth" {
     interface Session {
@@ -20,16 +21,7 @@ declare module "next-auth" {
             approved: boolean
             devPartnerId: string,
             devPartnerName: string,
-            roles: Array<{
-                id: string
-                name: string
-                description: string
-                permissions: Array<{
-                    id: string
-                    name: string
-                    description: string
-                }>
-            }>
+            role: UserRole
         } & DefaultSession["user"];
     }
 
@@ -48,16 +40,7 @@ declare module "next-auth" {
         approved: boolean
         devPartnerId: string,
         devPartnerName: string,
-        roles: Array<{
-            id: string
-            name: string
-            description: string
-            permissions: Array<{
-                id: string
-                name: string
-                description: string
-            }>
-        }>
+        role: UserRole
     }
 }
 
@@ -79,16 +62,7 @@ declare module "next-auth/jwt" {
             approved: boolean
             devPartnerId: string,
             devPartnerName: string,
-            roles: Array<{
-                id: string
-                name: string
-                description: string
-                permissions: Array<{
-                    id: string
-                    name: string
-                    description: string
-                }>
-            }>
+            role: UserRole
         };
     }
 }

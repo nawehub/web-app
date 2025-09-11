@@ -12,8 +12,14 @@ export type User = {
     rejected: boolean,
     devPartnerId: string,
     devPartnerName: string,
+    role: UserRole,
     createdAt: Date,
     updatedAt: Date
+}
+
+export type UserRole = {
+    name: string,
+    permissions: string[]
 }
 
 export type UserListResponse = { users: User[], total: number }

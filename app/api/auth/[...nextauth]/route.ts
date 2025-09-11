@@ -4,6 +4,7 @@ import GoogleProvider from "next-auth/providers/google";
 import AppleProvider from "next-auth/providers/apple";
 import GithubProvider from "next-auth/providers/github";
 import {refreshAccessToken} from "@/lib/auth";
+import {UserRole} from "@/types/user";
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -56,7 +57,7 @@ export const authOptions: NextAuthOptions = {
                             gender: data.user.gender as string,
                             status: data.user.status as string,
                             approved: data.user.approved, // important
-                            roles: data.user.roles as [],
+                            role: data.user.role as UserRole,
                             accessToken: data.accessToken as string,
                             refreshToken: data.refreshToken as string,
                             expiresIn: data.expiresIn as number,

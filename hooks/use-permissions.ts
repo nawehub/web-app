@@ -1,72 +1,55 @@
 import {signOut, useSession} from 'next-auth/react';
-// import {Role} from "@/types/api-types";
 import {redirect} from "next/navigation";
-
-export function usePermissions1() {
-    const { data: session } = useSession();
-    const hasPermission = (permissionId: string) => {
-        return session?.user.roles.some((role: Role) =>
-            role.permissions?.some(permission => permission.id === permissionId)
-        );
-    };
-    const hasRole = (roleId: string) => {
-        return session?.user.roles.some((role: Role) => role.id === roleId);
-    };
-    return { hasPermission, hasRole };
-}
+import {UserRole} from "@/types/user";
 
 type Permission = { id: string };
-type Role = { id: string; name?: string; permissions?: Permission[] };
-type UserLike = { roles?: Role[] | null } | null | undefined;
+type UserLike = { role?: UserRole | null } | null | undefined;
 
 const norm = (v?: string | null) => (v ?? '').trim().toLowerCase();
 
 const collectPermissionIds = (user: UserLike): Set<string> => {
     const set = new Set<string>();
-    user?.roles?.forEach(role => {
-        role?.permissions?.forEach(p => {
-            if (p?.id) set.add(norm(p.id));
-        });
+    user?.role?.permissions?.forEach(p => {
+        if (p) set.add(norm(p));
     });
     return set;
 };
 
 export const isAdmin = (user: UserLike): boolean =>
-    !!user?.roles?.some(r => norm(r?.id) === 'admin' || norm(r?.name) === 'admin');
+    user?.role?.name === "admin";
 
 export const isEntrepreneur = (user: UserLike): boolean =>
-    !!user?.roles?.some(r => norm(r?.id) === 'entrepreneur' || norm(r?.name) === 'entrepreneur');
+    user?.role?.name === "entrepreneur";
 
 export const isDevPartner = (user: UserLike): boolean =>
-    !!user?.roles?.some(r => norm(r?.id) === 'development-partner' || norm(r?.name) === 'development-partner');
+    user?.role?.name === "development-partner";
 
-export const hasRole = (user: UserLike, roleIdOrName: string): boolean => {
-    if (!user?.roles?.length) return false;
+export const hasRole = (user: UserLike, roleName: string): boolean => {
+    if (!user?.role) return false;
     if (isAdmin(user)) return true; // admin shortcut
-    const target = norm(roleIdOrName);
-    return user.roles.some(r => norm(r?.id) === target || norm(r?.name) === target);
+    return user.role.name === roleName;
 };
 
-export const hasPermission = (user: UserLike, permissionId: string): boolean => {
-    if (!permissionId) return false;
+export const hasPermission = (user: UserLike, permission: string): boolean => {
+    if (!permission) return false;
     if (isAdmin(user)) return true; // admin shortcut
-    const target = norm(permissionId);
+    const target = norm(permission);
     const userPerms = collectPermissionIds(user);
     return userPerms.has(target);
 };
 
-export const hasAnyPermission = (user: UserLike, permissionIds: string[]): boolean => {
-    if (!permissionIds?.length) return false;
+export const hasAnyPermission = (user: UserLike, permissions: string[]): boolean => {
+    if (!permissions?.length) return false;
     if (isAdmin(user)) return true; // admin shortcut
     const userPerms = collectPermissionIds(user);
-    return permissionIds.some(p => userPerms.has(norm(p)));
+    return permissions.some(p => userPerms.has(norm(p)));
 };
 
-export const hasAllPermissions = (user: UserLike, permissionIds: string[]): boolean => {
-    if (!permissionIds?.length) return false;
+export const hasAllPermissions = (user: UserLike, permissions: string[]): boolean => {
+    if (!permissions?.length) return false;
     if (isAdmin(user)) return true; // admin shortcut
     const userPerms = collectPermissionIds(user);
-    return permissionIds.every(p => userPerms.has(norm(p)));
+    return permissions.every(p => userPerms.has(norm(p)));
 };
 
 // React-friendly API: bind to a specific user (e.g., from your session)
@@ -79,10 +62,10 @@ export function usePermissions() {
     const user = session.user;
     return {
         isAdmin: () => isAdmin(user),
-        hasRole: (roleIdOrName: string) => hasRole(user, roleIdOrName),
-        hasPermission: (permissionId: string) => hasPermission(user, permissionId),
-        hasAnyPermission: (permissionIds: string[]) => hasAnyPermission(user, permissionIds),
-        hasAllPermissions: (permissionIds: string[]) => hasAllPermissions(user, permissionIds),
+        hasRole: (roleName: string) => hasRole(user, roleName),
+        hasPermission: (permission: string) => hasPermission(user, permission),
+        hasAnyPermission: (permissions: string[]) => hasAnyPermission(user, permissions),
+        hasAllPermissions: (permissions: string[]) => hasAllPermissions(user, permissions),
         // Small alias that accepts either role or permission
         can: (opts: { role?: string; permission?: string; anyOf?: string[]; allOf?: string[] }) => {
             if (isAdmin(user)) return true;

@@ -1,4 +1,35 @@
-export const sampleProjects = [
+export type ProjectStatus = 'APPROVED - IMPLEMENTATION ONGOING' | 'PENDING APPROVAL' | 'UNDER REVIEW' | 'APPROVED - IMPLEMENTATION COMPLETE' | 'REJECTED';
+
+export type ProjectPriority = 'Low' | 'Medium' | 'High';
+
+export type ProjectTimelineItem = {
+    phase: string;
+    status: 'completed' | 'pending' | 'in-progress';
+    date: string;
+};
+
+export type Project = {
+    id: string;
+    title: string;
+    description: string;
+    district: string;
+    category: string;
+    targetAmount: number;
+    raisedAmount: number;
+    status: ProjectStatus;
+    priority: ProjectPriority;
+    comments: number;
+    createdAt: string;
+    deadline: string;
+    createdBy: string;
+    supporters: number;
+    updates: number;
+    objectives: string[];
+    expectedOutcomes: string[];
+    timeline?: ProjectTimelineItem[];
+}
+
+export const sampleProjects: Project[] = [
     {
         id: '1',
         title: 'Bo Community Market Renovation',
@@ -9,9 +40,7 @@ export const sampleProjects = [
         raisedAmount: 750000,
         status: 'APPROVED - IMPLEMENTATION ONGOING',
         priority: 'High',
-        votes: 245,
         comments: 18,
-        views: 1250,
         createdAt: '2024-01-15',
         deadline: '2024-12-31',
         createdBy: 'Bo District Council',
@@ -50,9 +79,7 @@ export const sampleProjects = [
         raisedAmount: 900000,
         status: 'APPROVED - IMPLEMENTATION ONGOING',
         priority: 'High',
-        votes: 312,
         comments: 24,
-        views: 1890,
         createdAt: '2024-02-01',
         deadline: '2024-11-30',
         createdBy: 'Freetown City Council',
@@ -91,9 +118,7 @@ export const sampleProjects = [
         raisedAmount: 600000,
         status: 'APPROVED - IMPLEMENTATION ONGOING',
         priority: 'Medium',
-        votes: 189,
         comments: 12,
-        views: 980,
         createdAt: '2024-01-20',
         deadline: '2024-10-15',
         createdBy: 'Kenema District Council',
@@ -132,9 +157,7 @@ export const sampleProjects = [
         raisedAmount: 450000,
         status: 'UNDER REVIEW',
         priority: 'Medium',
-        votes: 156,
         comments: 9,
-        views: 720,
         createdAt: '2024-02-10',
         deadline: '2024-09-30',
         createdBy: 'Makeni City Council',
@@ -173,9 +196,7 @@ export const sampleProjects = [
         raisedAmount: 350000,
         status: 'UNDER REVIEW',
         priority: 'High',
-        votes: 203,
         comments: 15,
-        views: 1100,
         createdAt: '2024-01-25',
         deadline: '2024-08-31',
         createdBy: 'Kono District Council',
@@ -214,9 +235,7 @@ export const sampleProjects = [
         raisedAmount: 200000,
         status: 'PENDING APPROVAL',
         priority: 'Medium',
-        votes: 89,
         comments: 6,
-        views: 450,
         createdAt: '2024-02-15',
         deadline: '2025-03-31',
         createdBy: 'Port Loko District Council',
@@ -246,3 +265,7 @@ export const sampleProjects = [
         ]
     }
 ];
+
+export const getSampleProject = (id: string) => {
+    return sampleProjects.find(project => project.id === id);
+}
