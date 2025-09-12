@@ -35,10 +35,10 @@ export const eventService = () => {
                 })
                 return response as Promise<CreateEventResponse>
             },
-            approveRejectEvent: async (eventId: string, data: approveOrRejectEventForm) => {
+            approveRejectEvent: async (eventId: string, data: z.infer<typeof approveOrRejectEventForm>) => {
                 const response = await api4app('/events/' + eventId, {
                     method: 'PUT',
-                    body: data,
+                    body: JSON.stringify(data),
                 })
                 return response as Promise<CreateEventResponse>
             }

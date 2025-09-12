@@ -1,6 +1,6 @@
 // OpportunitiesGrid.tsx
 import React from "react";
-import type {FundingOpportunityDto} from "@/lib/types/opportunity"; // adjust import to your path
+import type {FundingOpportunityDto} from "@/types/funding"; // adjust import to your path
 import {AnimatePresence, motion} from "framer-motion";
 import {ArrowRight, CalendarDays, Eye, Landmark, Star,} from "lucide-react";
 import clsx from "clsx";
@@ -116,7 +116,8 @@ export type OpportunitiesGridProps = {
 
 };
 
-export function OpportunitiesGrid({ viewType, onView, onApply, showApply = false, emptyState,
+export function OpportunitiesGrid({
+                                      viewType, onView, onApply, showApply = false, emptyState,
                                       titles = {
                                           featured: "Featured Opportunities",
                                           others: "All Opportunities",
@@ -127,7 +128,7 @@ export function OpportunitiesGrid({ viewType, onView, onApply, showApply = false
                                       },
 
                                   }: OpportunitiesGridProps) {
-    const { data, isLoading: loading } = useListOpportunitiesQuery(viewType)
+    const {data, isLoading: loading} = useListOpportunitiesQuery(viewType)
     const featured = (data?.opportunities || []).filter((o) => o.isFeatured);
     const others = (data?.opportunities || [])
         .filter((o) => !o.isFeatured)
@@ -144,11 +145,11 @@ export function OpportunitiesGrid({ viewType, onView, onApply, showApply = false
         return (
             <motion.div
                 key={opp.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2, delay: idx * 0.02 }}
-                whileHover={{ y: -4 }}
+                initial={{opacity: 0, y: 10}}
+                animate={{opacity: 1, y: 0}}
+                exit={{opacity: 0, y: -10}}
+                transition={{duration: 0.2, delay: idx * 0.02}}
+                whileHover={{y: -4}}
                 className={clsx(
                     "group relative flex h-full flex-col overflow-hidden rounded-xl border-2 p-5",
                     "border-slate-100 bg-white hover:border-emerald-200 hover:shadow-lg",
@@ -159,7 +160,7 @@ export function OpportunitiesGrid({ viewType, onView, onApply, showApply = false
                 {opp.isFeatured && (
                     <div className="absolute right-3 top-3">
                         <Badge variant="featured">
-                            <Star className="h-3.5 w-3.5" />
+                            <Star className="h-3.5 w-3.5"/>
                             Featured
                         </Badge>
                     </div>
@@ -172,7 +173,7 @@ export function OpportunitiesGrid({ viewType, onView, onApply, showApply = false
                             {opp.title}
                         </h3>
                         <div className="mt-1 flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
-                            <Landmark className="h-3.5 w-3.5" />
+                            <Landmark className="h-3.5 w-3.5"/>
                             <span className="truncate">
                 {opp.provider?.name ?? "Unknown provider"}
               </span>
@@ -202,7 +203,7 @@ export function OpportunitiesGrid({ viewType, onView, onApply, showApply = false
                             )}
                             title={new Date(opp.applicationDeadline).toLocaleString()}
                         >
-              <CalendarDays className="h-4 w-4" />
+              <CalendarDays className="h-4 w-4"/>
                             {deadlineDays > 0
                                 ? `${deadlineDays} day${deadlineDays === 1 ? "" : "s"} left`
                                 : deadlineDays === 0
@@ -215,7 +216,7 @@ export function OpportunitiesGrid({ viewType, onView, onApply, showApply = false
                 {/* Footer actions */}
                 <div className="mt-4 flex gap-2">
                     <Button variant="outline" size="sm" onClick={() => onView?.(opp)}>
-                        <Eye className="mr-1 h-4 w-4" />
+                        <Eye className="mr-1 h-4 w-4"/>
                         View Opportunity
                     </Button>
                     {showApply && (
@@ -227,7 +228,7 @@ export function OpportunitiesGrid({ viewType, onView, onApply, showApply = false
                             }
                         >
                             Apply
-                            <ArrowRight className="ml-1 h-4 w-4" />
+                            <ArrowRight className="ml-1 h-4 w-4"/>
                         </Button>
                     )}
                 </div>
@@ -238,7 +239,7 @@ export function OpportunitiesGrid({ viewType, onView, onApply, showApply = false
     if (loading) {
         return (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {Array.from({ length: 6 }).map((_, i) => (
+                {Array.from({length: 3}).map((_, i) => (
                     <div
                         key={i}
                         className="h-44 animate-pulse rounded-xl border-2 border-slate-100 bg-slate-50/50 dark:border-slate-800 dark:bg-slate-900/40"
@@ -248,10 +249,11 @@ export function OpportunitiesGrid({ viewType, onView, onApply, showApply = false
         );
     }
 
-    if (!loading && data.length === 0) {
+    if (!loading && data?.count === 0) {
         return (
             (emptyState ?? (
-                <div className="rounded-lg border p-10 text-center text-slate-600 dark:border-slate-700 dark:text-slate-300">
+                <div
+                    className="rounded-lg border p-10 text-center text-slate-600 dark:border-slate-700 dark:text-slate-300">
                     No funding opportunities found
                 </div>
             ))
@@ -268,7 +270,7 @@ export function OpportunitiesGrid({ viewType, onView, onApply, showApply = false
                             {titles.featured}
                         </h2>
                         <Badge variant="featured" className="hidden sm:inline-flex">
-                            <Star className="h-3.5 w-3.5" />
+                            <Star className="h-3.5 w-3.5"/>
                             {featured.length} Featured
                         </Badge>
                     </div>

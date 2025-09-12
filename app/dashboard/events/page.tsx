@@ -145,14 +145,14 @@ export default function EventsPage() {
                             {searchQuery ? 'No events match your search.' : 'No events available at the moment.'}
                         </p>
                         {!searchQuery && (
-                            <IfAllowed permission={"funding:create"}>
+                            <IfDevPartner>
                                 <Link href="/dashboard/events/create">
                                     <Button>
                                         <Plus className="h-4 w-4 mr-2"/>
                                         Create First Event
                                     </Button>
                                 </Link>
-                            </IfAllowed>
+                            </IfDevPartner>
                         )}
                     </div>
                 ) : (

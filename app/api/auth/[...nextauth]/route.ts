@@ -1,32 +1,10 @@
 import NextAuth, {NextAuthOptions} from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
-import AppleProvider from "next-auth/providers/apple";
-import GithubProvider from "next-auth/providers/github";
 import {refreshAccessToken} from "@/lib/auth";
 import {UserRole} from "@/types/user";
 
 export const authOptions: NextAuthOptions = {
     providers: [
-        GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID!,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-            authorization: {
-                params: {
-                    prompt: "consent",
-                    access_type: "offline",
-                    response_type: "code"
-                }
-            }
-        }),
-        AppleProvider({
-            clientId: process.env.APPLE_ID!,
-            clientSecret: process.env.APPLE_SECRET!,
-        }),
-        GithubProvider({
-            clientId: process.env.GITHUB_ID!,
-            clientSecret: process.env.GITHUB_SECRET!,
-        }),
         CredentialsProvider({
             name: "Credentials",
             credentials: {
@@ -78,10 +56,7 @@ export const authOptions: NextAuthOptions = {
     },
     callbacks: {
         async signIn({ user, account, profile }) {
-            if (account?.provider === "google") {
-                return true;
-            }
-            return true;
+            return account?.provider === "credentials";
         },
         jwt: async function ({token, user}) {
             // On initial sign-in, mirror user + approved to top-level token
