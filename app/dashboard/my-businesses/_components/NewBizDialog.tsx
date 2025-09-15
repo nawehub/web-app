@@ -235,7 +235,7 @@ export const NewBizDialog = () => {
                                 control={form.control}
                                 render={() => (
                                     <div className="space-y-2">
-                                        <Label htmlFor="isAlreadyRegistered">Is this business already registered</Label>
+                                        <Label htmlFor="isAlreadyRegistered">Is this business registered with the Corporate Affairs Commission or the Office of the Registrar General?</Label>
                                         <div className="flex items-center space-x-2">
                                             <div className={'flex items-center space-x-2'}>
                                                 <Checkbox
