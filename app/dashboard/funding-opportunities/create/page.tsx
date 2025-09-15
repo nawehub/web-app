@@ -1,6 +1,6 @@
 "use client"
 
-import React, {FormEvent, useState, useTransition} from "react"
+import React, {FormEvent, useEffect, useState, useTransition} from "react"
 import {motion, AnimatePresence} from "framer-motion"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
 import {Button} from "@/components/ui/button"
@@ -14,13 +14,13 @@ import {CalendarIcon, ChevronLeft, ChevronRight, PlusCircleIcon} from "lucide-re
 import {format} from "date-fns"
 import {cn} from "@/lib/utils"
 import {useRouter} from "next/navigation"
-import {CustomCombobox} from "@/components/ui/combobox";
-import {useCreateOpportunityMutation, useListProvidersQuery} from "@/hooks/repository/use-funding";
+import {useCreateOpportunityMutation} from "@/hooks/repository/use-funding";
 import {createMinimalOpp} from "@/lib/services/funding";
-import {useToast} from "@/hooks/use-toast";
+import {toast} from "sonner";
 import {Icons} from "@/components/ui/icon";
 import QuillEditor from "@/components/QuillEditor";
 import {formatResponse} from "@/utils/format-response";
+import {useSession} from "next-auth/react";
 
 const initialFormData: createMinimalOpp = {
     title: "",
@@ -42,28 +42,29 @@ const steps = [
 
 export default function CreateFundingOpportunity() {
     const newOpportunity = useCreateOpportunityMutation()
-    const {data} = useListProvidersQuery();
     const [currentStep, setCurrentStep] = useState(1)
-    const [providerId, setProviderId] = useState("");
     const [formData, setFormData] = useState<createMinimalOpp>(initialFormData)
     const [isPending, startTransition] = useTransition()
     const [providerName, setProviderName] = useState("")
-    const {toast} = useToast();
     const router = useRouter()
+    const {data: session} = useSession()
 
     const updateFormData = (field: keyof createMinimalOpp, value: any) => {
         setFormData((prev) => ({...prev, [field]: value}))
     }
 
-    const getProvider = (pId: string) => {
-        if (data) {
-            const provider = data.providers.find((p) => p.id === pId)
-            if (provider && provider.id) {
-                formData.providerId = provider.id
-                setProviderName(provider.name)
-            }
-        }
-    }
+    useEffect(() => {
+        if (!session?.user) return
+
+        // Only set once or when it’s missing to avoid loops
+        setProviderName((prev) => prev || session.user.devPartnerName || "")
+
+        setFormData((prev) => {
+            if (prev.providerId) return prev
+            return { ...prev, providerId: session.user.devPartnerId }
+        })
+    }, [session?.user])
+
 
     const nextStep = () => {
         if (currentStep < steps.length) {
@@ -82,17 +83,13 @@ export default function CreateFundingOpportunity() {
         startTransition((async () => {
             try {
                 const response = await newOpportunity.mutateAsync(formData);
-                toast({
-                    title: 'Create Opportunity',
+                toast('Create Opportunity', {
                     description: response.message,
-                    variant: 'default',
                 });
                 router.push("/dashboard/funding-opportunities")
             } catch (error) {
-                toast({
-                    title: 'Registration failed',
+                toast('Registration failed',{
                     description: `${error instanceof Error ? formatResponse(error.message) : 'An unknown error occurred'}`,
-                    variant: 'destructive',
                 });
             }
         }))
@@ -101,7 +98,7 @@ export default function CreateFundingOpportunity() {
     const isStepValid = (step: number) => {
         switch (step) {
             case 1:
-                return formData.title && formData.description && formData.providerId && formData.applyLink
+                return formData.title && formData.description && formData.providerId
             case 2:
                 return formData.amountMin && formData.amountMax && formData.applicationDeadline
             case 3:
@@ -145,23 +142,7 @@ export default function CreateFundingOpportunity() {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="fundingProvider">Funding Provider *</Label>
-                            <CustomCombobox
-                                placeholder="Select funding provider"
-                                searchPlaceholder={'Search provider...'}
-                                data={data ? data.providers : []}
-                                searchField={'name'}
-                                displayField={'name'}
-                                valueField={'id'}
-                                value={providerId}
-                                onSelectAction={(value) => {
-                                    setProviderId(value)
-                                    getProvider(value)
-                                }}/>
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="applyLink">Application Link *</Label>
+                            <Label htmlFor="applyLink">Application Link </Label>
                             <Input
                                 id="applyLink"
                                 type="url"

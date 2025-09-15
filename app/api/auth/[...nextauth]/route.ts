@@ -36,6 +36,8 @@ export const authOptions: NextAuthOptions = {
                             status: data.user.status as string,
                             approved: data.user.approved, // important
                             role: data.user.role as UserRole,
+                            devPartnerId: data.user.devPartnerId as string,
+                            devPartnerName: data.user.devPartnerName as string,
                             accessToken: data.accessToken as string,
                             refreshToken: data.refreshToken as string,
                             expiresIn: data.expiresIn as number,

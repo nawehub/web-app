@@ -7,7 +7,7 @@ export const services = [
         subTitle: "(what they gain)",
         badge: "Providers",
         description: "A centralized platform to reach vetted entrepreneurs, track impact, and channel resources more effectively for sustainable development.",
-        illustration: "/images/benefit/partner-img.jpeg"
+        illustration: "/images/benefit/partner-update.jpeg"
     },
     {
         icon: Brain,

@@ -1,7 +1,7 @@
-import {useMutation, useQuery} from "@tanstack/react-query";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {
     ApplyForm,
-    ApproveOrRejectForm, createMinimalOpp,
+    ApproveOrRejectForm, approveOrRejectOpportunityForm, createMinimalOpp,
     createProviderForm, filterType,
     fundingService
 } from "@/lib/services/funding";
@@ -36,7 +36,7 @@ export const useListOpportunitiesQuery = (filter: filterType) => {
 
 export const useGetOpportunityQuery = (id: string) => {
     return useQuery({
-        queryKey: ['opportunities', id],
+        queryKey: ['opportunity', id],
         queryFn: async () => await fundingService().opportunities.getOne(id)
     });
 }
@@ -66,5 +66,16 @@ export function useChangeApplicationStatusMutation() {
     return useMutation({
         mutationKey: ['changeStatus'],
         mutationFn: (data: ApproveOrRejectForm) => fundingService().applications.changeStatus(data),
+    });
+}
+
+export function useApproveRejectOpportunityMutation(id: string) {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationKey: ['approve-reject-opportunity', id],
+        mutationFn: (req: z.infer<typeof approveOrRejectOpportunityForm>) => fundingService().opportunities.approveOrReject(id, req),
+        onSuccess(_, variables) {
+            queryClient.invalidateQueries({ queryKey: ['opportunities', 'opportunity', id] }).then();
+        },
     });
 }

@@ -10,7 +10,7 @@ import {Button} from "@/components/ui/button";
 import {ChevronLeft, ChevronRight, Plus, PlusCircleIcon} from "lucide-react";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
-import {useToast} from "@/components/ui/use-toast";
+import {toast} from "sonner";
 import {useRegisterBusinessMutation} from "@/hooks/repository/use-business";
 import React, {useState, useTransition} from "react";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
@@ -36,7 +36,6 @@ import {Textarea} from "@/components/ui/textarea";
 import {formatResponse} from "@/utils/format-response";
 
 export const NewBizDialog = () => {
-    const {toast} = useToast();
     const register = useRegisterBusinessMutation();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isPending, startTransition] = useTransition();
@@ -95,19 +94,15 @@ export const NewBizDialog = () => {
             }
             try {
                 const response: RegisterResponse = await register.mutateAsync(data);
-                toast({
-                    title: 'Registration Successful',
+                toast('Registration Successful', {
                     description: response.message,
-                    variant: 'default',
                 });
                 form.reset();
                 setIsDialogOpen(false);
             } catch (error) {
                 console.log({error})
-                toast({
-                    title: 'Registration failed',
+                toast('Registration failed',{
                     description: `${error instanceof Error ? formatResponse(error.message) : 'An unknown error occurred'}`,
-                    variant: 'destructive',
                 });
             } finally {
                 setLoading(false);

@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Upload, X, Calendar } from 'lucide-react';
 import { useCreateEventMutation } from '@/hooks/repository/use-events';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import QuillEditor from "@/components/QuillEditor";
@@ -27,7 +27,6 @@ export default function CreateEventPage() {
     const [endDate, setEndDate] = useState('');
     const [hostWebsite, setHostWebsite] = useState('');
 
-    const { toast } = useToast();
     const router = useRouter();
     const createEventMutation = useCreateEventMutation();
 
@@ -36,20 +35,18 @@ export default function CreateEventPage() {
         if (selectedFile) {
             // Validate file type
             if (!selectedFile.type.startsWith('image/')) {
-                toast({
-                    title: 'Invalid file type',
+                toast('Invalid file type',{
                     description: 'Please select an image file for the event flier.',
-                    variant: 'destructive',
+                    className: 'bg-destructive text-destructive-foreground',
                 });
                 return;
             }
 
             // Validate file size (max 5MB)
             if (selectedFile.size > 5 * 1024 * 1024) {
-                toast({
-                    title: 'File too large',
+                toast('File too large',{
                     description: 'Please select an image smaller than 5MB.',
-                    variant: 'destructive',
+                    className: 'bg-destructive text-destructive-foreground',
                 });
                 return;
             }
@@ -62,20 +59,18 @@ export default function CreateEventPage() {
         e.preventDefault();
 
         if (!title.trim() || !description.trim() || !host.trim() || !about.trim() || !flier || !startDate || !endDate) {
-            toast({
-                title: 'Error',
+            toast('Error',{
                 description: 'Please fill in all required fields',
-                variant: 'destructive',
+                className: 'bg-destructive text-destructive-foreground',
                 duration: 5000
             });
             return;
         }
 
         if (new Date(startDate) >= new Date(endDate)) {
-            toast({
-                title: 'Error',
+            toast('Error',{
                 description: 'End date must be after start date',
-                variant: 'destructive',
+                className: 'bg-destructive text-destructive-foreground',
                 duration: 5000,
             });
             return;
@@ -104,19 +99,18 @@ export default function CreateEventPage() {
 
             await createEventMutation.mutateAsync(formData);
 
-            toast({
-                title: 'Success',
+            toast('Event Create Success',{
                 description: 'Event created successfully',
-                variant: 'default'
+                className: 'bg-success text-success-foreground',
+                duration: 5000,
             });
 
             // Navigate back to an events list
             router.push('/dashboard/events');
         } catch (error) {
-            toast({
-                title: 'Error',
+            toast('Error',{
                 description: `${error instanceof Error ? formatResponse(error.message) : 'Failed to upload file'}`,
-                variant: 'destructive',
+                className: 'bg-destructive text-destructive-foreground',
             });
         }
     };

@@ -1,7 +1,6 @@
 import {z} from "zod";
 import {FundingApplication, FundingOpportunity, FundingOpportunityDto, FundingProvider} from "@/types/funding";
 import {api4app} from "@/lib/api4app";
-import {approveOrRejectBizForm} from "@/lib/services/business";
 
 export const createProviderForm = z.object({
     name: z.string({message: "provider name is required"}),
@@ -45,7 +44,7 @@ export type createOpportunityForm =
     providerId: string
 }
 
-export type createMinimalOpp = Omit<FundingOpportunityDto, "id" | "createdAt" | "updatedAt" | "provider"> & {
+export type createMinimalOpp = Omit<FundingOpportunityDto, "id" | "status" | "isFeatured" | "createdAt" | "updatedAt" | "provider"> & {
     providerId: string
 }
 

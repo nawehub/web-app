@@ -26,9 +26,10 @@ import {useListOpportunitiesQuery} from "@/hooks/repository/use-funding";
 import {fundingTypes} from "@/types/funding";
 import {useRouter} from "next/navigation";
 import { IfAllowed } from "@/components/auth/IfAllowed";
+import {filterType} from "@/lib/services/funding";
 
 interface FundingListProps {
-    viewType: string;
+    viewType: filterType;
 }
 
 export default function FundingList({ viewType }: FundingListProps) {

@@ -16,11 +16,14 @@ import {
 import Link from "next/link"
 import {useGetOpportunityQuery} from "@/hooks/repository/use-funding";
 import {formatDate} from "@/types/funding";
-import {QueryClient} from "@tanstack/react-query";
+import {dehydrate, HydrationBoundary, QueryClient} from "@tanstack/react-query";
 import {fundingService} from "@/lib/services/funding";
 import {Icons} from "@/components/ui/icon";
 import { formatCurrency } from "@/utils/formatters";
-import {IfAllowed} from "@/components/auth/IfAllowed";
+import {IfAllowed, IfEntrepreneur} from "@/components/auth/IfAllowed";
+import {
+    ApproveRejectOpportunityDialog
+} from "@/app/dashboard/funding-opportunities/_components/approve-reject-opportunity-dialog";
 
 interface PageProps {
     params: Promise<{
@@ -36,12 +39,14 @@ export default function FundingOpportunityDetail({params}: PageProps) {
     const {data: remoteOpportunity, isLoading} = useGetOpportunityQuery(unwrappedParams.id)
     const queryClient = new QueryClient();
     const [client, setClient] = useState<QueryClient>(queryClient);
+    const [selectedStatus, setSelectedStatus] = useState<"Approve" | "Reject">();
+    const [openAlert, setOpenAlert] = useState(false);
 
     useEffect(() => {
         async function fetchData() {
             await queryClient.prefetchQuery({
-                queryKey: ['applications', unwrappedParams.id],
-                queryFn: () => fundingService().applications.listApplications(unwrappedParams.id),
+                queryKey: ['opportunity', unwrappedParams.id],
+                queryFn: () => fundingService().opportunities.getOne(unwrappedParams.id),
             });
 
             setClient(queryClient);
@@ -95,131 +100,149 @@ export default function FundingOpportunityDetail({params}: PageProps) {
                     </Link>
                 </div>
             </div>
+            <HydrationBoundary state={dehydrate(client!)}>
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+                    <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="overview">Overview</TabsTrigger>
+                    </TabsList>
 
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-                <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="overview">Overview</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="overview" className="space-y-6">
-                    <div className="grid gap-6 md:grid-cols-3">
-                        {/* Main Content */}
-                        <div className="md:col-span-2 space-y-6">
-                            <Card>
-                                <CardHeader>
-                                    <div className="flex items-start justify-between">
-                                        <div className="space-y-2">
-                                            <div className="flex items-center space-x-2">
-                                                <Badge
-                                                    variant={getStatusColor(!isApplicationDeadlinePassed ? "Open" : "Closed") as any}>{!isApplicationDeadlinePassed ? "Open" : "Closed"}</Badge>
+                    <TabsContent value="overview" className="space-y-6">
+                        <div className="grid gap-6 md:grid-cols-3">
+                            {/* Main Content */}
+                            <div className="md:col-span-2 space-y-6">
+                                <Card>
+                                    <CardHeader>
+                                        <div className="flex items-start justify-between">
+                                            <div className="space-y-2">
+                                                <div className="flex items-center space-x-2">
+                                                    <Badge
+                                                        variant={getStatusColor(!isApplicationDeadlinePassed ? "Open" : "Closed") as any}>{!isApplicationDeadlinePassed ? "Open" : "Closed"}</Badge>
+                                                </div>
+                                                <CardTitle className="text-2xl">{remoteOpportunity?.title}</CardTitle>
+                                                <CardDescription className="text-base">Provided
+                                                    by {remoteOpportunity?.provider?.name}</CardDescription>
                                             </div>
-                                            <CardTitle className="text-2xl">{remoteOpportunity?.title}</CardTitle>
-                                            <CardDescription className="text-base">Provided
-                                                by {remoteOpportunity?.provider?.name}</CardDescription>
                                         </div>
-                                    </div>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="space-y-4">
-                                        <div>
-                                            <h3 className="text-lg font-semibold mb-2">Description</h3>
-                                            <p className="text-muted-foreground leading-relaxed">{remoteOpportunity?.description}</p>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="space-y-4">
+                                            <div>
+                                                <h3 className="text-lg font-semibold mb-2">Description</h3>
+                                                <p className="text-muted-foreground leading-relaxed">{remoteOpportunity?.description}</p>
+                                            </div>
+                                            <div>
+                                                <h3 className="text-lg font-semibold mb-2">About</h3>
+                                                <div
+                                                    className="prose prose-sm max-w-none dark:prose-invert"
+                                                    dangerouslySetInnerHTML={{ __html: remoteOpportunity?.about! }}
+                                                />
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h3 className="text-lg font-semibold mb-2">About</h3>
-                                            <div
-                                                className="prose prose-sm max-w-none dark:prose-invert"
-                                                dangerouslySetInnerHTML={{ __html: remoteOpportunity?.about! }}
-                                            />
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </div>
+                                    </CardContent>
+                                </Card>
+                            </div>
 
-                        {/* Sidebar */}
-                        <div className="space-y-6">
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle className="text-lg">Funding Details</CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <div className="flex items-center space-x-3">
-                                        <DollarSign className="h-5 w-5 text-muted-foreground"/>
-                                        <div>
-                                            <p className="text-sm text-muted-foreground">Funding Range</p>
-                                            <p className="font-semibold">
-                                                {formatCurrency(remoteOpportunity?.amountMin!)} -{" "}
-                                                {formatCurrency(remoteOpportunity?.amountMax!)}
-                                            </p>
+                            {/* Sidebar */}
+                            <div className="space-y-6">
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle className="text-lg">Funding Details</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        <div className="flex items-center space-x-3">
+                                            <DollarSign className="h-5 w-5 text-muted-foreground"/>
+                                            <div>
+                                                <p className="text-sm text-muted-foreground">Funding Range</p>
+                                                <p className="font-semibold">
+                                                    {formatCurrency(remoteOpportunity?.amountMin!)} -{" "}
+                                                    {formatCurrency(remoteOpportunity?.amountMax!)}
+                                                </p>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div className="flex items-center space-x-3">
-                                        <Calendar className="h-5 w-5 text-muted-foreground"/>
-                                        <div>
-                                            <p className="text-sm text-muted-foreground">Application Deadline</p>
-                                            <p className="font-semibold">{formatDate(remoteOpportunity?.applicationDeadline.toString()!)}</p>
-                                            {isApplicationDeadlinePassed &&
-                                                <p className="text-xs text-red-600 mt-1">Deadline has passed</p>}
+                                        <div className="flex items-center space-x-3">
+                                            <Calendar className="h-5 w-5 text-muted-foreground"/>
+                                            <div>
+                                                <p className="text-sm text-muted-foreground">Application Deadline</p>
+                                                <p className="font-semibold">{formatDate(remoteOpportunity?.applicationDeadline.toString()!)}</p>
+                                                {isApplicationDeadlinePassed &&
+                                                    <p className="text-xs text-red-600 mt-1">Deadline has passed</p>}
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div className="flex items-center space-x-3">
-                                        <Building2 className="h-5 w-5 text-muted-foreground"/>
-                                        <div>
-                                            <p className="text-sm text-muted-foreground">Funding Provider</p>
-                                            <p className="font-semibold">{remoteOpportunity?.provider?.name}</p>
+                                        <div className="flex items-center space-x-3">
+                                            <Building2 className="h-5 w-5 text-muted-foreground"/>
+                                            <div>
+                                                <p className="text-sm text-muted-foreground">Funding Provider</p>
+                                                <p className="font-semibold">{remoteOpportunity?.provider?.name}</p>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div className="flex items-center space-x-3">
-                                        <Clock className="h-5 w-5 text-muted-foreground"/>
-                                        <div>
-                                            <p className="text-sm text-muted-foreground">Created</p>
-                                            <p className="font-semibold">{formatDate(remoteOpportunity?.createdAt.toString())}</p>
+                                        <div className="flex items-center space-x-3">
+                                            <Clock className="h-5 w-5 text-muted-foreground"/>
+                                            <div>
+                                                <p className="text-sm text-muted-foreground">Created</p>
+                                                <p className="font-semibold">{formatDate(remoteOpportunity?.createdAt.toString())}</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                                    </CardContent>
+                                </Card>
 
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle className="text-lg">Quick Actions</CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-3">
-                                    {canApply ? (
-                                        <div className="flex flex-col items-center space-y-3">
-                                            <Button className="w-full" size="lg"
-                                                    onClick={() => window.open(remoteOpportunity?.applyLink, "_blank")}
-                                            >
-                                                <Send className="mr-2 h-4 w-4"/>
-                                                Apply Now
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle className="text-lg">Quick Actions</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="space-y-3">
+                                        {canApply ? (
+                                            <div className="flex flex-col items-center space-y-3">
+                                                <IfEntrepreneur>
+                                                    <Button className="w-full" size="lg"
+                                                            onClick={() => window.open(remoteOpportunity?.applyLink, "_blank")}
+                                                    >
+                                                        <Send className="mr-2 h-4 w-4"/>
+                                                        Apply Now
+                                                    </Button>
+                                                </IfEntrepreneur>
+                                                {remoteOpportunity?.status.state === "Pending_Approval" && (
+                                                    <IfAllowed>
+                                                        <Button
+                                                            variant="outline"
+                                                            className="w-full text-white hover:bg-green-700 bg-green-600"
+                                                            onClick={() => {
+                                                                setSelectedStatus("Approve")
+                                                                setOpenAlert(true)
+                                                            }}
+                                                        >
+                                                            Approve Funding Opportunity
+                                                        </Button>
+                                                        <Button
+                                                            variant="outline"
+                                                            className="w-full text-white hover:bg-red-700 bg-red-600"
+                                                            onClick={() => {
+                                                                setSelectedStatus("Reject")
+                                                                setOpenAlert(true)
+                                                            }}
+                                                        >
+                                                            Reject This Opportunity
+                                                        </Button>
+                                                    </IfAllowed>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <Button className="w-full" size="lg" disabled>
+                                                {isApplicationDeadlinePassed
+                                                    ? "Applications Closed"
+                                                    :  "Applications Opened"}
                                             </Button>
-                                            {remoteOpportunity?.status.state === "Pending_Approval" && (
-                                                <IfAllowed>
-                                                    <Button variant="outline" className="w-full text-white hover:bg-green-700 bg-green-600">
-                                                        Approve Funding Opportunity
-                                                    </Button>
-                                                    <Button variant="outline" className="w-full text-white hover:bg-red-700 bg-red-600">
-                                                        Reject This Opportunity
-                                                    </Button>
-                                                </IfAllowed>
-                                            )}
-                                        </div>
-                                    ) : (
-                                        <Button className="w-full" size="lg" disabled>
-                                            {isApplicationDeadlinePassed
-                                                ? "Applications Closed"
-                                                :  "Applications Opened"}
-                                        </Button>
-                                    )}
-                                </CardContent>
-                            </Card>
+                                        )}
+                                    </CardContent>
+                                </Card>
+                            </div>
                         </div>
-                    </div>
-                </TabsContent>
-            </Tabs>
+                    </TabsContent>
+                </Tabs>
+            </HydrationBoundary>
+            <ApproveRejectOpportunityDialog oppId={remoteOpportunity?.id!} action={selectedStatus as "Approve" | "Reject"} openAlert={openAlert} openAlertAction={setOpenAlert} />
         </div>
     )
 }
