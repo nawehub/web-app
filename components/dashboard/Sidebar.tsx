@@ -1,5 +1,5 @@
 import {Button} from "@/components/ui/button";
-import {MoreVertical, X, Zap} from "lucide-react";
+import {MoreVertical, X} from "lucide-react";
 import React from "react";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar";
 import {bottomMenuItems, documentMenuItems, exploreMenuItems} from "@/components/MenuItems";
@@ -14,8 +14,30 @@ interface SidebarProps {
     pathname: string;
 }
 
+const matchesPath = (pathname: string, href: string) => {
+    if (!href) return false;
+    if (href === "/") return pathname === "/"; // don't let "/" match everything
+    return pathname === href || pathname.startsWith(`${href}/`);
+};
+
+const getBestMatchHref = (pathname: string, hrefs: string[]) => {
+    const candidates = hrefs.filter((h) => matchesPath(pathname, h));
+    if (candidates.length === 0) return null;
+    // The longest prefix wins (most specific)
+    return candidates.sort((a, b) => b.length - a.length)[0];
+};
+
 export function Sidebar({isSidebarOpen, toggleSidebar, pathname}: SidebarProps) {
     const {data: session} = useSession();
+
+    const allHrefs = [
+        ...exploreMenuItems.map((i) => i.href),
+        ...documentMenuItems.map((i) => i.href),
+        ...bottomMenuItems.map((i) => i.href),
+    ].filter(Boolean);
+
+    const bestMatch = getBestMatchHref(pathname, allHrefs);
+
 
     // Shared inner content for the sidebar
     const SidebarInner = (
@@ -50,7 +72,7 @@ export function Sidebar({isSidebarOpen, toggleSidebar, pathname}: SidebarProps) 
                         href={item.href}
                         icon={<item.icon className="w-4 h-4"/>}
                         title={item.name}
-                        isActive={pathname === item.href || pathname.includes(item.href)}
+                        isActive={item.href === bestMatch}
                     />
                 ))}
             </nav>
@@ -66,7 +88,7 @@ export function Sidebar({isSidebarOpen, toggleSidebar, pathname}: SidebarProps) 
                                 href={item.href}
                                 icon={<item.icon className="w-4 h-4"/>}
                                 title={item.name}
-                                isActive={pathname === item.href || pathname.includes(item.href)}
+                                isActive={item.href === bestMatch}
                             />
                         ))}
                     </div>
@@ -81,7 +103,7 @@ export function Sidebar({isSidebarOpen, toggleSidebar, pathname}: SidebarProps) 
                         href={item.href}
                         icon={<item.icon className="w-4 h-4"/>}
                         title={item.name}
-                        isActive={pathname === item.href}
+                        isActive={item.href === bestMatch}
                     />
                 ))}
 
