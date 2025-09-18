@@ -1,4 +1,4 @@
-import {BriefcaseBusiness, User} from "lucide-react";
+import {BriefcaseBusiness, IdCard, User} from "lucide-react";
 
 export type BusinessFormData = {
     businessName: string
@@ -19,6 +19,8 @@ export type BusinessFormData = {
     registrationNumber?: string
     isAlreadyRegistered: boolean
     isPublicRegister: boolean
+    ninOrPassport: string
+    occupation: string
 }
 
 export const initData: BusinessFormData = {
@@ -40,6 +42,8 @@ export const initData: BusinessFormData = {
     registrationNumber: undefined,
     isAlreadyRegistered: false,
     isPublicRegister: false,
+    ninOrPassport: '',
+    occupation: '',
 }
 
 export function getDate15YearsAgo() {
@@ -54,7 +58,8 @@ export function getDate15YearsAgo() {
 
 export const steps = [
     {id: 1, title: 'Business Information', description: 'Enter your business details', icon: BriefcaseBusiness},
-    {id: 2, title: 'Owner Information', description: 'Enter business owner information', icon: User}
+    {id: 2, title: 'Owner Information', description: 'Enter business owner information', icon: User},
+    {id: 3, title: 'Identity Information', description: 'Enter your identity information', icon: IdCard}
 ]
 
 export const categories = [

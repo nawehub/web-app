@@ -23,6 +23,8 @@ export const registerBizForm = z.object({
     registrationNumber: z.string({message: "registration number is required"}).optional(),
     isAlreadyRegistered: z.boolean(),
     isPublicRegister: z.boolean(),
+    ninOrPassport: z.string({message: "nin or passport is required"}),
+    occupation: z.string({message: "occupation is required"}),
 })
 
 export const approveOrRejectBizForm = z.object({
@@ -55,6 +57,8 @@ export type BusinessData = {
         rejectionReason: string;
         statusActionDate: string;
     }
+    ninOrPassport: string;
+    occupation: string;
     createdAt: string;
     updatedAt: string;
 }

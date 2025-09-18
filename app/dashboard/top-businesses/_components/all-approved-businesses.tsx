@@ -272,6 +272,18 @@ export default function ApprovedBusinesses() {
                                                         {business.status.state}
                                                     </Badge>
                                                 </div>
+                                                {/*Nin Passport details*/}
+                                                <div className="flex items-center justify-between pt-2">
+                                                    <Badge variant="outline">
+                                                        {business.ninOrPassport}
+                                                    </Badge>
+                                                    <Badge
+                                                        variant={business.occupation ? 'default' : 'secondary'}
+                                                        className={business.occupation ? 'bg-green-500 hover:bg-green-600' : ''}
+                                                    >
+                                                        {business.occupation ?? "N/A"}
+                                                    </Badge>
+                                                </div>
                                             </div>
                                         )}
                                     </CardContent>

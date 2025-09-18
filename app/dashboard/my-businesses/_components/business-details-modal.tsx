@@ -276,6 +276,21 @@ export function BusinessDetailsModal({
                                 </div>
                             </div>
 
+                            {/* Owner Information */}
+                            <div
+                                className="rounded-xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900/60">
+                                <div
+                                    className="px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center gap-2">
+                                    <User className="h-4 w-4 text-emerald-600"/>
+                                    <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Owner Identity</h4>
+                                </div>
+                                <div className="px-4 py-2">
+                                    <InfoRow label="Owner Name" value={business?.ninOrPassport}/>
+                                    <Separator className="my-2"/>
+                                    <InfoRow label="Gender" value={business?.occupation ? business.occupation : 'N/A'}/>
+                                </div>
+                            </div>
+
                             {/* Status */}
                             <div
                                 className="rounded-xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900/60 md:col-span-2">

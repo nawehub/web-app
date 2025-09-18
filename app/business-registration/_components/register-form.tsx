@@ -19,7 +19,7 @@ import {BusinessFormData, steps, initData, getDate15YearsAgo, categories, busine
 import {useRouter} from "next/navigation";
 import {RegisterResponse} from "@/store/auth";
 import {useRegisterPublicBusinessMutation} from "@/hooks/repository/use-business";
-import {useToast} from "@/components/ui/use-toast";
+import {toast} from "sonner";
 import {
     Dialog,
     DialogContent,
@@ -36,7 +36,6 @@ export default function RegisterForm() {
     const [formData, setFormData] = useState<BusinessFormData>(initData)
     const router = useRouter()
     const register = useRegisterPublicBusinessMutation();
-    const {toast} = useToast();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [message, setMessage] = useState("");
     const [title, setTitle] = useState("Registering your business");
@@ -62,20 +61,18 @@ export default function RegisterForm() {
             }
             try {
                 const response: RegisterResponse = await register.mutateAsync(data);
-                toast({
-                    title: 'Registration Successful',
+                toast('Registration Successful',{
                     description: response.message,
-                    variant: 'default',
+                    className: "bg-green-500 text-white",
                     duration: 10000,
                 });
                 form.reset();
                 setMessage(response.message);
                 setTitle("Registration Successful");
             } catch (error) {
-                toast({
-                    title: 'Registration failed',
+                toast('Registration failed',{
                     description: `${error instanceof Error ? formatResponse(error.message) : 'An unknown error occurred'}`,
-                    variant: 'destructive',
+                    className: "bg-red-500 text-white",
                 });
             }
         });
@@ -83,7 +80,7 @@ export default function RegisterForm() {
 
     const isStepValid = () => {
         return formData.businessName && formData.businessAddress && formData.businessActivities && formData.businessEntityType && formData.category && formData.ownerName && formData.ownerAddress && formData.placeOfBirth && formData.dateOfBirth
-            && formData.nationality && formData.mothersName && formData.email && formData.contactNumber && formData.gender;
+            && formData.nationality && formData.mothersName && formData.email && formData.contactNumber && formData.gender && formData.ninOrPassport;
     }
 
     return (
@@ -440,6 +437,57 @@ export default function RegisterForm() {
                                                             field.onChange(value)
                                                             updateFormData('nationality', value)
                                                         }}/>
+                                                </div>
+                                            )}
+                                        />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader>
+                                <div>
+                                    <CardTitle>{steps[2].title}</CardTitle>
+                                    <CardDescription>{steps[2].description}</CardDescription>
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-4 mt-3">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <FormField
+                                            name={'ninOrPassport'}
+                                            control={form.control}
+                                            render={({field}) => (
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="ninOrPassport">Nin/Passport *</Label>
+                                                    <Input
+                                                        id="ninOrPassport"
+                                                        {...field}
+                                                        value={formData.ninOrPassport}
+                                                        onChange={(e) => updateFormData('ninOrPassport', e.target.value)}
+                                                        type={'text'}
+                                                        required
+                                                        placeholder="Enter your NIN or PASSPORT number"
+                                                    />
+                                                </div>
+                                            )}
+                                        />
+
+                                        <FormField
+                                            name={'occupation'}
+                                            control={form.control}
+                                            render={({field}) => (
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="occupation">Occupation </Label>
+                                                    <Input
+                                                        id="occupation"
+                                                        {...field}
+                                                        value={formData.occupation}
+                                                        onChange={(e) => updateFormData('occupation', e.target.value)}
+                                                        type={'text'}
+                                                        required
+                                                        placeholder="What is your occupation?"
+                                                    />
                                                 </div>
                                             )}
                                         />

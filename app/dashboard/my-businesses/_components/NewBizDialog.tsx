@@ -79,6 +79,8 @@ export const NewBizDialog = () => {
             case 2:
                 return formData.ownerName && formData.ownerAddress && formData.placeOfBirth && formData.dateOfBirth
                     && formData.nationality && formData.mothersName && formData.email && formData.contactNumber && formData.gender
+            case 3:
+                return formData.ninOrPassport
             default:
                 return false
         }
@@ -511,6 +513,50 @@ export const NewBizDialog = () => {
                                                 field.onChange(value)
                                                 updateFormData('nationality', value)
                                             }}/>
+                                    </div>
+                                )}
+                            />
+                        </div>
+                    </div>
+                )
+            case 3:
+                return (
+                    <div className="space-y-4 mt-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField
+                                name={'ninOrPassport'}
+                                control={form.control}
+                                render={({field}) => (
+                                    <div className="space-y-2">
+                                        <Label htmlFor="ninOrPassport">Nin/Passport *</Label>
+                                        <Input
+                                            id="ninOrPassport"
+                                            {...field}
+                                            value={formData.ninOrPassport}
+                                            onChange={(e) => updateFormData('ninOrPassport', e.target.value)}
+                                            type={'text'}
+                                            required
+                                            placeholder="Enter your NIN or PASSPORT number"
+                                        />
+                                    </div>
+                                )}
+                            />
+
+                            <FormField
+                                name={'occupation'}
+                                control={form.control}
+                                render={({field}) => (
+                                    <div className="space-y-2">
+                                        <Label htmlFor="occupation">Occupation </Label>
+                                        <Input
+                                            id="occupation"
+                                            {...field}
+                                            value={formData.occupation}
+                                            onChange={(e) => updateFormData('occupation', e.target.value)}
+                                            type={'text'}
+                                            required
+                                            placeholder="What is your occupation?"
+                                        />
                                     </div>
                                 )}
                             />
