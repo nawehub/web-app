@@ -162,7 +162,7 @@ export default function EventsPage() {
                                 {event.flier && (
                                     <div className="aspect-video relative overflow-hidden">
                                         <img
-                                            src={event.flier}
+                                            src={`${event.flier}?preview=true`}
                                             alt={event.title}
                                             className="w-full h-full object-cover"
                                         />

@@ -17,7 +17,6 @@ export async function GET(_: Request) {
     }
 }
 
-
 export async function POST(req: Request) {
     try {
         const body: z.infer<typeof registerBizForm> = await req.json();

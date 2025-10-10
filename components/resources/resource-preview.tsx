@@ -6,10 +6,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
-import { useToast } from "@/hooks/use-toast"
-import { Download, FileText, Star, ExternalLink, X } from "lucide-react"
+import { toast } from "sonner"
+import { Download, FileText, Star, ExternalLink } from "lucide-react"
 import {Resource, FileFormat} from "@/types/files";
-import PdfViewer from "@/components/resources/pdf-viewer";
 
 interface ResourcePreviewProps {
   resource: Resource
@@ -26,7 +25,6 @@ const DynamicPdfViewer = dynamic(() => import("@/components/resources/pdf-viewer
 export function ResourcePreview({ resource, isOpen, onCloseAction, onDownloadAction }: ResourcePreviewProps) {
   const [isDownloading, setIsDownloading] = useState(false)
   const [read, setRead] = useState<boolean>(false)
-  const { toast } = useToast()
 
   const handleCloseRead = () => {
     setRead(false)
@@ -54,15 +52,13 @@ export function ResourcePreview({ resource, isOpen, onCloseAction, onDownloadAct
 
       onDownloadAction(resource)
 
-      toast({
-        title: "Download Started",
+      toast("Download Started",{
         description: `${resource.title} is being downloaded.`,
       })
     } catch (error) {
-      toast({
-        title: "Download Failed",
+      toast("Download Failed", {
         description: "There was an error downloading the file.",
-        variant: "destructive",
+        className: "bg-red-500 text-white",
       })
     } finally {
       setIsDownloading(false)
@@ -88,19 +84,15 @@ export function ResourcePreview({ resource, isOpen, onCloseAction, onDownloadAct
           <div className="bg-gray-100 rounded-lg p-8 text-center">
             <FileText className="w-16 h-16 text-red-500 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">PDF Preview</h3>
-            <p className="text-gray-600 mb-4">
-              This is a comprehensive {resource.title.toLowerCase()} that contains detailed information and guidelines.
-            </p>
-            <div className="bg-white rounded border p-4 text-left">
-              <h4 className="font-semibold mb-2">Document Contents:</h4>
-              <ul className="text-sm text-gray-600 space-y-1">
-                <li>• Executive Summary</li>
-                <li>• Market Analysis</li>
-                <li>• Financial Projections</li>
-                <li>• Implementation Strategy</li>
-                <li>• Risk Assessment</li>
-              </ul>
-            </div>
+              <p className="text-gray-600 mb-4">
+                  {resource.title} is a comprehensive guide that covers everything you need to know.
+              </p>
+              <div className="bg-white rounded border p-4 text-left">
+                  <h4 className="font-semibold mb-2">Key Sections:</h4>
+                  <p className="text-sm text-gray-600 space-y-1">
+                      {resource.description}
+                  </p>
+              </div>
           </div>
           <Button variant="outline" className="w-full" onClick={(): void => setRead(true)}>Click To Read Content</Button>
           {read && (
@@ -116,22 +108,18 @@ export function ResourcePreview({ resource, isOpen, onCloseAction, onDownloadAct
             <FileText className="w-16 h-16 text-blue-500 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Document Preview</h3>
             <p className="text-gray-600 mb-4">
-              This document provides step-by-step guidance for {resource.title.toLowerCase()}.
+                {resource.title} is a comprehensive guide that covers everything you need to know.
             </p>
             <div className="bg-white rounded border p-4 text-left">
               <h4 className="font-semibold mb-2">Key Sections:</h4>
-              <ul className="text-sm text-gray-600 space-y-1">
-                <li>• Getting Started Guide</li>
-                <li>• Best Practices</li>
-                <li>• Templates and Examples</li>
-                <li>• Troubleshooting</li>
-                <li>• Additional Resources</li>
-              </ul>
+              <p className="text-sm text-gray-600 space-y-1">
+                  {resource.description}
+              </p>
             </div>
           </div>
           <Button variant="outline" className="w-full" onClick={(): void => setRead(true)}>Click To Read Content</Button>
           {read && (
-              <DynamicPdfViewer isOpen={read} onToggle={handleCloseRead} fileUrl={resource.url} />
+              <DynamicPdfViewer isOpen={read} onToggle={handleCloseRead} fileUrl={`${resource.url}?preview=true`} />
           )}
         </div>
       )

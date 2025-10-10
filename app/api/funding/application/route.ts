@@ -5,7 +5,6 @@ import {ApplyForm, ApproveOrRejectForm} from "@/lib/services/funding";
 export async function POST(req: Request) {
     try {
         const body: ApplyForm = await req.json();
-        console.log({body})
         const response = await apiRequest("/funding/opportunity/applications", {
             method: 'POST',
             body: JSON.stringify(body),

@@ -164,7 +164,7 @@ export default function EventDetailPage() {
                                 <CardContent className="pt-0">
                                     <div className="aspect-video relative overflow-hidden rounded-lg">
                                         <img
-                                            src={event.flier}
+                                            src={`${event.flier}?preview=true`}
                                             alt={event.title}
                                             className="w-full h-full object-cover"
                                         />
