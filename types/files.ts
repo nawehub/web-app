@@ -65,6 +65,12 @@ export type FolderData = {
     updatedAt: Date
 }
 
+export type StatusDto = {
+    state: 'Draft' | 'Approved' | 'Rejected' | 'Pending_Approval'
+    rejectionReason: string
+    statusActionDate: Date
+}
+
 export type Resource = {
     id: string
     title: string
@@ -74,11 +80,13 @@ export type Resource = {
     description: string
     url: string
     fileFormat: FileFormat
+    fileSize: number
     accessLevel: AccessLevel
     isFeatured: boolean
     views?: 1000000
     downloads?: 5
     rating?: 4.5
+    status: StatusDto
     createdAt: Date
     updatedAt: Date
 }

@@ -33,7 +33,7 @@ import {UploadFileDialog} from '@/app/dashboard/files/_components/upload-file-di
 import {useListFolderResourcesQuery, useListFoldersQuery} from "@/hooks/repository/use-resources";
 import {FolderData} from "@/types/files";
 import {SettingsMenu} from "@/app/dashboard/files/_components/SettingsMenu";
-import {IfDevPartner} from "@/components/auth/IfAllowed";
+import {IfAllowed, IfDevPartner} from "@/components/auth/IfAllowed";
 
 interface Selection {
     files: Set<string>;
@@ -45,11 +45,11 @@ export default function FilesPage() {
     const [breadcrumbs, setBreadcrumbs] = useState<Array<{ id?: string; name: string }>>([
         {name: 'Files'}
     ]);
-    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+    const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
     const [searchQuery, setSearchQuery] = useState('');
     const [showCreateFolder, setShowCreateFolder] = useState(false);
     const [showUploadFile, setShowUploadFile] = useState(false);
-    const [selection, setSelection] = useState<Selection>({ files: new Set(), folders: new Set() });
+    const [selection, setSelection] = useState<Selection>({files: new Set(), folders: new Set()});
     // const [lastSelectedItem, setLastSelectedItem] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
@@ -88,12 +88,29 @@ export default function FilesPage() {
         file.description.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    // const formatFileSize = (bytes?: number) => {
-    //     if (!bytes) return 'Unknown size';
-    //     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    //     const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    //     return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
-    // };
+    const formatFileSize = (bytes?: number | null): string => {
+        // 1. Handle non-positive or invalid input gracefully
+        if (bytes === undefined || bytes === null || bytes < 0 || isNaN(bytes)) {
+            return 'Unknown size';
+        }
+        if (bytes === 0) {
+            return '0 Bytes';
+        }
+
+        // 2. Use the correct IEC (binary) units for base 1024
+        const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+
+        const i = Math.floor(Math.log(bytes) / Math.log(1024));
+
+        // 3. Prevent crashing for extremely large files (index out of bounds)
+        const unitIndex = Math.min(i, sizes.length - 1);
+
+        // Calculate the scaled value, rounded to 2 decimal places
+        const scaledValue = bytes / Math.pow(1024, unitIndex);
+
+        // Use toFixed(2) for reliable 2-decimal rounding and string formatting
+        return `${scaledValue.toFixed(2)} ${sizes[unitIndex]}`;
+    };
 
     const getFileIcon = (mimeType?: string) => {
         if (!mimeType) return <File className="h-8 w-8"/>;
@@ -143,7 +160,7 @@ export default function FilesPage() {
                 <div>
                     <h1 className="text-2xl font-semibold tracking-tight">File Management</h1>
                     <p className="text-muted-foreground">
-                        Organize and manage your business resources
+                        Organize and manage your platform resources
                     </p>
                 </div>
 
@@ -159,7 +176,7 @@ export default function FilesPage() {
                         <SortAsc className="h-4 w-4 mr-2"/>
                         Sort
                     </Button>
-                    <SettingsMenu />
+                    <SettingsMenu/>
                     <IfDevPartner>
                         <Button onClick={() => setShowUploadFile(true)}>
                             <Upload className="h-4 w-4 mr-2"/>
@@ -326,8 +343,7 @@ export default function FilesPage() {
                                                                         {file.type}
                                                                     </Badge>
                                                                     <span className="text-xs text-muted-foreground">
-                                                                        45mb
-                                                                        {/*{formatFileSize()}*/}
+                                                                        {formatFileSize(file.fileSize)}
                                                                     </span>
                                                                 </div>
                                                             )}
@@ -345,11 +361,14 @@ export default function FilesPage() {
                                                                     </Button>
                                                                 </DropdownMenuTrigger>
                                                                 <DropdownMenuContent>
+                                                                    {file.status.state === 'Pending_Approval' && (
+                                                                        <IfAllowed>
+                                                                            <DropdownMenuItem>Approve</DropdownMenuItem>
+                                                                            <DropdownMenuItem>Reject</DropdownMenuItem>
+                                                                            <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                                                                        </IfAllowed>
+                                                                    )}
                                                                     <DropdownMenuItem>Download</DropdownMenuItem>
-                                                                    <DropdownMenuItem>Share</DropdownMenuItem>
-                                                                    <DropdownMenuItem>Move</DropdownMenuItem>
-                                                                    <DropdownMenuItem
-                                                                        className="text-destructive">Delete</DropdownMenuItem>
                                                                 </DropdownMenuContent>
                                                             </DropdownMenu>
                                                         )}
@@ -357,10 +376,15 @@ export default function FilesPage() {
                                                 </Card>
                                             </ContextMenuTrigger>
                                             <ContextMenuContent>
+                                                {file.status.state === 'Pending_Approval' && (
+                                                    <IfAllowed>
+                                                        <ContextMenuItem>Approve</ContextMenuItem>
+                                                        <ContextMenuItem>Reject</ContextMenuItem>
+                                                        <ContextMenuItem className="text-destructive">Delete</ContextMenuItem>
+                                                    </IfAllowed>
+                                                )}
+
                                                 <ContextMenuItem>Download</ContextMenuItem>
-                                                <ContextMenuItem>Share</ContextMenuItem>
-                                                <ContextMenuItem>Move</ContextMenuItem>
-                                                <ContextMenuItem className="text-destructive">Delete</ContextMenuItem>
                                             </ContextMenuContent>
                                         </ContextMenu>
                                     ))}
