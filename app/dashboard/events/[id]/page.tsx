@@ -19,6 +19,7 @@ import React, {useEffect, useState} from "react";
 import {EventApproveRejectDialog} from "@/app/dashboard/events/_components/event-approve-reject-dialog";
 import {dehydrate, HydrationBoundary, QueryClient} from "@tanstack/react-query";
 import {eventService} from "@/lib/services/event";
+import {constructFileUrl} from "@/types/files";
 
 export default function EventDetailPage() {
     const params = useParams();
@@ -164,7 +165,7 @@ export default function EventDetailPage() {
                                 <CardContent className="pt-0">
                                     <div className="aspect-video relative overflow-hidden rounded-lg">
                                         <img
-                                            src={`${event.flier}?preview=true`}
+                                            src={constructFileUrl(event.flier, true)}
                                             alt={event.title}
                                             className="w-full h-full object-cover"
                                         />

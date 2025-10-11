@@ -8,13 +8,12 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { toast } from "sonner"
 import { Download, FileText, Star, ExternalLink } from "lucide-react"
-import {Resource, FileFormat} from "@/types/files";
+import {Resource, FileFormat, constructFileUrl} from "@/types/files";
 
 interface ResourcePreviewProps {
   resource: Resource
   isOpen: boolean
   onCloseAction: () => void
-  onDownloadAction: (resource: Resource) => void
 }
 
 const DynamicPdfViewer = dynamic(() => import("@/components/resources/pdf-viewer"), {
@@ -22,7 +21,7 @@ const DynamicPdfViewer = dynamic(() => import("@/components/resources/pdf-viewer
   loading: () => <p>Loading PDF viewer...</p>, // Optional: a loading state
 });
 
-export function ResourcePreview({ resource, isOpen, onCloseAction, onDownloadAction }: ResourcePreviewProps) {
+export function ResourcePreview({ resource, isOpen, onCloseAction }: ResourcePreviewProps) {
   const [isDownloading, setIsDownloading] = useState(false)
   const [read, setRead] = useState<boolean>(false)
 
@@ -49,8 +48,6 @@ export function ResourcePreview({ resource, isOpen, onCloseAction, onDownloadAct
       link.click()
       document.body.removeChild(link)
       URL.revokeObjectURL(url)
-
-      onDownloadAction(resource)
 
       toast("Download Started",{
         description: `${resource.title} is being downloaded.`,
@@ -96,7 +93,7 @@ export function ResourcePreview({ resource, isOpen, onCloseAction, onDownloadAct
           </div>
           <Button variant="outline" className="w-full" onClick={(): void => setRead(true)}>Click To Read Content</Button>
           {read && (
-              <DynamicPdfViewer isOpen={read} onToggle={handleCloseRead} fileUrl={resource.url} />
+              <DynamicPdfViewer isOpen={read} onToggle={handleCloseRead} fileUrl={constructFileUrl(resource.url, true)} />
           )}        </div>
       )
     }
@@ -119,7 +116,7 @@ export function ResourcePreview({ resource, isOpen, onCloseAction, onDownloadAct
           </div>
           <Button variant="outline" className="w-full" onClick={(): void => setRead(true)}>Click To Read Content</Button>
           {read && (
-              <DynamicPdfViewer isOpen={read} onToggle={handleCloseRead} fileUrl={`${resource.url}?preview=true`} />
+              <DynamicPdfViewer isOpen={read} onToggle={handleCloseRead} fileUrl={constructFileUrl(resource.url, true)} />
           )}
         </div>
       )
@@ -214,7 +211,11 @@ export function ResourcePreview({ resource, isOpen, onCloseAction, onDownloadAct
                 {isDownloading ? "Downloading..." : "Download Resource"}
               </Button>
 
-              <Button variant="outline" className="w-full">
+              <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => window.open(constructFileUrl(resource.url, true), "_blank")}
+              >
                 <ExternalLink className="w-4 h-4 mr-2" />
                 Open in New Tab
               </Button>

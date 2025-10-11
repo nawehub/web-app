@@ -104,3 +104,12 @@ export interface UploadFileData {
     };
     file: File;
 }
+
+export const constructFileUrl = (url: string, isPreview: boolean) => {
+    const { pathname } = new URL(url);
+    const parts = pathname.split("/");
+
+    const folderId = parts.at(-2);
+    const fileName = parts.at(-1);
+    return `/api/resources/files/views/${folderId}/${fileName}?preview=${isPreview ? "true" : "false"}`;
+}

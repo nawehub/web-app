@@ -62,11 +62,6 @@ export default function ResourcesPage() {
         setPreviewResource(null)
     }
 
-    const handleResourceDownload = (resource: Resource) => {
-        console.log("Downloaded:", resource.title)
-        // The download is handled within the preview component
-    }
-
     const getIcon = (category: string) => {
         if (category.toLowerCase() === "finance") return <Brain className={'h-4 w-4'} />
         if (category.toLowerCase() === "finance") return <DollarSign className={'h-4 w-4'} />
@@ -354,7 +349,6 @@ export default function ResourcesPage() {
                         resource={previewResource}
                         isOpen={isPreviewOpen}
                         onCloseAction={handleClosePreview}
-                        onDownloadAction={handleResourceDownload}
                     />
                 )}
             </div>

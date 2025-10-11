@@ -5,19 +5,13 @@ import {Button} from '@/components/ui/button';
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from '@/components/ui/card';
 import {Input} from '@/components/ui/input';
 import {Badge} from '@/components/ui/badge';
-import {
-    Calendar,
-    Plus,
-    Search,
-    ExternalLink,
-    Clock
-} from 'lucide-react';
+import {Calendar, Clock, ExternalLink, Plus, Search} from 'lucide-react';
 import {CreateEventDialog} from '@/app/dashboard/events/_components/create-event-dialog';
 import {useEventsQuery} from '@/hooks/repository/use-events';
 import Link from 'next/link';
 import {formatDate} from "@/types/funding";
 import {useRouter} from "next/navigation";
-import {IfAllowed, IfDevPartner} from "@/components/auth/IfAllowed";
+import {IfDevPartner} from "@/components/auth/IfAllowed";
 import {
     Select,
     SelectContent,
@@ -28,6 +22,8 @@ import {
     SelectValue
 } from "@/components/ui/select";
 import {useIsMobile} from "@/hooks/use-mobile";
+import {downloadOrPreviewFileHelper} from "@/lib/download-helper";
+import {constructFileUrl} from "@/types/files";
 
 export default function EventsPage() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -162,7 +158,7 @@ export default function EventsPage() {
                                 {event.flier && (
                                     <div className="aspect-video relative overflow-hidden">
                                         <img
-                                            src={`${event.flier}?preview=true`}
+                                            src={constructFileUrl(event.flier, true)}
                                             alt={event.title}
                                             className="w-full h-full object-cover"
                                         />
@@ -203,8 +199,8 @@ export default function EventsPage() {
                                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                         <Calendar className="h-4 w-4"/>
                                         <span>
-                      {formatDate(event.startDate.toString())} - {formatDate(event.endDate.toString())}
-                    </span>
+                                          {formatDate(event.startDate.toString())} - {formatDate(event.endDate.toString())}
+                                        </span>
                                     </div>
 
                                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
