@@ -9,8 +9,8 @@ import {Card, CardContent} from "@/components/ui/card"
 import {toast} from "sonner"
 import {Download, FileText, Star, ExternalLink} from "lucide-react"
 import {Resource, FileFormat, constructFileUrl} from "@/types/files";
-import FilePreview from "@/components/resources/file-preview";
-import PdfViewer from "@/components/resources/pdf-viewer";
+import {downloadOrPreviewFileHelper} from "@/lib/download-helper";
+// import PdfViewer from "@/components/resources/pdf-viewer";
 
 interface ResourcePreviewProps {
     resource: Resource
@@ -36,24 +36,10 @@ export function ResourcePreview({resource, isOpen, onCloseAction}: ResourcePrevi
         setIsDownloading(true)
 
         try {
-            // Simulate download process
-            await new Promise((resolve) => setTimeout(resolve, 1000))
-
-            // Create a mock file download
-            const fileName = `${resource.title.toLowerCase().replace(/\s+/g, "-")}.pdf`
-            const blob = new Blob(["Mock file content"], {type: "application/pdf"})
-            const url = URL.createObjectURL(blob)
-
-            const link = document.createElement("a")
-            link.href = url
-            link.download = fileName
-            document.body.appendChild(link)
-            link.click()
-            document.body.removeChild(link)
-            URL.revokeObjectURL(url)
-
-            toast("Download Started", {
-                description: `${resource.title} is being downloaded.`,
+            await downloadOrPreviewFileHelper(constructFileUrl(resource.url, false), resource.fileName)
+            toast("Download Successful", {
+                description: "Your file has been downloaded successfully.",
+                className: "bg-green-500 text-white",
             })
         } catch (error) {
             toast("Download Failed", {
@@ -95,11 +81,11 @@ export function ResourcePreview({resource, isOpen, onCloseAction}: ResourcePrevi
                             </p>
                         </div>
                     </div>
-                    <Button variant="outline" className="w-full" onClick={(): void => setRead(true)}>Click To Read
+                    <Button variant="outline" className="w-full" onClick={(): void => setRead(true)}>Click To View
                         Content</Button>
                     {read && (
-                        <PdfViewer fileTitle={resource.title} isOpen={read} onToggle={handleCloseRead}
-                                   fileUrl={constructFileUrl(resource.url, true)} />
+                        <DynamicPdfViewer isOpen={read} onToggle={handleCloseRead}
+                                   fileUrl={constructFileUrl(resource.url, true)} fName={resource.fileName} />
                     )}
                 </div>
             )

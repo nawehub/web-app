@@ -81,6 +81,7 @@ export type Resource = {
     url: string
     fileFormat: FileFormat
     fileSize: number
+    fileName: string
     accessLevel: AccessLevel
     isFeatured: boolean
     views?: 1000000
