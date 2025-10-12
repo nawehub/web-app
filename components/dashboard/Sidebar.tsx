@@ -7,6 +7,7 @@ import {SidebarItem} from "./SidebarItem";
 import {useSession} from "next-auth/react";
 import {IfAllowed} from "@/components/auth/IfAllowed";
 import Link from "next/link";
+import {isAdmin} from "@/hooks/use-permissions";
 
 interface SidebarProps {
     isSidebarOpen: boolean
@@ -83,13 +84,25 @@ export function Sidebar({isSidebarOpen, toggleSidebar, pathname}: SidebarProps) 
                     <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Management</h3>
                     <div className="space-y-1">
                         {documentMenuItems.map((item, i) => (
-                            <SidebarItem
-                                key={i}
-                                href={item.href}
-                                icon={<item.icon className="w-4 h-4"/>}
-                                title={item.name}
-                                isActive={item.href === bestMatch}
-                            />
+                            <React.Fragment key={i}>
+                                {item.name == "Partners Request" && isAdmin(session?.user) ? (
+                                    <SidebarItem
+                                        key={i}
+                                        href={item.href}
+                                        icon={<item.icon className="w-4 h-4"/>}
+                                        title={item.name}
+                                        isActive={item.href === bestMatch}
+                                    />
+                                ) : item.name !== "Partners Request" && (
+                                    <SidebarItem
+                                        key={i}
+                                        href={item.href}
+                                        icon={<item.icon className="w-4 h-4"/>}
+                                        title={item.name}
+                                        isActive={item.href === bestMatch}
+                                    />
+                                )}
+                            </React.Fragment>
                         ))}
                     </div>
                 </div>
