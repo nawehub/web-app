@@ -8,20 +8,34 @@ import {Label} from "@/components/ui/label";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {useToast} from "@/hooks/use-toast";
 import {useSession} from "next-auth/react";
+import { AUTH_DISABLED } from "@/lib/feature-flags";
 
 export default function SettingsPage() {
-    const {data: session} = useSession({
-        required: true,
-    });
+    const disableAuth = AUTH_DISABLED;
+    const {data: session} = useSession(disableAuth ? undefined : { required: true });
+
+    const userFromSession =
+        session?.user ??
+        (disableAuth
+            ? ({
+                  id: "dev-user",
+                  firstName: "Dev",
+                  lastName: "User",
+                  name: "Dev User",
+                  email: "dev@local",
+                  phone: "",
+                  gender: "",
+              } as any)
+            : undefined);
     const [isSaving, setIsSaving] = useState(false);
     const {toast} = useToast();
     const [user, setUser] = useState({
-        id: session?.user?.id || "",
-        firstName: session?.user?.firstName || "",
-        lastName: session?.user?.lastName || "",
-        email: session?.user?.email || "",
-        phone: session?.user?.phone || "",
-        gender: session?.user?.gender || "",
+        id: userFromSession?.id || "",
+        firstName: userFromSession?.firstName || "",
+        lastName: userFromSession?.lastName || "",
+        email: userFromSession?.email || "",
+        phone: userFromSession?.phone || "",
+        gender: userFromSession?.gender || "",
     });
 
     const handleSave = () => {

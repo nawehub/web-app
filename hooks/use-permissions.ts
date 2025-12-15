@@ -1,6 +1,7 @@
 import {signOut, useSession} from 'next-auth/react';
 import {redirect} from "next/navigation";
 import {UserRole} from "@/types/user";
+import { AUTH_DISABLED } from "@/lib/feature-flags";
 
 type Permission = { id: string };
 type UserLike = { role?: UserRole | null } | null | undefined;
@@ -54,12 +55,20 @@ export const hasAllPermissions = (user: UserLike, permissions: string[]): boolea
 
 // React-friendly API: bind to a specific user (e.g., from your session)
 export function usePermissions() {
+    const disableAuth = AUTH_DISABLED;
     const { data: session } = useSession();
-    if (!session) {
+    const user =
+        session?.user ??
+        (disableAuth
+            ? ({
+                  role: { name: "admin", permissions: ["full:access"] },
+              } as any)
+            : null);
+
+    if (!user) {
         signOut().then()
         redirect("/login");
     }
-    const user = session.user;
     return {
         isAdmin: () => isAdmin(user),
         hasRole: (roleName: string) => hasRole(user, roleName),

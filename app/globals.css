@@ -4,51 +4,213 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* ========================================
+       NaWeHub Design System - Light Mode
+       African-Inspired Warmth Theme
+       ======================================== */
+    
+    /* Primary - Forest Green (Growth & Prosperity) */
+    --color-primary-50: 152 81% 96%;
+    --color-primary-100: 149 80% 90%;
+    --color-primary-200: 152 76% 80%;
+    --color-primary-300: 156 72% 67%;
+    --color-primary-400: 160 64% 52%;
+    --color-primary-500: 160 84% 39%;
+    --color-primary-600: 161 94% 30%;
+    --color-primary-700: 163 94% 24%;
+    --color-primary-800: 164 86% 20%;
+    --color-primary-900: 166 91% 15%;
+
+    /* Secondary - Sunset Orange (Energy & Community) */
+    --color-secondary-50: 33 100% 96%;
+    --color-secondary-100: 34 100% 92%;
+    --color-secondary-200: 32 98% 83%;
+    --color-secondary-300: 31 97% 72%;
+    --color-secondary-400: 27 96% 61%;
+    --color-secondary-500: 25 95% 53%;
+    --color-secondary-600: 21 90% 48%;
+    --color-secondary-700: 17 88% 40%;
+    --color-secondary-800: 15 79% 34%;
+    --color-secondary-900: 15 75% 28%;
+
+    /* Neutral - Warm Gray (Approachable, Not Cold) */
+    --color-neutral-50: 60 9% 98%;
+    --color-neutral-100: 60 5% 96%;
+    --color-neutral-200: 20 6% 90%;
+    --color-neutral-300: 24 6% 83%;
+    --color-neutral-400: 24 5% 64%;
+    --color-neutral-500: 25 5% 45%;
+    --color-neutral-600: 33 5% 32%;
+    --color-neutral-700: 30 6% 25%;
+    --color-neutral-800: 12 6% 15%;
+    --color-neutral-900: 24 10% 10%;
+
+    /* Semantic Colors */
+    --color-success: 142 71% 45%;
+    --color-warning: 38 92% 50%;
+    --color-error: 0 84% 60%;
+    --color-info: 217 91% 60%;
+
+    /* Background & Foreground */
+    --background: 60 9% 98%;
+    --foreground: 24 10% 10%;
+    
+    /* Card */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 24 10% 10%;
+    
+    /* Popover */
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --popover-foreground: 24 10% 10%;
+    
+    /* Primary (Shadcn compatibility) */
+    --primary: 160 84% 39%;
+    --primary-foreground: 60 9% 98%;
+    
+    /* Secondary (Shadcn compatibility) */
+    --secondary: 60 5% 96%;
+    --secondary-foreground: 24 10% 10%;
+    
+    /* Muted */
+    --muted: 60 5% 96%;
+    --muted-foreground: 25 5% 45%;
+    
+    /* Accent */
+    --accent: 25 95% 53%;
+    --accent-foreground: 0 0% 100%;
+    
+    /* Destructive */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 60 9% 98%;
+    
+    /* Border & Input */
+    --border: 20 6% 90%;
+    --input: 20 6% 90%;
+    --ring: 160 84% 39%;
+    
+    /* Radius Scale */
     --radius: 0.5rem;
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-2xl: 1.5rem;
+    --radius-full: 9999px;
+
+    /* Shadow Scale */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    --shadow-primary: 0 4px 14px 0 rgb(16 185 129 / 0.39);
+    --shadow-secondary: 0 4px 14px 0 rgb(249 115 22 / 0.39);
+
+    /* Spacing Scale (4px base unit) */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+    --space-20: 5rem;
+    --space-24: 6rem;
+
+    /* Typography Scale */
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.25rem;
+    --text-2xl: 1.5rem;
+    --text-3xl: 1.875rem;
+    --text-4xl: 2.25rem;
+    --text-5xl: 3rem;
+
+    /* Line Heights */
+    --leading-tight: 1.25;
+    --leading-normal: 1.5;
+    --leading-relaxed: 1.625;
+
+    /* Duration Scale */
+    --duration-fast: 150ms;
+    --duration-normal: 250ms;
+    --duration-slow: 350ms;
+    --duration-slower: 500ms;
+
+    /* Easings */
+    --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    /* Chart Colors */
+    --chart-1: 160 84% 39%;
+    --chart-2: 25 95% 53%;
+    --chart-3: 217 91% 60%;
+    --chart-4: 142 71% 45%;
+    --chart-5: 38 92% 50%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --input-gray: rgba(39, 39, 42, 1);
-    --input-border-gray:  rgba(63 63 70);
-    --text-white: #ffffff;
+    /* ========================================
+       NaWeHub Design System - Dark Mode
+       Warm Dark Theme (Not Pure Black)
+       ======================================== */
+    
+    /* Background & Foreground */
+    --background: 24 10% 10%;
+    --foreground: 30 15% 95%;
+    
+    /* Card */
+    --card: 24 10% 12%;
+    --card-foreground: 30 15% 95%;
+    
+    /* Popover */
+    --popover: 24 10% 12%;
+    --popover-foreground: 30 15% 95%;
+    
+    /* Primary */
+    --primary: 160 84% 39%;
+    --primary-foreground: 24 10% 10%;
+    
+    /* Secondary */
+    --secondary: 24 10% 18%;
+    --secondary-foreground: 30 15% 95%;
+    
+    /* Muted */
+    --muted: 24 10% 18%;
+    --muted-foreground: 30 15% 65%;
+    
+    /* Accent */
+    --accent: 28 85% 55%;
+    --accent-foreground: 24 10% 10%;
+    
+    /* Destructive */
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 30 15% 95%;
+    
+    /* Border & Input */
+    --border: 24 10% 20%;
+    --input: 24 10% 20%;
+    --ring: 160 84% 39%;
+
+    /* Dark mode shadows with warm tint */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.4), 0 8px 10px -6px rgb(0 0 0 / 0.3);
+    --shadow-primary: 0 4px 14px 0 rgb(16 185 129 / 0.25);
+    --shadow-secondary: 0 4px 14px 0 rgb(249 115 22 / 0.25);
+
+    /* Dark Chart Colors */
+    --chart-1: 160 70% 45%;
+    --chart-2: 28 85% 55%;
+    --chart-3: 217 80% 65%;
+    --chart-4: 142 60% 50%;
+    --chart-5: 38 80% 55%;
   }
 }
 
@@ -56,114 +218,387 @@
   * {
     @apply border-border;
   }
+  
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Typography defaults */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-semibold tracking-tight;
+  }
+
+  h1 {
+    @apply text-4xl lg:text-5xl leading-tight;
+  }
+
+  h2 {
+    @apply text-3xl lg:text-4xl leading-tight;
+  }
+
+  h3 {
+    @apply text-2xl lg:text-3xl leading-snug;
+  }
+
+  h4 {
+    @apply text-xl lg:text-2xl leading-snug;
+  }
+
+  p {
+    @apply leading-relaxed;
+  }
+
+  /* Mobile-optimized base styles */
+  html {
+    /* Prevent iOS font scaling */
+    -webkit-text-size-adjust: 100%;
+    /* Smooth scrolling */
+    scroll-behavior: smooth;
+  }
+
+  /* Better touch targets */
+  button, 
+  [role="button"],
+  input[type="submit"],
+  input[type="button"],
+  a {
+    @apply touch-manipulation;
+  }
+
+  /* Focus visible styles for accessibility */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  /* Remove default focus outline */
+  :focus:not(:focus-visible) {
+    @apply outline-none;
   }
 }
 
-/* Custom animations */
-@keyframes scroll {
-    0% {
-        transform: translateX(0);
+@layer components {
+  /* Mobile-first container */
+  .container-mobile {
+    @apply w-full mx-auto px-4;
+    max-width: 100%;
+  }
+
+  @media (min-width: 480px) {
+    .container-mobile {
+      max-width: 480px;
     }
-    100% {
-        transform: translateX(-50%);
+  }
+
+  @media (min-width: 768px) {
+    .container-mobile {
+      max-width: 720px;
+      @apply px-6;
     }
-}
+  }
 
-.animate-scroll {
-    animation: scroll 35s linear infinite;
-}
+  @media (min-width: 1024px) {
+    .container-mobile {
+      max-width: 960px;
+    }
+  }
 
-.animate-scroll:hover {
-    animation-play-state: paused;
-}
+  @media (min-width: 1280px) {
+    .container-mobile {
+      max-width: 1140px;
+    }
+  }
 
-/* Line clamp utility */
-.line-clamp-6 {
+  @media (min-width: 1536px) {
+    .container-mobile {
+      max-width: 1320px;
+    }
+  }
+
+  /* Sticky CTA bar for mobile forms */
+  .sticky-cta {
+    @apply fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur-sm border-t z-40;
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+
+  /* Safe area padding for iOS */
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  /* Card hover effects */
+  .card-interactive {
+    @apply transition-all duration-normal;
+  }
+
+  .card-interactive:hover {
+    @apply shadow-lg;
+    transform: translateY(-2px);
+  }
+
+  .card-interactive:active {
+    transform: scale(0.98);
+  }
+
+  /* Primary button with glow */
+  .btn-primary-glow {
+    box-shadow: var(--shadow-primary);
+  }
+
+  .btn-primary-glow:hover {
+    box-shadow: 0 6px 20px 0 rgb(16 185 129 / 0.45);
+  }
+
+  /* Secondary button with glow */
+  .btn-secondary-glow {
+    box-shadow: var(--shadow-secondary);
+  }
+
+  .btn-secondary-glow:hover {
+    box-shadow: 0 6px 20px 0 rgb(249 115 22 / 0.45);
+  }
+
+  /* Skeleton shimmer animation */
+  .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--muted)) 0%,
+      hsl(var(--muted-foreground) / 0.1) 50%,
+      hsl(var(--muted)) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+
+  /* Text truncation utilities */
+  .line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-6 {
     display: -webkit-box;
     -webkit-line-clamp: 6;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
 }
 
+@layer utilities {
+  /* Touch manipulation for better mobile interactions */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Custom selection color */
+  ::selection {
+    @apply bg-primary/20 text-foreground;
+  }
+}
+
+/* ========================================
+   Animations
+   ======================================== */
+
+/* Scroll animation for carousels */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 35s linear infinite;
+}
+
+.animate-scroll:hover {
+  animation-play-state: paused;
+}
+
+/* Fade in up - for page content entrance */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp var(--duration-normal) var(--ease-out) forwards;
+}
+
+/* Scale in - for modals/toasts */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scaleIn var(--duration-normal) var(--ease-spring) forwards;
+}
+
+/* Slide in from bottom - for bottom sheets */
+@keyframes slideInBottom {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-in-bottom {
+  animation: slideInBottom var(--duration-slow) var(--ease-out) forwards;
+}
+
+/* Pulse - for loading/attention states */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulse 2s var(--ease-in-out) infinite;
+}
+
+/* Shimmer - for skeleton loading */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Spin animation for loaders */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin 1.5s linear infinite;
+}
+
+/* ========================================
+   Reduced Motion
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ========================================
+   Mobile-Specific Overrides
+   ======================================== */
+
 @media screen and (max-width: 500px) {
-    button.text-sm {
-        font-size: 0.8rem;
-        text-wrap: auto;
-    }
+  button.text-sm {
+    font-size: 0.875rem;
+    text-wrap: balance;
+  }
 
-    .container--header {
-        padding-left: 10px;
-        padding-right: 10px;
-    }
+  .container--header {
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
+  }
 
-    .py-20 {
-        padding-bottom: 1rem;
-        padding-top: 1rem;
-    }
+  .py-20 {
+    padding-bottom: 1rem;
+    padding-top: 1rem;
+  }
 
-    .container--contact-us .p-8 {
-        padding: 0;
-    }
+  /* Contact section: keep comfortable padding on small devices */
+  .container--contact-us .p-8 {
+    padding: 1rem;
+  }
 }
 
 @media screen and (max-width: 767px) {
-    .container--contact-us {
-        padding: 0;
-    }
+  /* Prevent edge-to-edge squashing on mobile/tablet */
+  .container--contact-us {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 }
 
-@media only screen and (min-width: 767px) and (max-width: 1024px) and (orientation:portrait) {
-    /* For portrait layouts only */
-
-    .container--contact-us .p-8 {
-        padding: 0;
-    }
+@media only screen and (min-width: 767px) and (max-width: 1024px) and (orientation: portrait) {
+  .container--contact-us .p-8 {
+    padding: 1.5rem;
+  }
 }
 
-.left-sidebar {
-    background-color: var(--text-white);
-    z-index: 50;
-}
+/* ========================================
+   Dark Mode Specific Styles
+   ======================================== */
 
-.chart-wrap {
-    overflow-x: auto;
-}
-
-.recent-activity-block {
-    @media screen and (max-width: 1024px) {
-        grid-column: span 4 / span 4;
-    }
-}
-
-.logo-wrap {
-    padding-bottom: 0.65rem;
-    padding-top: 0.6rem;
-}
-
-header nav a.underline {
-    text-decoration: none;
-}
-
-header nav a.underline span {
-    width: 100%;
-}
-
-.custom-chart {
-    width: 100%;
-}
-
-/*--------------------------- dark ------------------------------*/
 .dark header,
 .dark .head-wrap,
 .dark .left-sidebar {
-    background-color: hsl(var(--background));
+  background-color: hsl(var(--background));
 }
 
 .dark input.bg-gray-200 {
-    background-color: var(--input-gray);
-    border: 1px solid var(--input-border-gray);
+  background-color: hsl(var(--input));
+  border: 1px solid hsl(var(--border));
 }
 
 .dark .text-gray-900,
@@ -174,7 +609,7 @@ header nav a.underline span {
 .dark .text-slate-600,
 .dark .head-wrap .user-name,
 .dark .hover\:bg-accent:hover svg {
-    color: var(--text-white);
+  color: hsl(var(--foreground));
 }
 
 .dark .search-question__wrap,
@@ -183,29 +618,71 @@ header nav a.underline span {
 .dark .to-white,
 .dark .feedback-wrap,
 .dark .backdrop-blur-sm,
-.dark .button-dark-transparent:hover,
 .dark .register-business-wrap,
 .dark .dashboard-slider,
 .dark .haw-can-we-help__wrap,
 .dark .main-resource__wrap,
 .dark .bg-gradient-to-br {
-    background: transparent;
+  background: transparent;
+}
+
+/* Button dark transparent - ensure text visibility on hover */
+.button-dark-transparent {
+  color: hsl(var(--foreground));
+}
+
+.button-dark-transparent:hover {
+  color: hsl(var(--foreground)) !important;
+  background-color: hsl(var(--accent)) !important;
+}
+
+.dark .button-dark-transparent:hover {
+  color: hsl(var(--foreground)) !important;
+  background-color: hsl(var(--accent)) !important;
 }
 
 .dark .dashboard-slider .slider-item {
-    background: var(--text-white);
+  background: hsl(var(--card));
 }
 
 .dark .search-question__wrap,
 .dark .haw-can-we-help__wrap {
-    border-bottom: 1px solid var(--input-border-gray);
-    border-top: 1px solid var(--input-border-gray);
+  border-bottom: 1px solid hsl(var(--border));
+  border-top: 1px solid hsl(var(--border));
 }
 
-.dark .rounded-lg {
-    border: 1px solid var(--input-border-gray);
+/* ========================================
+   Component-Specific Utilities
+   ======================================== */
+
+.left-sidebar {
+  background-color: hsl(var(--background));
+  z-index: 50;
 }
 
-.dark .shadow-xl {
-    box-shadow: 0 20px 25px -5px rgb(255 255 255 / 0.1), 0 8px 10px -6px rgb(255 255 255 / 0.1);
+.chart-wrap {
+  overflow-x: auto;
+}
+
+.recent-activity-block {
+  @media screen and (max-width: 1024px) {
+    grid-column: span 4 / span 4;
+  }
+}
+
+.logo-wrap {
+  padding-bottom: 0.65rem;
+  padding-top: 0.6rem;
+}
+
+header nav a.underline {
+  text-decoration: none;
+}
+
+header nav a.underline span {
+  width: 100%;
+}
+
+.custom-chart {
+  width: 100%;
 }

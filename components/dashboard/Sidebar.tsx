@@ -1,35 +1,49 @@
-import {Button} from "@/components/ui/button";
-import {MoreVertical, X} from "lucide-react";
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { X, ChevronRight } from "lucide-react";
 import React from "react";
-import {Avatar, AvatarFallback} from "@/components/ui/avatar";
-import {bottomMenuItems, documentMenuItems, exploreMenuItems} from "@/components/MenuItems";
-import {SidebarItem} from "./SidebarItem";
-import {useSession} from "next-auth/react";
-import {IfAllowed} from "@/components/auth/IfAllowed";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { bottomMenuItems, documentMenuItems, exploreMenuItems } from "@/components/MenuItems";
+import { SidebarItem } from "./SidebarItem";
+import { useSession } from "next-auth/react";
+import { IfAllowed } from "@/components/auth/IfAllowed";
 import Link from "next/link";
-import {isAdmin} from "@/hooks/use-permissions";
+import { isAdmin } from "@/hooks/use-permissions";
+import { cn } from "@/lib/utils";
+import { AUTH_DISABLED } from "@/lib/feature-flags";
 
 interface SidebarProps {
-    isSidebarOpen: boolean
-    toggleSidebar: () => void
+    isSidebarOpen: boolean;
+    toggleSidebar: () => void;
     pathname: string;
 }
 
 const matchesPath = (pathname: string, href: string) => {
     if (!href) return false;
-    if (href === "/") return pathname === "/"; // don't let "/" match everything
+    if (href === "/") return pathname === "/";
     return pathname === href || pathname.startsWith(`${href}/`);
 };
 
 const getBestMatchHref = (pathname: string, hrefs: string[]) => {
     const candidates = hrefs.filter((h) => matchesPath(pathname, h));
     if (candidates.length === 0) return null;
-    // The longest prefix wins (most specific)
     return candidates.sort((a, b) => b.length - a.length)[0];
 };
 
-export function Sidebar({isSidebarOpen, toggleSidebar, pathname}: SidebarProps) {
-    const {data: session} = useSession();
+export function Sidebar({ isSidebarOpen, toggleSidebar, pathname }: SidebarProps) {
+    const { data: session } = useSession();
+    const disableAuth = AUTH_DISABLED;
+    const user =
+        session?.user ??
+        (disableAuth
+            ? ({
+                  firstName: "Dev",
+                  lastName: "User",
+                  email: "dev@local",
+                  role: { name: "admin", permissions: ["full:access"] },
+              } as any)
+            : undefined);
 
     const allHrefs = [
         ...exploreMenuItems.map((i) => i.href),
@@ -39,151 +53,173 @@ export function Sidebar({isSidebarOpen, toggleSidebar, pathname}: SidebarProps) 
 
     const bestMatch = getBestMatchHref(pathname, allHrefs);
 
+    // Get user initials for avatar
+    const getInitials = () => {
+        const first = user?.firstName?.[0] || "";
+        const last = user?.lastName?.[0] || "";
+        return (first + last).toUpperCase() || "U";
+    };
 
-    // Shared inner content for the sidebar
-    const SidebarInner = (
-        <>
+    const SidebarContent = (
+        <div className="flex flex-col h-full">
             {/* Mobile Close Button */}
-            <div className="lg:hidden absolute top-4 right-4">
+            <div className="lg:hidden absolute top-3 right-3 z-10">
                 <Button
                     variant="ghost"
-                    size="sm"
+                    size="icon"
                     onClick={toggleSidebar}
-                    className="text-gray-700 hover:text-gray-900 dark:text-gray-200 dark:hover:text-white"
+                    className="h-10 w-10"
                     aria-label="Close sidebar"
                 >
-                    <X className="w-5 h-5"/>
+                    <X className="w-5 h-5" />
                 </Button>
             </div>
 
             {/* Logo */}
-            <div className="logo-wrap px-4 py-2 border-b border-gray-200 dark:border-gray-800">
-                <div className="flex items-center justify-center">
-                    <Link href={"/"}>
-                        <img src="/images/wehub-sample-logo.png" alt="Logo" className="h-11 w-auto"/>
-                    </Link>
-                </div>
+            <div className="px-4 py-4 border-b">
+                <Link href="/" className="flex items-center justify-center">
+                    <img
+                        src="/images/wehub-sample-logo.png"
+                        alt="NaWeHub Logo"
+                        className="h-10 w-auto"
+                    />
+                </Link>
             </div>
 
-            {/* Navigation */}
-            <nav className="px-4 space-y-1 py-4">
-                {exploreMenuItems.map((item, i) => (
-                    <SidebarItem
-                        key={i}
-                        href={item.href}
-                        icon={<item.icon className="w-4 h-4"/>}
-                        title={item.name}
-                        isActive={item.href === bestMatch}
-                    />
-                ))}
+            {/* Main Navigation */}
+            <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label="Sidebar navigation">
+                {/* Explore Section */}
+                <div className="space-y-1">
+                    {exploreMenuItems.map((item, i) => (
+                        <SidebarItem
+                            key={i}
+                            href={item.href}
+                            icon={<item.icon className="w-5 h-5" />}
+                            title={item.name}
+                            isActive={item.href === bestMatch}
+                        />
+                    ))}
+                </div>
+
+                {/* Management Section */}
+                <IfAllowed anyOf={["funding:create", "full:access"]}>
+                    <div className="mt-8">
+                        <h3 className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                            Management
+                        </h3>
+                        <div className="space-y-1">
+                            {documentMenuItems.map((item, i) => (
+                                <React.Fragment key={i}>
+                                    {item.name === "Partners Request" && isAdmin(user) ? (
+                                        <SidebarItem
+                                            href={item.href}
+                                            icon={<item.icon className="w-5 h-5" />}
+                                            title={item.name}
+                                            isActive={item.href === bestMatch}
+                                        />
+                                    ) : item.name !== "Partners Request" && (
+                                        <SidebarItem
+                                            href={item.href}
+                                            icon={<item.icon className="w-5 h-5" />}
+                                            title={item.name}
+                                            isActive={item.href === bestMatch}
+                                        />
+                                    )}
+                                </React.Fragment>
+                            ))}
+                        </div>
+                    </div>
+                </IfAllowed>
             </nav>
 
-            {/* Documents Section */}
-            <IfAllowed anyOf={["funding:create", "full:access"]}>
-                <div className="px-4 mt-6">
-                    <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Management</h3>
-                    <div className="space-y-1">
-                        {documentMenuItems.map((item, i) => (
-                            <React.Fragment key={i}>
-                                {item.name == "Partners Request" && isAdmin(session?.user) ? (
-                                    <SidebarItem
-                                        key={i}
-                                        href={item.href}
-                                        icon={<item.icon className="w-4 h-4"/>}
-                                        title={item.name}
-                                        isActive={item.href === bestMatch}
-                                    />
-                                ) : item.name !== "Partners Request" && (
-                                    <SidebarItem
-                                        key={i}
-                                        href={item.href}
-                                        icon={<item.icon className="w-4 h-4"/>}
-                                        title={item.name}
-                                        isActive={item.href === bestMatch}
-                                    />
-                                )}
-                            </React.Fragment>
-                        ))}
-                    </div>
-                </div>
-            </IfAllowed>
-
             {/* Bottom Section */}
-            <div className="absolute bottom-0 w-64 p-4 space-y-2">
+            <div className="mt-auto border-t p-3 space-y-1">
                 {bottomMenuItems.map((item, i) => (
                     <SidebarItem
                         key={i}
                         href={item.href}
-                        icon={<item.icon className="w-4 h-4"/>}
+                        icon={<item.icon className="w-5 h-5" />}
                         title={item.name}
                         isActive={item.href === bestMatch}
                     />
                 ))}
 
-                {/* User Profile */}
-                <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                    <Avatar className="w-8 h-8">
-                        <AvatarFallback className="bg-gray-600 text-white text-xs">MJ</AvatarFallback>
+                {/* User Profile Card */}
+                <div className="mt-3 flex items-center gap-3 px-3 py-3 rounded-lg bg-neutral-100 dark:bg-neutral-800">
+                    <Avatar className="h-9 w-9 shrink-0">
+                        <AvatarFallback className="bg-primary text-primary-foreground text-sm font-medium">
+                            {getInitials()}
+                        </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium truncate text-gray-900 dark:text-gray-100">
-                            {session?.user?.firstName}
-                        </div>
-                        <div className="text-xs truncate text-gray-500 dark:text-gray-400">
-                            {session?.user?.email}
-                        </div>
+                        <p className="text-sm font-medium truncate">
+                            {user?.firstName} {user?.lastName}
+                        </p>
+                        <p className="text-xs text-muted-foreground truncate">
+                            {user?.email}
+                        </p>
                     </div>
-                    <MoreVertical className="w-4 h-4 flex-shrink-0 text-gray-500 dark:text-gray-400"/>
+                    <ChevronRight className="w-4 h-4 shrink-0 text-muted-foreground" />
                 </div>
             </div>
-        </>
+        </div>
     );
 
     return (
         <>
-            {/* Desktop (always visible) */}
-            <div
-                className="hidden lg:block left-sidebar fixed top-0 left-0 h-full w-64 border-r bg-white dark:bg-neutral-900 z-40"
+            {/* Desktop Sidebar (always visible) */}
+            <aside
+                className={cn(
+                    "hidden lg:flex flex-col",
+                    "fixed top-0 left-0 h-screen w-64",
+                    "bg-background border-r z-sticky"
+                )}
+                aria-label="Main sidebar"
             >
-                {SidebarInner}
-            </div>
+                {SidebarContent}
+            </aside>
 
-            {/* Mobile overlay is always mounted to allow smooth transitions */}
+            {/* Mobile Sidebar Overlay */}
             <div
-                className={`fixed inset-0 z-[80] lg:hidden transition-[opacity] duration-300 ${
-                    isSidebarOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-                }`}
+                className={cn(
+                    "fixed inset-0 z-modal lg:hidden transition-opacity duration-normal",
+                    isSidebarOpen
+                        ? "opacity-100 pointer-events-auto"
+                        : "opacity-0 pointer-events-none"
+                )}
                 aria-hidden={!isSidebarOpen}
             >
                 {/* Backdrop */}
                 <div
-                    className={`absolute inset-0 bg-black/50 backdrop-blur-[1px] transition-opacity duration-300 ${
+                    className={cn(
+                        "absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-normal",
                         isSidebarOpen ? "opacity-100" : "opacity-0"
-                    }`}
+                    )}
                     onClick={toggleSidebar}
-                    aria-label="Close sidebar backdrop"
+                    aria-label="Close sidebar"
                 />
 
-                {/* Drawer panel */}
-                <div
+                {/* Drawer Panel */}
+                <aside
                     role="dialog"
                     aria-modal="true"
-                    className={`absolute top-0 left-0 h-svh w-64 bg-white dark:bg-neutral-900 border-r shadow-2xl transform transition-transform duration-300 ease-out ${
+                    aria-label="Mobile sidebar navigation"
+                    className={cn(
+                        "absolute top-0 left-0 h-[100dvh] w-72",
+                        "bg-background border-r shadow-xl",
+                        "transform transition-transform duration-slow ease-out",
                         isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-                    }`}
+                    )}
                     onClick={(e) => {
-                        // Keep clicks inside from closing due to backdrop
                         e.stopPropagation();
-                        // If a link is clicked anywhere inside, close the drawer
                         const anchor = (e.target as HTMLElement).closest("a[href]");
                         if (anchor) {
                             toggleSidebar();
                         }
                     }}
-                    style={{willChange: "transform"}}
                 >
-                    {SidebarInner}
-                </div>
+                    {SidebarContent}
+                </aside>
             </div>
         </>
     );

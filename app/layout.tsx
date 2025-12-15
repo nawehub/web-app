@@ -1,6 +1,6 @@
 import type {Metadata} from 'next'
 import './globals.css'
-import {Inter} from "next/font/google";
+import {Plus_Jakarta_Sans, Source_Sans_3} from "next/font/google";
 import React from "react";
 import {Providers} from "@/lib/providers/providers";
 import {AuthProvider} from "@/hooks/context/AuthContext";
@@ -8,7 +8,17 @@ import {AuthErrorBoundary} from "@/components/AuthErrorBoundary";
 import {ThemeProvider} from "@/components/theme-provider";
 import {Toaster} from "@/components/ui/sonner";
 
-const inter = Inter({subsets: ["latin"]});
+const plusJakarta = Plus_Jakarta_Sans({
+    subsets: ["latin"],
+    variable: "--font-display",
+    display: "swap",
+});
+
+const sourceSans = Source_Sans_3({
+    subsets: ["latin"],
+    variable: "--font-body",
+    display: "swap",
+});
 
 export const metadata: Metadata = {
     title: 'NaWeHub',
@@ -23,7 +33,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" suppressHydrationWarning={true}>
-            <body className={inter.className}>
+            <body className={`${plusJakarta.variable} ${sourceSans.variable} font-body antialiased`}>
             <ThemeProvider attribute="class" enableSystem>
                 <AuthProvider>
                     <Providers>
