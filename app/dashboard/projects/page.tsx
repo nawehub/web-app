@@ -159,17 +159,17 @@ const categories = [
 const getStatusColor = (status: string) => {
     switch (status) {
         case 'APPROVED - IMPLEMENTATION ONGOING':
-            return 'bg-green-500 hover:bg-green-600';
+            return 'bg-emerald-500 text-white';
         case 'UNDER REVIEW':
-            return 'bg-yellow-500 hover:bg-yellow-600';
+            return 'bg-amber-500 text-white';
         case 'PENDING APPROVAL':
-            return 'bg-blue-500 hover:bg-blue-600';
+            return 'bg-blue-500 text-white';
         case 'COMPLETED':
-            return 'bg-purple-500 hover:bg-purple-600';
+            return 'bg-violet-500 text-white';
         case 'REJECTED':
-            return 'bg-red-500 hover:bg-red-600';
+            return 'bg-red-500 text-white';
         default:
-            return 'bg-gray-500 hover:bg-gray-600';
+            return 'bg-zinc-500 text-white';
     }
 };
 
@@ -191,13 +191,13 @@ const getStatusIcon = (status: string) => {
 const getPriorityColor = (priority: string) => {
     switch (priority) {
         case 'High':
-            return 'text-red-600 bg-red-50 border-red-200';
+            return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border-red-200 dark:border-red-800';
         case 'Medium':
-            return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+            return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800';
         case 'Low':
-            return 'text-green-600 bg-green-50 border-green-200';
+            return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800';
         default:
-            return 'text-gray-600 bg-gray-50 border-gray-200';
+            return 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 border-zinc-200 dark:border-zinc-700';
     }
 };
 
@@ -241,18 +241,29 @@ export default function ProjectsPage() {
     };
 
     return (
-        <div className="space-y-6 py-6">
+        <div className="space-y-8 py-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-semibold tracking-tight">District Projects</h1>
-                    <p className="text-muted-foreground">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                        <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-white">
+                            District Projects
+                        </h1>
+                        <Badge
+                            variant="secondary"
+                            className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+                        >
+                            <TrendingUp className="w-3 h-3 mr-1" />
+                            LYD
+                        </Badge>
+                    </div>
+                    <p className="text-zinc-600 dark:text-zinc-400">
                         Community-driven development projects across Sierra Leone
                     </p>
                 </div>
 
                 <Link href="/dashboard/projects/create">
-                    <Button>
+                    <Button className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold rounded-xl shadow-lg shadow-emerald-500/25 hover:shadow-xl hover:shadow-emerald-500/30 transition-all duration-300">
                         <Plus className="h-4 w-4 mr-2" />
                         Create Project
                     </Button>
@@ -260,139 +271,168 @@ export default function ProjectsPage() {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <Card>
-                    <CardContent className="pt-6">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <div className="text-2xl font-bold">{sampleProjects.length}</div>
-                                <p className="text-xs text-muted-foreground">Total Projects</p>
-                            </div>
-                            <TrendingUp className="h-8 w-8 text-blue-500" />
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardContent className="pt-6">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <div className="text-2xl font-bold">
-                                    {sampleProjects.filter(p => p.status === 'APPROVED - IMPLEMENTATION ONGOING').length}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                    {
+                        label: "Total Projects",
+                        value: sampleProjects.length,
+                        icon: TrendingUp,
+                        gradient: "from-blue-500 to-cyan-500",
+                    },
+                    {
+                        label: "Active Projects",
+                        value: sampleProjects.filter((p) => p.status === "APPROVED - IMPLEMENTATION ONGOING").length,
+                        icon: Clock,
+                        gradient: "from-emerald-500 to-teal-500",
+                    },
+                    {
+                        label: "Total Raised",
+                        value: formatCurrency(sampleProjects.reduce((sum, p) => sum + p.raisedAmount, 0)),
+                        icon: DollarSign,
+                        gradient: "from-violet-500 to-purple-500",
+                    },
+                    {
+                        label: "Total Supporters",
+                        value: sampleProjects.reduce((sum, p) => sum + p.supporters, 0),
+                        icon: Users,
+                        gradient: "from-orange-500 to-amber-500",
+                    },
+                ].map((stat, index) => {
+                    const Icon = stat.icon;
+                    return (
+                        <Card
+                            key={index}
+                            className="rounded-2xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-lg shadow-zinc-200/50 dark:shadow-zinc-900/50"
+                        >
+                            <CardContent className="p-4 sm:p-6">
+                                <div className="flex items-center justify-between">
+                                    <div className="min-w-0">
+                                        <div className="text-lg sm:text-2xl font-bold text-zinc-900 dark:text-white truncate">
+                                            {stat.value}
+                                        </div>
+                                        <p className="text-xs text-zinc-500 dark:text-zinc-400">{stat.label}</p>
+                                    </div>
+                                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-r ${stat.gradient} flex items-center justify-center`}>
+                                        <Icon className="h-5 w-5 text-white" />
+                                    </div>
                                 </div>
-                                <p className="text-xs text-muted-foreground">Active Projects</p>
-                            </div>
-                            <Clock className="h-8 w-8 text-green-500" />
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardContent className="pt-6">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <div className="text-2xl font-bold">
-                                    {formatCurrency(sampleProjects.reduce((sum, p) => sum + p.raisedAmount, 0))}
-                                </div>
-                                <p className="text-xs text-muted-foreground">Total Raised</p>
-                            </div>
-                            <DollarSign className="h-8 w-8 text-purple-500" />
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardContent className="pt-6">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <div className="text-2xl font-bold">
-                                    {sampleProjects.reduce((sum, p) => sum + p.supporters, 0)}
-                                </div>
-                                <p className="text-xs text-muted-foreground">Total Supporters</p>
-                            </div>
-                            <Users className="h-8 w-8 text-orange-500" />
-                        </div>
-                    </CardContent>
-                </Card>
+                            </CardContent>
+                        </Card>
+                    );
+                })}
             </div>
 
             {/* Tabs */}
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-                <TabsList>
-                    <TabsTrigger value="all">All Projects</TabsTrigger>
-                    <TabsTrigger value="active">Active</TabsTrigger>
-                    <TabsTrigger value="review">Under Review</TabsTrigger>
-                    <TabsTrigger value="pending">Pending</TabsTrigger>
-                </TabsList>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+                <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+                    <TabsList className="bg-zinc-100 dark:bg-zinc-800 p-1 rounded-xl w-full sm:w-auto max-w-full justify-start overflow-x-auto">
+                        <TabsTrigger value="all" className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-900">
+                            All Projects
+                        </TabsTrigger>
+                        <TabsTrigger value="active" className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-900">
+                            Active
+                        </TabsTrigger>
+                        <TabsTrigger value="review" className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-900">
+                            Under Review
+                        </TabsTrigger>
+                        <TabsTrigger value="pending" className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-900">
+                            Pending
+                        </TabsTrigger>
+                    </TabsList>
 
-                {/* Search and Filters */}
-                <div className="flex flex-col lg:flex-row gap-4">
-                    <div className="relative flex-1 max-w-sm">
-                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input
-                            placeholder="Search projects..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="pl-8"
-                        />
-                    </div>
+                    {/* Search and Filters */}
+                    <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+                        <div className="relative flex-1 lg:w-72">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+                            <Input
+                                placeholder="Search projects..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="pl-10 h-10 border-zinc-200 dark:border-zinc-800 rounded-xl"
+                            />
+                        </div>
 
-                    <div className="flex gap-2">
-                        <Select value={selectedDistrict} onValueChange={setSelectedDistrict}>
-                            <SelectTrigger className="w-[180px]">
-                                <MapPin className="h-4 w-4 mr-2" />
-                                <SelectValue placeholder="All Districts" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">All Districts</SelectItem>
-                                {districts.map((district) => (
-                                    <SelectItem key={district} value={district}>
-                                        {district}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        <div className="flex flex-col sm:flex-row gap-2">
+                            <Select value={selectedDistrict} onValueChange={setSelectedDistrict}>
+                                <SelectTrigger className="w-full sm:w-[170px] h-10 rounded-xl border-zinc-200 dark:border-zinc-800">
+                                    <MapPin className="h-4 w-4 mr-2 text-zinc-400" />
+                                    <SelectValue placeholder="District" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Districts</SelectItem>
+                                    {districts.map((district) => (
+                                        <SelectItem key={district} value={district}>
+                                            {district}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
 
-                        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                            <SelectTrigger className="w-[180px]">
-                                <Filter className="h-4 w-4 mr-2" />
-                                <SelectValue placeholder="All Categories" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">All Categories</SelectItem>
-                                {categories.map((category) => (
-                                    <SelectItem key={category} value={category}>
-                                        {category}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                                <SelectTrigger className="w-full sm:w-[170px] h-10 rounded-xl border-zinc-200 dark:border-zinc-800">
+                                    <Filter className="h-4 w-4 mr-2 text-zinc-400" />
+                                    <SelectValue placeholder="Category" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Categories</SelectItem>
+                                    {categories.map((category) => (
+                                        <SelectItem key={category} value={category}>
+                                            {category}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+
+                            <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                                <SelectTrigger className="w-full sm:w-[170px] h-10 rounded-xl border-zinc-200 dark:border-zinc-800">
+                                    <AlertCircle className="h-4 w-4 mr-2 text-zinc-400" />
+                                    <SelectValue placeholder="Status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Statuses</SelectItem>
+                                    <SelectItem value="APPROVED - IMPLEMENTATION ONGOING">Active</SelectItem>
+                                    <SelectItem value="UNDER REVIEW">Under Review</SelectItem>
+                                    <SelectItem value="PENDING APPROVAL">Pending</SelectItem>
+                                    <SelectItem value="COMPLETED">Completed</SelectItem>
+                                    <SelectItem value="REJECTED">Rejected</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
                     </div>
                 </div>
 
                 <TabsContent value={activeTab} className="space-y-4">
                     {filteredProjects.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-12 text-center">
-                            <TrendingUp className="h-12 w-12 text-muted-foreground mb-4" />
-                            <h3 className="text-lg font-medium mb-2">No projects found</h3>
-                            <p className="text-muted-foreground mb-4">
-                                {searchQuery ? 'No projects match your search criteria.' : 'No projects available in this category.'}
-                            </p>
-                            <Link href="/dashboard/lyd/projects/create">
-                                <Button>
-                                    <Plus className="h-4 w-4 mr-2" />
-                                    Create First Project
-                                </Button>
-                            </Link>
-                        </div>
+                        <Card className="rounded-2xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+                            <CardContent className="flex flex-col items-center justify-center py-14 text-center">
+                                <div className="w-14 h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center mb-4">
+                                    <TrendingUp className="h-7 w-7 text-zinc-400" />
+                                </div>
+                                <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-2">
+                                    No projects found
+                                </h3>
+                                <p className="text-zinc-500 dark:text-zinc-400 mb-5 max-w-md">
+                                    {searchQuery ? "No projects match your search criteria." : "No projects available in this category."}
+                                </p>
+                                <Link href="/dashboard/projects/create">
+                                    <Button className="rounded-xl">
+                                        <Plus className="h-4 w-4 mr-2" />
+                                        Create Project
+                                    </Button>
+                                </Link>
+                            </CardContent>
+                        </Card>
                     ) : (
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             {filteredProjects.map((project) => (
-                                <Card key={project.id} className="overflow-hidden hover:shadow-lg transition-all duration-300">
+                                <Card
+                                    key={project.id}
+                                    className="overflow-hidden rounded-2xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:shadow-xl hover:shadow-zinc-200/50 dark:hover:shadow-zinc-900/50 transition-all duration-300"
+                                >
                                     <CardHeader className="pb-4">
                                         <div className="flex items-start justify-between">
                                             <div className="flex-1">
-                                                <CardTitle className="text-lg font-semibold line-clamp-2 mb-2">
+                                                <CardTitle className="text-lg font-semibold line-clamp-2 mb-2 text-zinc-900 dark:text-white">
                                                     {project.title}
                                                 </CardTitle>
                                                 <CardDescription className="line-clamp-3">
@@ -401,19 +441,21 @@ export default function ProjectsPage() {
                                             </div>
                                             <Badge
                                                 variant="outline"
-                                                className={cn("ml-2 text-white border-0", getPriorityColor(project.priority))}
+                                                className={cn("ml-2 shrink-0", getPriorityColor(project.priority))}
                                             >
                                                 {project.priority}
                                             </Badge>
                                         </div>
 
                                         <div className="flex items-center gap-4 mt-3">
-                                            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                                            <div className="flex items-center gap-1 text-sm text-zinc-500 dark:text-zinc-400">
                                                 <MapPin className="h-4 w-4" />
                                                 <span>{project.district}</span>
                                             </div>
-                                            <Badge variant="outline">{project.category}</Badge>
-                                            <Badge className={cn("text-white", getStatusColor(project.status))}>
+                                            <Badge variant="outline" className="border-zinc-200 dark:border-zinc-700">
+                                                {project.category}
+                                            </Badge>
+                                            <Badge className={cn(getStatusColor(project.status))}>
                                                 {getStatusIcon(project.status)}
                                                 <span className="ml-1 text-xs">{project.status.split(' - ')[0]}</span>
                                             </Badge>
@@ -425,57 +467,57 @@ export default function ProjectsPage() {
                                         <div className="space-y-2">
                                             <div className="flex justify-between text-sm">
                                                 <span className="font-medium">Funding Progress</span>
-                                                <span className="text-muted-foreground">
-                          {getProgressPercentage(project.raisedAmount, project.targetAmount)}%
-                        </span>
+                                                <span className="text-zinc-500 dark:text-zinc-400">
+                                                    {getProgressPercentage(project.raisedAmount, project.targetAmount)}%
+                                                </span>
                                             </div>
                                             <Progress
                                                 value={getProgressPercentage(project.raisedAmount, project.targetAmount)}
                                                 className="h-2"
                                             />
-                                            <div className="flex justify-between text-sm text-muted-foreground">
+                                            <div className="flex justify-between text-sm text-zinc-500 dark:text-zinc-400">
                                                 <span>{formatCurrency(project.raisedAmount)} raised</span>
                                                 <span>of {formatCurrency(project.targetAmount)}</span>
                                             </div>
                                         </div>
 
                                         {/* Project Stats */}
-                                        <div className="grid grid-cols-4 gap-4 pt-2 border-t">
+                                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
                                             <div className="text-center">
-                                                <div className="flex items-center justify-center gap-1 text-sm font-medium">
-                                                    <ThumbsUp className="h-4 w-4 text-green-500" />
+                                                <div className="flex items-center justify-center gap-1 text-sm font-medium text-zinc-900 dark:text-white">
+                                                    <ThumbsUp className="h-4 w-4 text-emerald-500" />
                                                     {project.votes}
                                                 </div>
-                                                <p className="text-xs text-muted-foreground">Votes</p>
+                                                <p className="text-xs text-zinc-500 dark:text-zinc-400">Votes</p>
                                             </div>
 
                                             <div className="text-center">
-                                                <div className="flex items-center justify-center gap-1 text-sm font-medium">
+                                                <div className="flex items-center justify-center gap-1 text-sm font-medium text-zinc-900 dark:text-white">
                                                     <MessageCircle className="h-4 w-4 text-blue-500" />
                                                     {project.comments}
                                                 </div>
-                                                <p className="text-xs text-muted-foreground">Comments</p>
+                                                <p className="text-xs text-zinc-500 dark:text-zinc-400">Comments</p>
                                             </div>
 
                                             <div className="text-center">
-                                                <div className="flex items-center justify-center gap-1 text-sm font-medium">
+                                                <div className="flex items-center justify-center gap-1 text-sm font-medium text-zinc-900 dark:text-white">
                                                     <Users className="h-4 w-4 text-purple-500" />
                                                     {project.supporters}
                                                 </div>
-                                                <p className="text-xs text-muted-foreground">Supporters</p>
+                                                <p className="text-xs text-zinc-500 dark:text-zinc-400">Supporters</p>
                                             </div>
 
                                             <div className="text-center">
-                                                <div className="flex items-center justify-center gap-1 text-sm font-medium">
+                                                <div className="flex items-center justify-center gap-1 text-sm font-medium text-zinc-900 dark:text-white">
                                                     <Eye className="h-4 w-4 text-orange-500" />
                                                     {project.views}
                                                 </div>
-                                                <p className="text-xs text-muted-foreground">Views</p>
+                                                <p className="text-xs text-zinc-500 dark:text-zinc-400">Views</p>
                                             </div>
                                         </div>
 
                                         {/* Project Details */}
-                                        <div className="flex items-center justify-between text-sm text-muted-foreground pt-2 border-t">
+                                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm text-zinc-500 dark:text-zinc-400 pt-4 border-t border-zinc-100 dark:border-zinc-800">
                                             <div className="flex items-center gap-1">
                                                 <Calendar className="h-4 w-4" />
                                                 <span>Deadline: {formatDate(project.deadline)}</span>
@@ -484,13 +526,19 @@ export default function ProjectsPage() {
                                         </div>
 
                                         {/* Action Buttons */}
-                                        <div className="flex gap-2 pt-2">
+                                        <div className="flex flex-col sm:flex-row gap-2 pt-2">
                                             <Link href={`/dashboard/projects/${project.id}`} className="flex-1">
-                                                <Button variant="outline" className="w-full">
+                                                <Button
+                                                    variant="outline"
+                                                    className="w-full rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:border-emerald-300 dark:hover:border-emerald-700 hover:text-emerald-700 dark:hover:text-emerald-200"
+                                                >
                                                     View Details
                                                 </Button>
                                             </Link>
-                                            <Button size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                                            <Button
+                                                size="sm"
+                                                className="rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 sm:w-auto w-full"
+                                            >
                                                 <ThumbsUp className="h-4 w-4 mr-1" />
                                                 Vote
                                             </Button>

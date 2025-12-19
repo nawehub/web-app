@@ -27,8 +27,8 @@ export default function ContactUsSection() {
     }
 
     return (
-        <section className="w-full bg-white dark:bg-gray-950 py-24 border-t border-gray-200 dark:border-gray-800">
-            <div className="container container--contact-us mx-auto px-8">
+        <section className="w-full bg-white dark:bg-gray-950 py-16 sm:py-20 lg:py-24 border-t border-gray-200 dark:border-gray-800">
+            <div className="container container--contact-us mx-auto px-4 sm:px-6 lg:px-8">
                 {/*<motion.p
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -57,11 +57,11 @@ export default function ContactUsSection() {
                     We’re here to answer your questions, explore your business ideas,
                     and support you in formalizing and growing your business sustainably. Connect with us--let’s
                     build successful businesses together.                </motion.p>
-                <div className="flex flex-col md:flex-row gap-10 md:gap-16 items-start">
+                <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
                     {/* Left: Contact Form */}
                     <motion.div
                         ref={cardRef}
-                        className="w-full md:w-1/2 bg-gray-50 dark:bg-gray-900/80 rounded-2xl shadow-xl p-8 border border-gray-200 dark:border-gray-800 relative"
+                        className="w-full lg:flex-1 lg:max-w-[640px] bg-gray-50 dark:bg-gray-900/80 rounded-2xl shadow-xl p-5 sm:p-8 border border-gray-200 dark:border-gray-800 relative min-w-0"
                         style={{ rotateX, rotateY }}
                         onMouseMove={handleMouseMove}
                         onMouseLeave={handleMouseLeave}
@@ -74,13 +74,13 @@ export default function ContactUsSection() {
                     </motion.div>
                     {/* Right: Contact Info & Map */}
                     <motion.div
-                        className="w-full md:w-1/2 flex flex-col gap-8"
+                        className="w-full lg:flex-1 flex flex-col gap-6 sm:gap-8 min-w-0"
                         initial={{ opacity: 0, x: 40 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.7, delay: 0.4 }}
                         viewport={{ once: true }}
                     >
-                        <div className="bg-white dark:bg-gray-900/80 rounded-2xl shadow-xl px-8 pb-3 pt-8 border border-gray-200 dark:border-gray-800 mb-2">
+                        <div className="bg-white dark:bg-gray-900/80 rounded-2xl shadow-xl p-6 sm:p-8 border border-gray-200 dark:border-gray-800">
                             <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Prefer a Direct Approach?</h4>
                             <ul className="space-y-3 text-gray-700 dark:text-gray-200">
                                 <li className="flex items-center gap-2"><span role="img" aria-label="phone">📞</span> {appMetadata.Authors.phone}</li>
