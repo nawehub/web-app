@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Save, Calendar, MapPin, DollarSign } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -36,54 +36,47 @@ export default function CreateProjectPage() {
     const [objectives, setObjectives] = useState('');
     const [expectedOutcomes, setExpectedOutcomes] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-
-    const { toast } = useToast();
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!title.trim()) {
-            toast({
-                title: 'Error',
+            toast("Error", {
                 description: 'Please enter a project title',
-                variant: 'destructive',
+                className: 'bg-destructive text-destructive-foreground',
             });
             return;
         }
 
         if (!description.trim()) {
-            toast({
-                title: 'Error',
+            toast('Error', {
                 description: 'Please enter a project description',
-                variant: 'destructive',
+                className: 'bg-destructive text-destructive-foreground',
             });
             return;
         }
 
         if (!district || !category) {
-            toast({
-                title: 'Error',
+            toast('Error', {
                 description: 'Please select district and category',
-                variant: 'destructive',
+                className: 'bg-destructive text-destructive-foreground',
             });
             return;
         }
 
         if (!targetAmount || isNaN(Number(targetAmount))) {
-            toast({
-                title: 'Error',
+            toast('Error', {
                 description: 'Please enter a valid target amount',
-                variant: 'destructive',
+                className: 'bg-destructive text-destructive-foreground',
             });
             return;
         }
 
         if (!deadline) {
-            toast({
-                title: 'Error',
+            toast('Error', {
                 description: 'Please select a deadline',
-                variant: 'destructive',
+                className: 'bg-destructive text-destructive-foreground',
             });
             return;
         }
@@ -93,8 +86,7 @@ export default function CreateProjectPage() {
         // Simulate API call
         setTimeout(() => {
             setIsSubmitting(false);
-            toast({
-                title: 'Success',
+            toast('Success', {
                 description: 'Project created successfully and submitted for review',
             });
             router.push('/dashboard/projects');
