@@ -21,8 +21,8 @@ export const demographsData: Region[] = [
 					"Njaluahun",
 					"Penguia",
 					"Upper Bambara",
-					"Yawei",
-				],
+					"Yawei"
+				]
 			},
 			{
 				name: "Kenema",
@@ -43,8 +43,8 @@ export const demographsData: Region[] = [
 					"Small Bo",
 					"Tunkia",
 					"Wandor",
-					"Kenema City",
-				],
+					"Kenema City"
+				]
 			},
 			{
 				name: "Kono",
@@ -63,10 +63,10 @@ export const demographsData: Region[] = [
 					"Soa",
 					"Tankora",
 					"Toli",
-					"Koidu City",
-				],
-			},
-		],
+					"Koidu City"
+				]
+			}
+		]
 	},
 	{
 		name: "North",
@@ -86,8 +86,8 @@ export const demographsData: Region[] = [
 					"gowahun",
 					"Paki Masabong",
 					"Safroko Limba",
-					"Makani City",
-				],
+					"Makani City"
+				]
 			},
 			{
 				name: "Falaba",
@@ -104,8 +104,8 @@ export const demographsData: Region[] = [
 					"Neya",
 					"Nyedu",
 					"Sulima",
-					"Wollay Barawa",
-				],
+					"Wollay Barawa"
+				]
 			},
 			{
 				name: "Koinadugu",
@@ -119,8 +119,8 @@ export const demographsData: Region[] = [
 					"Sengbe",
 					"Tamiso",
 					"Wara Wara Bafodia",
-					"Wara Wara Yagala",
-				],
+					"Wara Wara Yagala"
+				]
 			},
 			{
 				name: "Tonkolili",
@@ -143,10 +143,10 @@ export const demographsData: Region[] = [
 					"Tane",
 					"Yele",
 					"Yoni Mabanta",
-					"Yoni Mamaila",
-				],
-			},
-		],
+					"Yoni Mamaila"
+				]
+			}
+		]
 	},
 	{
 		name: "North West",
@@ -163,8 +163,8 @@ export const demographsData: Region[] = [
 					"Masungbala",
 					"Munu Thalla",
 					"Samu",
-					"Tonko Limba",
-				],
+					"Tonko Limba"
+				]
 			},
 			{
 				name: "Karena",
@@ -181,8 +181,8 @@ export const demographsData: Region[] = [
 					"Sanda Tendaran",
 					"Sella Limba",
 					"Tambakha Simibungie",
-					"Tambakha Yobangie",
-				],
+					"Tambakha Yobangie"
+				]
 			},
 			{
 				name: "Port Loko",
@@ -200,8 +200,8 @@ export const demographsData: Region[] = [
 					"Marampa",
 					"Masimera",
 					"Thainkatopa",
-					"Port Loko City",
-				],
+					"Port Loko City"
+				]
 			},
 		],
 	},
@@ -227,8 +227,8 @@ export const demographsData: Region[] = [
 					"Tikonko",
 					"Valunia",
 					"Wonde",
-					"Bo City",
-				],
+					"Bo City"
+				]
 			},
 			{
 				name: "Bonthe",
@@ -244,8 +244,8 @@ export const demographsData: Region[] = [
 					"Sittia",
 					"Sogbeni",
 					"Yawbeko",
-					"Bonthe Urban",
-				],
+					"Bonthe Urban"
+				]
 			},
 			{
 				name: "Moyamba",
@@ -263,8 +263,8 @@ export const demographsData: Region[] = [
 					"Banta",
 					"Ribbi",
 					"Timdale",
-					"Upper Banta",
-				],
+					"Upper Banta"
+				]
 			},
 			{
 				name: "Pujehun",
@@ -282,17 +282,17 @@ export const demographsData: Region[] = [
 					"Perri",
 					"Soro Gbema",
 					"Sowa",
-					"Yakemu Kpukumu",
-				],
-			},
-		],
+					"Yakemu Kpukumu"
+				]
+			}
+		]
 	},
 	{
 		name: "West",
 		districts: [
 			{
 				name: "Western Area Rural",
-				chiefdoms: ["Koya", "Mountain Rural", "Waterloo Rural", "York Rural"],
+				chiefdoms: ["Koya", "Mountain Rural", "Waterloo Rural", "York Rural"]
 			},
 			{
 				name: "Western Area Urban",
@@ -304,9 +304,9 @@ export const demographsData: Region[] = [
 					"East 3",
 					"West 1",
 					"West 2",
-					"West 3",
-				],
-			},
-		],
-	},
+					"West 3"
+				]
+			}
+		]
+	}
 ];
