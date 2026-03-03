@@ -17,7 +17,7 @@ const PUBLIC_PATHS = [
     "/faq",
     "/privacy",
     "/services",
-    "/lyd-projects",
+    "/projects",
     "/api"
 ];
 

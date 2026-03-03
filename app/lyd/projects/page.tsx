@@ -333,9 +333,8 @@ export default function ProjectsPage() {
                                             {/* Project Stats */}
                                             <div className="grid grid-cols-3 gap-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
                                                 {[
-                                                    { icon: MessageCircle, value: project.comments, label: "Comments", color: "text-blue-500" },
+                                                    // { icon: MessageCircle, value: project.comments, label: "Comments", color: "text-blue-500" },
                                                     { icon: Users, value: project.supporters, label: "Supporters", color: "text-violet-500" },
-                                                    { icon: Eye, value: project.views, label: "Views", color: "text-orange-500" }
                                                 ].map((stat, index) => {
                                                     const Icon = stat.icon;
                                                     return (
@@ -356,7 +355,7 @@ export default function ProjectsPage() {
                                                     <Calendar className="h-4 w-4"/>
                                                     <span>Deadline: {formatDate(project.deadline)}</span>
                                                 </div>
-                                                <Link href={`/lyd-projects/${project.id}`}>
+                                                <Link href={`/app/lyd/projects/${project.id}`}>
                                                     <Button
                                                         variant="outline"
                                                         size="sm"

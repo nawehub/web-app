@@ -1,9 +1,17 @@
 import {DistrictRanking, LYDDonation, MakeDonationRequest, ProfileWithContribution, TopContributor} from "@/types/lyd";
 import {api4app} from "@/lib/api4app";
 
-export type DonationResponse = {
-    message: string
-    status: string
+export type ContributionResponse = {
+    contributionId: string;
+    actionUrlOrCode: string;
+    usageInstructions: UsageInstructions;
+    status: string;
+}
+
+export interface UsageInstructions {
+    title: string;
+    steps: string[];
+    expiryMessage: string;
 }
 
 export type ListProfileDonationsResponse = {
@@ -63,7 +71,7 @@ export const lydService = () => {
                     body: JSON.stringify(req),
                 })
 
-                return resp as Promise<DonationResponse>
+                return resp as Promise<ContributionResponse>
             }
         },
     }
