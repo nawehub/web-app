@@ -34,7 +34,7 @@ export function useGlobalSse({
     esRef.current?.close();
 
     const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/lyd/contributions/stream`;
-    const es = new EventSource(url);
+    const es = new EventSource(url, { withCredentials: true });
     esRef.current = es;
 
     if (onTopContributors) {
@@ -107,7 +107,7 @@ export function usePaymentSse({
     if (!contributionId || typeof window === "undefined") return;
 
     const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/lyd/contributions/${contributionId}/stream`;
-    const es = new EventSource(url);
+    const es = new EventSource(url, { withCredentials: true });
     esRef.current = es;
 
     es.addEventListener(PAYMENT_ATTACHED_EVENT_TYPE, (e: MessageEvent) => {

@@ -10,26 +10,24 @@ import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Search, Calendar, DollarSign, MapPin, Filter } from "lucide-react"
 import { currencies } from "@/lib/lyd-data"
-import {LYDDonation} from "@/types/lyd";
+import {LYDContribution} from "@/types/lyd";
 import {allDistricts} from "@/types/demographs";
 import {useListProfileDonationsQuery} from "@/hooks/repository/use-lyd";
 import { formatDate } from "@/types/funding";
-
-interface DonationHistoryProps {
-    onCloseAction: () => void
-}
+import {useRouter} from "next/navigation";
 
 type SearchResults = {
-    donations: LYDDonation[]
+    donations: LYDContribution[]
     totalAmount: number
     totalDonations: number
 }
 
-export function DonationHistoryComponent({ onCloseAction }: DonationHistoryProps) {
+export default function ContributionHistoryPage() {
     const [searchTerm, setSearchTerm] = useState("")
     const [searchResults, setSearchResults] = useState<SearchResults | null>(null)
     const { refetch} = useListProfileDonationsQuery(searchTerm);
     const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
 
     const handleSearch = async () => {
         setIsLoading(true);
@@ -39,7 +37,7 @@ export function DonationHistoryComponent({ onCloseAction }: DonationHistoryProps
             const result = await refetch();
 
             if (result.data) {
-                const totalAmount = result.data.donations.reduce((sum, donation) => sum + donation.amount, 0);
+                const totalAmount = result.data.donations.reduce((sum, donation) => sum + donation.amount.amount, 0);
 
                 setSearchResults({
                     donations: result.data.donations,
@@ -73,12 +71,12 @@ export function DonationHistoryComponent({ onCloseAction }: DonationHistoryProps
         }
     }
 
-    const getTargetName = (donation: LYDDonation) => {
+    const getTargetName = (donation: LYDContribution) => {
         const district = allDistricts.find((d) => d.name === donation.district)
         if (donation.target === "District") {
             return `${district?.name} District`
         } else {
-            const chiefdom = district?.chiefdoms.find((c) => c === donation.targetValue)
+            const chiefdom = district?.chiefdoms.find((c) => c === donation.targetId)
             return `${chiefdom} (${district?.name} District)`
         }
     }
@@ -218,7 +216,7 @@ export function DonationHistoryComponent({ onCloseAction }: DonationHistoryProps
                                                     </div>
                                                 </TableCell>
                                                 <TableCell>
-                                                    <div className="font-medium">{formatCurrency(donation.amount, donation.currency)}</div>
+                                                    <div className="font-medium">{formatCurrency(donation.amount.amount, donation.amount.currency)}</div>
                                                 </TableCell>
                                                 <TableCell>
                                                     <div className="flex items-center space-x-2">
@@ -234,7 +232,7 @@ export function DonationHistoryComponent({ onCloseAction }: DonationHistoryProps
                                                 <TableCell>
                                                     <div className="text-sm">
                                                         <div className="font-medium">{donation.paymentMethod}</div>
-                                                        <div className="text-muted-foreground">{donation.paymentProvider}</div>
+                                                        <div className="text-muted-foreground">{donation.paymentMethod === 'Payment_Code' ? 'Mobile Money' : 'Credit/Debit Card'}</div>
                                                     </div>
                                                 </TableCell>
                                                 <TableCell>
@@ -260,7 +258,7 @@ export function DonationHistoryComponent({ onCloseAction }: DonationHistoryProps
 
             {/* Back Button */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mt-8">
-                <Button variant="outline" onClick={onCloseAction}>
+                <Button variant="outline" onClick={() => router.push("/lyd")}>
                     Back to LYD Dashboard
                 </Button>
             </motion.div>

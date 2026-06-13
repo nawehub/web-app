@@ -102,7 +102,7 @@ export default function FilesPage() {
 
         const i = Math.floor(Math.log(bytes) / Math.log(1024));
 
-        // 3. Prevent crashing for extremely large files (index out of bounds)
+        // 3. Prevent crashing for extremely large lyd (index out of bounds)
         const unitIndex = Math.min(i, sizes.length - 1);
 
         // Calculate the scaled value, rounded to 2 decimal places

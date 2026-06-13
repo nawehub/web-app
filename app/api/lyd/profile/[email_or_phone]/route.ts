@@ -11,6 +11,7 @@ export async function GET(_: Request, { params }: { params: { email_or_phone: st
         })
 
         const data = await response.json();
+        console.log("Profile data: ", data, "")
         return NextResponse.json(data, { status: response.status });
     } catch (error) {
         return NextResponse.json({ message: 'Internal server error' }, { status: 500 });

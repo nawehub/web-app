@@ -1,11 +1,32 @@
 import {useMutation, useQuery} from "@tanstack/react-query";
-import {MakeDonationRequest} from "@/types/lyd";
+import {MakeContributionRequest} from "@/types/lyd";
 import {lydService} from "@/lib/services/lyd";
+import { v4 as uuidv4 } from 'uuid';
 
-export function useMakeDonationMutation() {
+export function useMakeContributionMutation() {
+    const mutationKey = "make-contribution";
+    const STORAGE_KEY = `pending_idempotency_${mutationKey}`;
+
     return useMutation({
-        mutationKey: ['makeDonation'],
-        mutationFn: (data: MakeDonationRequest) => lydService().lyd.donate(data),
+        mutationKey: [mutationKey],
+        onMutate: async (variables) => {
+            localStorage.setItem(STORAGE_KEY, variables.idempotencyKey);
+        },
+        mutationFn: async ({data, idempotencyKey}: {
+            data: MakeContributionRequest,
+            idempotencyKey: string
+        }) => {
+            return await lydService().lyd.donate(data, idempotencyKey);
+        },
+        onSuccess: () => {
+            localStorage.removeItem(STORAGE_KEY);
+        },
+        onError: (error: any) => {
+            if (error.status <= 500) {
+                localStorage.removeItem(STORAGE_KEY);
+            }
+        },
+        retry: false
     });
 }
 
@@ -33,6 +54,11 @@ export const useListProfileDonationsQuery = (emailOrPhone: string) => {
 export const useProfileWithContributionQuery = (emailOrPhone: string) => {
     return useQuery({
         queryKey: ['profile-with-contribution', emailOrPhone],
-        queryFn: async () => await lydService().lyd.profileWithContribution(emailOrPhone)
+        queryFn: async () => await lydService().lyd.profileWithContribution(emailOrPhone),
+        staleTime: 1000 * 60 * 10, // 10 minutes
+        gcTime: 1000 * 60 * 60,    // 1 hour
+        refetchOnWindowFocus: false,
+        retry: 1,
+        enabled: !!emailOrPhone,
     });
 }

@@ -53,14 +53,12 @@ export async function apiRequest4ResourceUpload(endpoint: string, options: Reque
 }
 
 export async function api4Public(endpoint: string, options: RequestInit = {}) {
-    const headers = {
-        'Content-Type': 'application/json',
-        ...options.headers,
-    };
-
+    const headers = new Headers(options.headers);
+    if (!headers.has('Content-Type')) {
+        headers.set('Content-Type', 'application/json');
+    }
     return await fetch(`${process.env.API_BASE_URL}${endpoint}`, {
         ...options,
         headers,
     });
-
 }

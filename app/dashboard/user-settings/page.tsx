@@ -6,7 +6,7 @@ import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} f
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {useToast} from "@/hooks/use-toast";
+import {toast} from "sonner";
 import {useSession} from "next-auth/react";
 import { AUTH_DISABLED } from "@/lib/feature-flags";
 
@@ -28,7 +28,6 @@ export default function SettingsPage() {
               } as any)
             : undefined);
     const [isSaving, setIsSaving] = useState(false);
-    const {toast} = useToast();
     const [user, setUser] = useState({
         id: userFromSession?.id || "",
         firstName: userFromSession?.firstName || "",
@@ -42,9 +41,9 @@ export default function SettingsPage() {
         setIsSaving(true);
         setTimeout(() => {
             setIsSaving(false);
-            toast({
-                title: "Settings saved",
+            toast("Settings saved", {
                 description: "Your preferences have been updated successfully.",
+                duration: 5000
             });
         }, 1000);
     };

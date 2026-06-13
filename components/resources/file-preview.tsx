@@ -195,7 +195,7 @@ const FilePreview: React.FC<FilePreviewProps> = ({
         setFileType(category);
 
         try {
-            // Handle DOCX files
+            // Handle DOCX lyd
             if (category === 'docx') {
                 const arrayBuffer = await selectedFile.arrayBuffer();
                 const result = await mammoth.convertToHtml({arrayBuffer});
@@ -203,7 +203,7 @@ const FilePreview: React.FC<FilePreviewProps> = ({
                 return;
             }
 
-            // Handle PDF files
+            // Handle PDF lyd
             if (category === 'pdf') {
                 if (!window.pdfjsLib) {
                     setError('PDF library not loaded yet. Please try again.');

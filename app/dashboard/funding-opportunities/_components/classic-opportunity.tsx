@@ -20,7 +20,6 @@ import { useRouter } from "next/navigation"
 import {CustomCombobox} from "@/components/ui/combobox";
 import {useCreateOpportunityMutation, useListProvidersQuery} from "@/hooks/repository/use-funding";
 import {createOpportunityForm} from "@/lib/services/funding";
-import {useToast} from "@/hooks/use-toast";
 import {Icons} from "@/components/ui/icon";
 import { fundingTypes, criteriaTypes, currencies } from "@/types/funding";
 
@@ -57,7 +56,7 @@ export default function ClassicFundingOpportunity() {
     const [newTag, setNewTag] = useState("")
     const [isPending, startTransition] = useTransition()
     const [providerName, setProviderName] = useState("")
-    const { toast } = useToast();
+
     const [newCriteria, setNewCriteria] = useState({
         key: "",
         value: "",
@@ -122,23 +121,21 @@ export default function ClassicFundingOpportunity() {
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        startTransition((async () => {
-            try {
-                const response = await newOpportunity.mutateAsync(formData);
-                toast({
-                    title: 'Create Opportunity',
-                    description: response.message,
-                    variant: 'default',
-                });
-                router.push("/dashboard/funding-opportunities")
-            } catch (error) {
-                toast({
-                    title: 'Registration failed',
-                    description: `${error instanceof Error ? error.message : 'An unknown error occurred'}`,
-                    variant: 'destructive',
-                });
-            }
-        }))
+        // startTransition((async () => {
+        //     try {
+        //         const response = await newOpportunity.mutateAsync(null);
+        //         toast('Create Opportunity', {
+        //             description: response.message,
+        //             className: 'bg-green-500 text-white'
+        //         });
+        //         router.push("/dashboard/funding-opportunities")
+        //     } catch (error) {
+        //         toast('Registration failed', {
+        //             description: `${error instanceof Error ? error.message : 'An unknown error occurred'}`,
+        //             className: 'bg-red-500 text-white'
+        //         });
+        //     }
+        // }))
     }
 
     const isStepValid = (step: number) => {

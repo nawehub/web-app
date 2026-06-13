@@ -111,7 +111,7 @@ export function seedComprehensiveDatabase() {
           const boDistrict = districts.find((d) => d.name === "Bo")
 
           if (boDistrict) {
-            const donation = comprehensiveDb.makeDonation({
+            const donation = comprehensiveDb.makeContribution({
               userId: createdUsers[1]!.id,
               districtId: boDistrict.id,
               amount: 5000,

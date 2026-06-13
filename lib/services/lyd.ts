@@ -1,22 +1,34 @@
-import {DistrictRanking, LYDDonation, MakeDonationRequest, ProfileWithContribution, TopContributor} from "@/types/lyd";
+import {DistrictRanking, LYDContribution, MakeContributionRequest, ProfileWithContribution, TopContributor} from "@/types/lyd";
 import {api4app} from "@/lib/api4app";
 
-export type ContributionResponse = {
-    contributionId: string;
-    actionUrlOrCode: string;
-    usageInstructions: UsageInstructions;
-    status: string;
+// ─── Mirrors ContributionResponse from api-gateway ───────────────────────────
+export interface UsageInstructions {
+    title: string
+    steps: string[]
+    expiryMessage: string
 }
 
-export interface UsageInstructions {
-    title: string;
-    steps: string[];
-    expiryMessage: string;
+export interface ContributionResponse {
+    contributionId: string
+    actionUrlOrCode: string
+    usageInstructions?: UsageInstructions
+    status: ContributionStatus
+    expiresAt: string
+    expiresInSeconds: number
 }
+
+export type ContributionStatus =
+    | "CREATED"
+    | "PAYMENT_REQUESTED"
+    | "PAYMENT_PENDING"
+    | "PAYMENT_COMPLETED"
+    | "PAYMENT_FAILED"
+    | "PAYMENT_CANCELLED"
+    | "PAYMENT_EXPIRED"
 
 export type ListProfileDonationsResponse = {
     totalCount: number
-    donations: LYDDonation[]
+    donations: LYDContribution[]
 }
 
 export const lydService = () => {
@@ -62,11 +74,12 @@ export const lydService = () => {
 
                 return response as Promise<ProfileWithContribution>
             },
-            donate: async (req: MakeDonationRequest) => {
+            donate: async (req: MakeContributionRequest, idempotencyKey: string) => {
                 const resp = await api4app('/lyd', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        "X-Idempotency-Key": idempotencyKey
                     },
                     body: JSON.stringify(req),
                 })

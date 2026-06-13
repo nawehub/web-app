@@ -104,7 +104,7 @@ export const resourceService = () => {
         },
         resource: {
             listAllResources: async () => {
-                const response = await api4app('/resources/files', {
+                const response = await api4app('/resources/lyd', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -113,7 +113,7 @@ export const resourceService = () => {
                 return response as Promise<FileListResponse>
             },
             listFolderResources: async (folderId: string) => {
-                const response = await api4app('/resources/files/folder/' + folderId, {
+                const response = await api4app('/resources/lyd/folder/' + folderId, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -122,7 +122,7 @@ export const resourceService = () => {
                 return response as Promise<FileListResponse>
             },
             uploadResource: async (data: FormData) => {
-                const response = await api4FileUpload('/resources/files', {
+                const response = await api4FileUpload('/resources/lyd', {
                     method: 'POST',
                     body: data,
                 })

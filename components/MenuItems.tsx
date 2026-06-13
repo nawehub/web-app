@@ -24,7 +24,7 @@ export const exploreMenuItems = [
 
 export const documentMenuItems = [
     { name: "Development Partners", href: "/dashboard/funding-providers", icon: Briefcase },
-    { name: "File Manager", href: "/dashboard/files", icon: Folder },
+    { name: "File Manager", href: "/dashboard/lyd", icon: Folder },
     { name: "Partners Request", href: "/dashboard/users", icon: Users },
 ];
 

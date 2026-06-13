@@ -35,7 +35,7 @@ export default function AllBusinesses() {
     const isMobile = useIsMobile();
 
     const {hasPermission, isAdmin} = usePermissions();
-    const {data, isLoading} = useListBusinessQuery(viewMode);
+    const {data, isLoading} = useListBusinessQuery();
 
     // useEffect(() => {
     //     if (isAdmin()) {

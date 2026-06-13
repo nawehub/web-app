@@ -7,7 +7,7 @@ export async function GET(request: Request) {
         const url = new URL(request.url);
 
         // The path contains the bucketName/objectName
-        const pathSegments = url.pathname.split('/api/resources/files/views')[1];
+        const pathSegments = url.pathname.split('/api/resources/lyd/views')[1];
 
         // The query string includes '?preview=true'
         const queryString = url.search;

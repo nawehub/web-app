@@ -12,10 +12,11 @@ const QueryProvider = ({
 			new QueryClient({
 				defaultOptions: {
 					queries: {
-						// With SSR, we usually want to set some default staleTime
-						// above 0 to avoid re-fetching immediately on the client
-						staleTime: 2 * 1000,
-						refetchInterval: 2 * 1000,
+						staleTime: 60 * 1000,
+						refetchOnWindowFocus: false,
+					},
+					mutations: {
+						retry: false,
 					},
 				},
 			})

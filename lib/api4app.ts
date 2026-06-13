@@ -4,6 +4,7 @@ export async function api4app(endpoint: string, options: RequestInit = {}) {
         'Content-Type': 'application/json',
         ...options.headers,
     };
+    console.log("Outgoing Request to Backend with Key:", headers?['X-Idempotency-Key'] : '')
     const response = await fetch(`${baseUrl}${endpoint}`, {
         ...options,
         headers,

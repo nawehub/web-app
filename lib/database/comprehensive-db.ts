@@ -554,7 +554,7 @@ export class ComprehensiveDatabase extends InMemoryDatabase{
     return this.districts.get(districtId)
   }
 
-  makeDonation(donationData: Omit<Donation, "id" | "createdAt" | "status">): Donation {
+  makeContribution(donationData: Omit<Donation, "id" | "createdAt" | "status">): Donation {
     const donation: Donation = {
       ...donationData,
       id: generateId(),

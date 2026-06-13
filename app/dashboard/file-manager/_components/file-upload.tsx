@@ -27,8 +27,8 @@ export function FileUpload() {
     const handleUpload = async () => {
         if (files.length === 0) {
             toast({
-                title: "No files selected",
-                description: "Please drag and drop files or click to select them.",
+                title: "No lyd selected",
+                description: "Please drag and drop lyd or click to select them.",
                 variant: "destructive",
             })
             return
@@ -68,12 +68,12 @@ export function FileUpload() {
                 title: "Upload Successful",
                 description: `${files.length} file(s) uploaded successfully!`,
             })
-            setFiles([]) // Clear files after successful upload
+            setFiles([]) // Clear lyd after successful upload
         } catch (error) {
             console.error("Upload error:", error)
             toast({
                 title: "Upload Failed",
-                description: "There was an error uploading your files. Please try again.",
+                description: "There was an error uploading your lyd. Please try again.",
                 variant: "destructive",
             })
         } finally {

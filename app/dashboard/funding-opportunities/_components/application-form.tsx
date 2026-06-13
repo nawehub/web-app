@@ -16,7 +16,7 @@ import {CustomCombobox} from "@/components/ui/combobox";
 import {useListBusinessQuery} from "@/hooks/repository/use-business";
 import {ApplyForm} from "@/lib/services/funding";
 import {useApplyToOpportunityMutation} from "@/hooks/repository/use-funding";
-import {useToast} from "@/hooks/use-toast";
+import {toast} from "sonner";
 
 interface ApplicationFormProps {
     opportunity: FundingOpportunity
@@ -54,10 +54,9 @@ export function ApplicationForm({opportunity, onSubmitAction, onCancelAction}: A
         })),
     })
     const [businessId, setBusinessId] = useState<string>("")
-    const {data} = useListBusinessQuery("")
+    const {data} = useListBusinessQuery()
     const [isPending, startTransition] = useTransition();
     const apply = useApplyToOpportunityMutation()
-    const {toast} = useToast();
 
     const {data: session} = useSession();
 
@@ -122,18 +121,16 @@ export function ApplicationForm({opportunity, onSubmitAction, onCancelAction}: A
         try {
             startTransition(async () => {
                 const response = await apply.mutateAsync(applyData)
-                toast({
-                    title: 'Create Opportunity',
+                toast('Create Opportunity', {
                     description: response.message,
-                    variant: 'default',
+                    className: 'bg-green-500 text-white',
                 });
                 onSubmitAction()
             })
         } catch (e) {
-            toast({
-                title: 'Registration failed',
+            toast('Registration failed', {
                 description: `${e instanceof Error ? e.message : 'An unknown error occurred'}`,
-                variant: 'destructive',
+                className: 'bg-red-500 text-white',
             });
         }
     }

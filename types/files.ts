@@ -33,7 +33,7 @@ export interface FolderItem {
     createdAt: Date
     createdBy: string
     fileCount: number
-    totalSize: number // total size of files within this folder
+    totalSize: number // total size of lyd within this folder
 }
 
 export interface Category {

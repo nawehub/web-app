@@ -26,7 +26,7 @@ import {
 } from "lucide-react"
 import {FundingApplication, FundingOpportunity, formatDate} from "@/types/funding"
 import {useChangeApplicationStatusMutation} from "@/hooks/repository/use-funding";
-import {useToast} from "@/hooks/use-toast";
+import {toast} from "sonner";
 import {IfAllowed} from "@/components/auth/IfAllowed";
 
 interface ApplicantsListProps {
@@ -41,7 +41,6 @@ export function ApplicantsList({opportunity, applications}: ApplicantsListProps)
     const [rejectionReason, setRejectionReason] = useState("")
     const changeStatus = useChangeApplicationStatusMutation()
     const [isPending, startTransition] = useTransition()
-    const { toast } = useToast()
     const [rejectStatus, setRejectStatus] = useState(false)
 
     const filteredApplications = applications
@@ -96,17 +95,15 @@ export function ApplicantsList({opportunity, applications}: ApplicantsListProps)
                     action,
                     rejectionReason,
                 })
-                toast({
-                    title: `Application ${action}`,
+                toast(`Application ${action}`, {
                     description: `Application ${action.toLowerCase()} successfully`,
-                    variant: 'default'
+                    className: 'bg-green-500 text-white',
                 })
                 setSelectedApplication(response.provider)
             } catch (e) {
-                toast({
-                    title: `${action} Error`,
+                toast(`${action} Error`, {
                     description: `${e instanceof Error ? e.message : 'An unknown error occurred'}`,
-                    variant: 'destructive'
+                    className: 'bg-red-500 text-white',
                 })
             }
         })

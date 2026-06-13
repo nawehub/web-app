@@ -1,4 +1,4 @@
-export interface LYDProfile {
+export interface LYDContributor {
     id: string
     firstName: string
     lastName: string
@@ -11,18 +11,23 @@ export interface LYDProfile {
     updatedAt: Date
 }
 
-export interface LYDDonation {
+export interface LYDContribution {
     id: string
-    amount: number
+    amount: Money
     target: "District" | "Chiefdom"
     district: string
-    paymentMethod: "Momo" | "Bank" | "Card"
-    paymentProvider: string
-    currency: "SLE" | "USD" | "GBP" | "EUR"
-    targetValue: string
+    paymentMethod: "Payment_Code" | "CheckoutSession"
+    targetId: string
     status: "Pending" | "Completed" | "Failed" | "Refunded" | "Cancelled" | "Declined"
     createdAt: Date
     updatedAt: Date
+}
+
+export type Currency = "SLE" | "USD" | "GBP" | "EUR"
+
+export type Money = {
+    amount: number
+    currency: Currency
 }
 
 export interface DistrictRanking {
@@ -41,29 +46,17 @@ export interface TopContributor {
     anonymous: boolean
 }
 
-export type MakeDonationRequest = {
-    profile: Omit<LYDProfile, "id" | "createdAt" | "updatedAt">
-    amount: number
-    target: "District" | "Chiefdom"
-    district: string
-    paymentMethod: "Momo" | "Bank" | "Card"
-    paymentProvider: string
-    currency: "SLE" | "USD" | "GBP" | "EUR"
-    targetValue: string
+export type MakeContributionRequest = {
+    contributor: Omit<LYDContributor, "id" | "createdAt" | "updatedAt">
+    districtId: string;
+    target: "District" | "Chiefdom";
+    targetId: string;
+    paymentMethod:  "Payment_Code" | "CheckoutSession";
+    amount: Money,
+    successUrl: string,
+    cancelUrl: string
 }
 
-type Venue = {
-    id: string;
-    name: string;
-    address: string;
-    capacity: number;
-    amenities: string[]; // e.g., ["Wi-Fi", "Parking", "Projector"]
-    contactPerson?: string;
-}
-
-export type ProfileWithContribution = Omit<LYDProfile, "createdAt" | "updatedAt"> & {
-    paymentMethod: "Momo" | "Bank" | "Card"
-    paymentProvider: string
-    currency: "SLE" | "USD" | "GBP" | "EUR"
-    totalContributions: number
+export type ProfileWithContribution = Omit<LYDContributor, "createdAt" | "updatedAt"> & {
+    totalContributions: Money
 }

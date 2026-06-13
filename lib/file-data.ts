@@ -1,6 +1,6 @@
 import type {FolderData, Resource} from "@/types/files"
 
-// Mock data for folders and files
+// Mock data for folders and lyd
 export let mockFolders: FolderData[] = [
     {
         id: "folder-1",
@@ -138,7 +138,7 @@ export const deleteItem = async ({ id, type }: { id: string; type: "folder" | "f
     await simulateDelay()
     if (type === "folder") {
         mockFolders = mockFolders.filter((f) => f.id !== id)
-        mockFiles = mockFiles.filter((file) => file.id !== id) // Delete files within the folder too
+        mockFiles = mockFiles.filter((file) => file.id !== id) // Delete lyd within the folder too
     } else {
         mockFiles = mockFiles.filter((f) => f.id !== id)
     }

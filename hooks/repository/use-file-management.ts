@@ -78,7 +78,7 @@ export function useCreateFolderMutation() {
 
     return useMutation({
         mutationFn: async (data: CreateFolderData) => {
-            const response = await api4app('/api/files/folders', {
+            const response = await api4app('/api/lyd/folders', {
                 body: JSON.stringify(data),
             });
             return response.data as Folder;
@@ -110,7 +110,7 @@ export function useUploadFileMutation() {
             formData.append('metadata', JSON.stringify(data.metadata));
             formData.append('file', data.file);
 
-            const response = await api4app('/api/files', {
+            const response = await api4app('/api/lyd', {
                 method: 'POST',
                 body: formData,
             });
@@ -132,7 +132,7 @@ export function useCategoriesQuery() {
     return useQuery({
         queryKey: ['categories'],
         queryFn: async () => {
-            const response = await api4app('/api/files/categories');
+            const response = await api4app('/api/lyd/categories');
             return response.data as Category[];
         },
     });
@@ -143,7 +143,7 @@ export function useTagsQuery() {
     return useQuery({
         queryKey: ['tags'],
         queryFn: async () => {
-            const response = await api4app('/api/files/tags');
+            const response = await api4app('/api/lyd/tags');
             return response.data as Tag[];
         },
     });
