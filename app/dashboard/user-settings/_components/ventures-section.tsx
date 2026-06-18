@@ -15,7 +15,7 @@ import { AddPrompt, SectionCard } from "./section-card";
 interface VenturesSectionProps {
     profile: EntrepreneurProfile;
     isPublic: boolean;
-    onToggleVisibility: () => void;
+    onToggleVisibility?: () => void;
     onAddVenture?: () => void;
     onEditVenture?: (id: string) => void;
 }
@@ -42,12 +42,18 @@ export function VenturesSection({
         >
             <div className="flex flex-col gap-3.5">
                 {profile.ventures.map((v) => (
-                    <VentureCard key={v.id} venture={v} onEdit={() => onEditVenture?.(v.id)} />
+                    <VentureCard
+                        key={v.id}
+                        venture={v}
+                        onEdit={onEditVenture ? () => onEditVenture(v.id) : undefined}
+                    />
                 ))}
             </div>
-            <div className="mt-3.5">
-                <AddPrompt label="Add a business, startup, project or idea" onClick={onAddVenture} />
-            </div>
+            {onAddVenture && (
+                <div className="mt-3.5">
+                    <AddPrompt label="Add a business, startup, project or idea" onClick={onAddVenture} />
+                </div>
+            )}
         </SectionCard>
     );
 }
@@ -69,15 +75,17 @@ function VentureCard({ venture: v, onEdit }: { venture: Venture; onEdit?: () => 
                 <div className="min-w-0 flex-1">
                     <h3 className="flex flex-wrap items-center gap-2 font-display text-base font-bold">
                         {v.name}
-                        <button
-                            type="button"
-                            onClick={onEdit}
-                            title="Edit venture"
-                            aria-label="Edit venture"
-                            className="grid h-7 w-7 place-items-center rounded-lg border bg-card text-muted-foreground transition-colors hover:border-primary-100 hover:bg-primary-50 hover:text-primary-600"
-                        >
-                            <Pencil className="h-3.5 w-3.5" />
-                        </button>
+                        {onEdit && (
+                            <button
+                                type="button"
+                                onClick={onEdit}
+                                title="Edit venture"
+                                aria-label="Edit venture"
+                                className="grid h-7 w-7 place-items-center rounded-lg border bg-card text-muted-foreground transition-colors hover:border-primary-100 hover:bg-primary-50 hover:text-primary-600"
+                            >
+                                <Pencil className="h-3.5 w-3.5" />
+                            </button>
+                        )}
                     </h3>
                     <div className="mt-2 flex flex-wrap gap-1.5">
                         <Tag>{v.sector}</Tag>

@@ -38,9 +38,9 @@ export function AboutSection({ profile, isPublic, onToggleVisibility, onEdit }: 
                 <p className="whitespace-pre-wrap text-[15px] leading-relaxed text-neutral-700">
                     {profile.about}
                 </p>
-            ) : (
+            ) : onEdit ? (
                 <AddPrompt label="Tell your story — who you are and what drives you" onClick={onEdit} />
-            )}
+            ) : null}
         </SectionCard>
     );
 }
@@ -61,7 +61,7 @@ export function SkillsSection({
                         {s}
                     </Chip>
                 ))}
-                <ChipAdd onClick={onAdd}>Add skill</ChipAdd>
+                {onAdd && <ChipAdd onClick={onAdd}>Add skill</ChipAdd>}
             </div>
         </SectionCard>
     );
@@ -83,32 +83,37 @@ export function JourneySection({
         >
             {profile.journey.length > 0 && (
                 <div className="mb-3 flex flex-col">
-                    {profile.journey.map((j, i) => (
-                        <button
-                            key={j.id}
-                            type="button"
-                            onClick={onEditItem ? () => onEditItem(i) : undefined}
-                            className={cn(
-                                "grid grid-cols-[64px_1fr] gap-3.5 border-b border-neutral-100 py-3.5 text-left last:border-0 last:pb-0",
-                                onEditItem && "-mx-2 rounded-lg px-2 transition-colors hover:bg-muted/60"
-                            )}
-                        >
-                            <div className="font-display text-sm font-extrabold text-primary-700">
-                                {j.year}
-                            </div>
-                            <div>
-                                <h4 className="font-display text-[15px] font-semibold">{j.title}</h4>
-                                {j.desc && (
-                                    <p className="mt-1 text-[13.5px] leading-normal text-muted-foreground">
-                                        {j.desc}
-                                    </p>
+                    {profile.journey.map((j, i) => {
+                        const Comp = onEditItem ? "button" : "div";
+                        return (
+                            <Comp
+                                key={j.id}
+                                type={onEditItem ? "button" : undefined}
+                                onClick={onEditItem ? () => onEditItem(i) : undefined}
+                                className={cn(
+                                    "grid grid-cols-[64px_1fr] gap-3.5 border-b border-neutral-100 py-3.5 text-left last:border-0 last:pb-0",
+                                    onEditItem && "-mx-2 rounded-lg px-2 transition-colors hover:bg-muted/60"
                                 )}
-                            </div>
-                        </button>
-                    ))}
+                            >
+                                <div className="font-display text-sm font-extrabold text-primary-700">
+                                    {j.year}
+                                </div>
+                                <div>
+                                    <h4 className="font-display text-[15px] font-semibold">{j.title}</h4>
+                                    {j.desc && (
+                                        <p className="mt-1 text-[13.5px] leading-normal text-muted-foreground">
+                                            {j.desc}
+                                        </p>
+                                    )}
+                                </div>
+                            </Comp>
+                        );
+                    })}
                 </div>
             )}
-            <AddPrompt label="Add a milestone, role, or past venture" onClick={onAddItem} />
+            {onAddItem && (
+                <AddPrompt label="Add a milestone, role, or past venture" onClick={onAddItem} />
+            )}
         </SectionCard>
     );
 }
@@ -140,7 +145,9 @@ export function EducationSection({
                     ))}
                 </div>
             )}
-            <AddPrompt label="Add education, certification or training" onClick={onAddItem} />
+            {onAddItem && (
+                <AddPrompt label="Add education, certification or training" onClick={onAddItem} />
+            )}
         </SectionCard>
     );
 }
@@ -176,11 +183,13 @@ export function CredibilitySection({
                         onClick={onEditCredItem ? () => onEditCredItem("references", i) : undefined}
                     />
                 ))}
-                <AddPrompt
-                    label="Add a reference"
-                    onClick={onAddCredItem ? () => onAddCredItem("references") : undefined}
-                    compact
-                />
+                {onAddCredItem && (
+                    <AddPrompt
+                        label="Add a reference"
+                        onClick={() => onAddCredItem("references")}
+                        compact
+                    />
+                )}
             </div>
 
             <SubHead>Memberships</SubHead>
@@ -190,7 +199,7 @@ export function CredibilitySection({
                         {m}
                     </Chip>
                 ))}
-                <ChipAdd onClick={onAddMembership}>Add</ChipAdd>
+                {onAddMembership && <ChipAdd onClick={onAddMembership}>Add</ChipAdd>}
             </div>
 
             <SubHead>Awards &amp; Recognition</SubHead>
@@ -205,11 +214,13 @@ export function CredibilitySection({
                         onClick={onEditCredItem ? () => onEditCredItem("awards", i) : undefined}
                     />
                 ))}
-                <AddPrompt
-                    label="Add an award or recognition"
-                    onClick={onAddCredItem ? () => onAddCredItem("awards") : undefined}
-                    compact
-                />
+                {onAddCredItem && (
+                    <AddPrompt
+                        label="Add an award or recognition"
+                        onClick={() => onAddCredItem("awards")}
+                        compact
+                    />
+                )}
             </div>
 
             <SubHead>Public Profiles &amp; Links</SubHead>
@@ -223,11 +234,13 @@ export function CredibilitySection({
                         onClick={onEditCredItem ? () => onEditCredItem("links", i) : undefined}
                     />
                 ))}
-                <AddPrompt
-                    label="Add a public profile or link"
-                    onClick={onAddCredItem ? () => onAddCredItem("links") : undefined}
-                    compact
-                />
+                {onAddCredItem && (
+                    <AddPrompt
+                        label="Add a public profile or link"
+                        onClick={() => onAddCredItem("links")}
+                        compact
+                    />
+                )}
             </div>
         </SectionCard>
     );

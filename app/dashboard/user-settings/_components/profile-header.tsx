@@ -30,15 +30,17 @@ export function ProfileHeader({ profile, onEdit, onPickPhoto }: ProfileHeaderPro
                             "repeating-linear-gradient(45deg,#fff 0 1px,transparent 1px 18px)",
                     }}
                 />
-                <button
-                    type="button"
-                    onClick={onEdit}
-                    title="Edit profile"
-                    aria-label="Edit profile"
-                    className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-lg bg-white/90 text-neutral-700 shadow-sm transition-colors hover:text-primary-600"
-                >
-                    <Pencil className="h-4 w-4" />
-                </button>
+                {onEdit && (
+                    <button
+                        type="button"
+                        onClick={onEdit}
+                        title="Edit profile"
+                        aria-label="Edit profile"
+                        className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-lg bg-white/90 text-neutral-700 shadow-sm transition-colors hover:text-primary-600"
+                    >
+                        <Pencil className="h-4 w-4" />
+                    </button>
+                )}
             </div>
 
             {/* Body */}
@@ -52,15 +54,17 @@ export function ProfileHeader({ profile, onEdit, onPickPhoto }: ProfileHeaderPro
                                 {initials(profile.name)}
                             </AvatarFallback>
                         </Avatar>
-                        <button
-                            type="button"
-                            onClick={() => (onPickPhoto ? onPickPhoto() : onEdit?.())}
-                            title="Change photo"
-                            aria-label="Change photo"
-                            className="absolute bottom-1.5 right-0.5 grid h-9 w-9 place-items-center rounded-full border bg-card text-neutral-700 shadow-sm transition-colors hover:border-primary-100 hover:text-primary-600"
-                        >
-                            <Camera className="h-4 w-4" />
-                        </button>
+                        {(onPickPhoto || onEdit) && (
+                            <button
+                                type="button"
+                                onClick={() => (onPickPhoto ? onPickPhoto() : onEdit?.())}
+                                title="Change photo"
+                                aria-label="Change photo"
+                                className="absolute bottom-1.5 right-0.5 grid h-9 w-9 place-items-center rounded-full border bg-card text-neutral-700 shadow-sm transition-colors hover:border-primary-100 hover:text-primary-600"
+                            >
+                                <Camera className="h-4 w-4" />
+                            </button>
+                        )}
                     </div>
 
                     {/* Score ring */}
