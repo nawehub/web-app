@@ -69,7 +69,7 @@ export default function Home() {
     ];
 
     return (
-        <div className="min-h-screen overflow-x-hidden bg-white dark:bg-zinc-950">
+        <div className="min-h-screen overflow-x-hidden bg-background">
             {/* Header */}
             <AppHeader isVisible={isVisible}/>
 
@@ -363,7 +363,7 @@ export default function Home() {
                 </section>
 
                 {/* ========== PARTNERS SECTION ========== */}
-                <section className="py-24 px-4 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-900/50">
+                <section className="py-24 px-4 sm:px-6 lg:px-8 bg-muted/50 dark:bg-zinc-900/50">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-12">
                             <span className="inline-block text-emerald-600 dark:text-emerald-400 font-semibold text-sm tracking-wider uppercase mb-4">
