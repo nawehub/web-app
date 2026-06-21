@@ -1,30 +1,3 @@
-/**
- * NaWeHub Dashboard — Page
- * --------------------------------------
- * Location: app/(dashboard)/page.tsx
- *
- * Full token pass — every hardcoded zinc/emerald/teal/cyan/rose/pink/
- * violet/purple color replaced. A few specific decisions:
- *
- * - The four quick-action tiles each had an unrelated one-off gradient
- *   (blue/cyan, emerald/teal, rose/pink, violet/purple). Recolored to four
- *   tokens that actually exist in your palette: primary, accent, and the
- *   `--color-info` / `--color-secondary-700` ("rust") tokens already
- *   defined in globals.css but mostly unused — so this still reads as
- *   "four distinct colors" without introducing four brand-unrelated hues.
- * - Renamed "Love Your District" → "Next Big Idea" to match the renaming
- *   you confirmed earlier in the contact form work (the `/lyd` route and
- *   `lyd`-prefixed naming are legacy internals; the user-facing brand is
- *   Next Big Idea everywhere else).
- * - The CTA banner's emerald→teal→cyan gradient is now the same dark
- *   `neutral-900` + ClothBorder block used for every other CTA across the
- *   site (home page, Next Big Idea page, Contact page) — ties the
- *   dashboard back to the same visual signature instead of introducing a
- *   fourth gradient combination found nowhere else.
- * - StatsCards / UserActivity / FeaturedOpportunities themselves were
- *   redesigned separately — this file's usage of them is unchanged.
- */
-
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -40,6 +13,7 @@ import { IfDevPartner } from "@/components/auth/IfAllowed";
 import { useState } from "react";
 import { FundingOpportunityDto } from "@/types/funding";
 import { Plus, Sparkles, ArrowRight, Briefcase, Heart, Rocket, Target, BarChart3 } from "lucide-react";
+import {ClothBorder} from "@/components/icons";
 
 const quickActions = [
     {
@@ -71,19 +45,6 @@ const quickActions = [
         tone: "bg-[hsl(var(--color-secondary-700))] text-white",
     },
 ];
-
-function ClothBorder({ tone }: { tone: string }) {
-    return (
-        <div className="h-3 w-full overflow-hidden" aria-hidden="true">
-            <svg width="100%" height="100%" preserveAspectRatio="none">
-                <pattern id="dashboard-cloth-border" width="24" height="12" patternUnits="userSpaceOnUse">
-                    <path d="M0 6 L12 0 L24 6 L12 12 Z" fill={tone} fillOpacity="0.55" />
-                </pattern>
-                <rect width="100%" height="100%" fill="url(#dashboard-cloth-border)" />
-            </svg>
-        </div>
-    );
-}
 
 export default function DashboardPage() {
     const [opportunities, setOpportunities] = useState<FundingOpportunityDto[]>([]);
@@ -171,7 +132,7 @@ export default function DashboardPage() {
                 {/* CTA Banner */}
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
                     <div className="overflow-hidden rounded-3xl bg-[hsl(var(--color-neutral-900))]">
-                        <ClothBorder tone="hsl(25 95% 53%)" />
+                        <ClothBorder fillTone="hsl(25 95% 53%)" fillUrl="dashboard-cloth-border" />
                         <div className="flex flex-col items-center justify-between gap-6 px-6 py-8 md:flex-row">
                             <div className="flex items-center gap-4 text-[hsl(var(--color-neutral-50))]">
                                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-sm">
@@ -193,7 +154,7 @@ export default function DashboardPage() {
                                 </Button>
                             </Link>
                         </div>
-                        <ClothBorder tone="hsl(60 9% 98%)" />
+                        <ClothBorder fillTone="hsl(60 9% 98%)" fillUrl="dashboard-cloth-border" />
                     </div>
                 </motion.div>
             </div>

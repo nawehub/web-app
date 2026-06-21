@@ -1,23 +1,3 @@
-/**
- * NaWeHub Dashboard — SidebarItem
- * --------------------------------------
- * Location: components/dashboard/SidebarItem.tsx
- *
- * Added a `collapsed` prop. When true: the label and badge text are hidden,
- * the item becomes a centered icon-only square, and the title is wrapped in
- * a Tooltip that appears on hover (positioned to the right, since the
- * sidebar lives on the left edge). Assumes a standard shadcn
- * Tooltip/TooltipTrigger/TooltipContent API at @/components/ui/tooltip —
- * reasonable since TooltipProvider is already used in the dashboard page,
- * so a TooltipProvider is presumably already wrapping the app somewhere
- * higher up (root layout or similar). If not, wrap DashboardLayout's
- * returned tree in <TooltipProvider> once, rather than per-item here.
- *
- * Badge handling when collapsed: rather than hide it entirely, it becomes a
- * small dot in the corner of the icon — keeps the "you have something here"
- * signal without needing room for the number.
- */
-
 "use client";
 
 import Link from "next/link";

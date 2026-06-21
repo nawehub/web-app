@@ -1,15 +1,3 @@
-/**
- * NaWeHub Dashboard — UserNav
- * --------------------------------------
- * Location: components/dashboard/user-nav.tsx
- *
- * Only change: the AvatarFallback now uses `bg-primary/15 text-primary`
- * instead of the shadcn default (a plain muted gray), matching the avatar
- * treatment in the redesigned Sidebar so the same person's initials look
- * the same color in both places. Everything else — the AUTH_DISABLED dev
- * escape hatch, signOut flow, dropdown structure — is untouched.
- */
-
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

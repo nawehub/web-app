@@ -1,16 +1,3 @@
-/**
- * NaWeHub Dashboard — StatsCards
- * --------------------------------------
- * Location: components/dashboard/StatsCards.tsx
- *
- * This one was already mostly theme-safe (just Card/CardHeader/CardContent
- * defaults). Two changes: the "+15 this month" deltas were hardcoded
- * `text-green-600`, swapped for your own `--color-success` token; and the
- * big stat numbers now use the mono ledger-numeral treatment from the
- * public site's stats sections, which ties the dashboard back to the same
- * visual language instead of feeling like a different app.
- */
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Building2, DollarSign, TrendingUp, Users } from "lucide-react";
 

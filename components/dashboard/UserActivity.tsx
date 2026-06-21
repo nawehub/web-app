@@ -1,32 +1,3 @@
-/**
- * NaWeHub Dashboard — UserActivity
- * --------------------------------------
- * Location: components/dashboard/UserActivity.tsx
- *
- * - `text-gray-900 dark:text-gray-100` → `text-foreground`.
- * - Switched from a line chart to a bar chart for monthly active users.
- * - Color fix: the original hardcoded `stroke="#8884d8"` (recharts
- *   boilerplate purple) had nothing to do with the brand. I'd first tried
- *   wiring it through `ChartContainer`'s `--chart-1` config variable, but
- *   that token was never actually confirmed to exist in your globals.css —
- *   if it's only defined under one theme (or not at all), the chart would
- *   render wrong or invisible in light mode specifically. So instead this
- *   uses the same literal brand green already established elsewhere in
- *   this codebase (`hsl(160 84% 39%)`, used for the home page's SVG
- *   underline for the same reason: presentational color attributes on
- *   SVG/chart elements don't reliably resolve CSS custom properties).
- *   Guaranteed correct in both themes without depending on an unverified
- *   token — swap back to `var(--color-users)` once you've confirmed
- *   `--chart-1` is defined for both light and dark.
- * - Each bar now gets its own color via per-entry `<Cell>` elements,
- *   cycling through a small on-brand palette (graduated shades of the
- *   established green plus the established accent orange) rather than
- *   introducing hues I don't have a verified value for — same reasoning
- *   as above. The palette repeats if there are more months than colors.
- * - Card surfaces, badges, and spacing otherwise untouched — this file was
- *   already relying on theme-safe Card/Select primitives.
- */
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SelectContent, SelectItem, SelectTrigger, SelectValue, Select } from "@/components/ui/select";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";

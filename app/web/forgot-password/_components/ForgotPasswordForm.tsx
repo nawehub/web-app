@@ -19,8 +19,6 @@ export default function ForgotPasswordForm({ setIsSubmittedAction }: ForgotPassw
         e.preventDefault();
         setIsLoading(true);
         try {
-            // TODO: replace with the real reset-password request once the
-            // endpoint exists — see file header note.
             setIsSubmittedAction(true, email);
         } finally {
             setIsLoading(false);

@@ -1,7 +1,6 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { ArrowUpRight } from 'lucide-react'
-import {BRAND_GRADIENT, ClothBorder, Logo} from "@/components/icons";
+import {ClothBorder, Logo} from "@/components/icons";
 import {getStartedLinks, platformLinks, socials} from "@/lib/navigations";
 
 export default function Footer() {

@@ -1,18 +1,3 @@
-/**
- * NaWeHub Dashboard — FeaturedOpportunities
- * --------------------------------------
- * Location: components/dashboard/featured-opportunities.tsx
- *
- * This one was already theme-safe — no hardcoded zinc/emerald colors
- * anywhere, just Card/Badge/Button defaults. Only light touch-ups for
- * visual consistency with the rest of the redesigned dashboard: rounded-2xl
- * to match the other cards, and the shadow on hover now uses the same
- * `var(--shadow-md)` token instead of Tailwind's default `shadow-md` scale
- * (cosmetically close, but ties it to the same elevation system). Data
- * fetching, the `setOpportunities` effect, and currency/date formatting
- * are all untouched.
- */
-
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,7 +12,7 @@ interface FundingOpportunitiesProps {
 }
 
 export const FeaturedOpportunities = ({ setOpportunities }: FundingOpportunitiesProps) => {
-    const { data, isLoading } = useListOpportunitiesQuery("Featured")
+    const { data } = useListOpportunitiesQuery("Featured")
 
     useEffect(() => {
         setOpportunities(data?.opportunities || [])

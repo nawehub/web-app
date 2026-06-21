@@ -185,13 +185,6 @@ function formatSLE(amount: number): string {
     return `SLE ${amount.toLocaleString()}`
 }
 
-/**
- * Thin repeating diamond border, a nod to Gara cloth trim — used sparingly
- * as the page's signature divider. Colors are passed in as plain HSL
- * strings rather than CSS vars (SVG fill doesn't reliably resolve var()
- * across browsers). The hero's instance sits on the now theme-adaptive
- * gradient; the CTA banner's instance still sits on the always-dark block.
- */
 function ClothBorder({tone}: { tone: string }) {
     return (
         <div className="h-3 w-full overflow-hidden" aria-hidden="true">

@@ -11,25 +11,6 @@ import React, { useState } from "react";
 import { toast } from "sonner";
 import { districts } from "@/types/demographs";
 
-/**
- * The previous version hardcoded `bg-white/80` on the Card (no dark variant
- * at all) and a custom blue-to-purple gradient on the submit button —
- * neither tied to the brand or theme. Switched to plain `border-border
- * bg-card` and the shadcn Button's default variant, which already resolves
- * to `bg-primary text-primary-foreground` from your tokens, so it adapts
- * automatically and matches every other primary action on the site.
- *
- * Also dropped the `lg:col-span-2` wrapper the form used to ship in — that
- * was a leftover from an older grid layout; ContactUsSection now uses flex
- * and sizes this directly, so the wrapper had no effect either way.
- *
- * One content note: the category list still has value="lyd" mapped to a
- * "Love Your District" label — since your Next Big Idea feature appears to
- * be the rebrand of that (the home page itself uses a `lydFeatures`
- * variable name for the Next Big Idea section), I changed the visible label
- * to "Next Big Idea" but kept the value as "lyd" in case anything
- * server-side still expects that exact enum value. Worth confirming.
- */
 export default function ContactForm() {
     const [formData, setFormData] = useState({
         name: '',

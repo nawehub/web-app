@@ -26,7 +26,7 @@ import { formatResponse } from "@/utils/format-response";
 
 type IdentityDocType = 'national_id' | 'passport'
 
-// See file header note #1 — delete this once BusinessFormData itself has
+// See file header note #1 — I need to delete this once BusinessFormData itself has
 // these two fields.
 type FormDataWithIdentity = BusinessFormData & {
     identityDocumentType: IdentityDocType

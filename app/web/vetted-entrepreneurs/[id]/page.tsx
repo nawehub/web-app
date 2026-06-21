@@ -14,7 +14,7 @@ export default function VettedEntrepreneurProfilePage() {
     const { data: profile, isLoading, isError } = usePublicProfileQuery(id);
 
     return (
-        <div className="bg-muted/30 dark:bg-zinc-950">
+        <div>
             {isLoading ? (
                 <main className="flex-1 px-4 py-6 pt-20 sm:py-8">
                     <div className="mx-auto max-w-[820px]">
