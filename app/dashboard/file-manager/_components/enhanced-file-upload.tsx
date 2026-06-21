@@ -8,13 +8,13 @@ import { UploadCloud, FileText, XCircle, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { useToast } from "@/hooks/use-toast"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import type {FileItem, FolderData} from "@/types/files"
+import { toast } from "sonner"
 
 interface EnhancedFileUploadProps {
     onUploadCompleteAction: (file: FileItem) => void
@@ -27,7 +27,6 @@ export function EnhancedFileUpload({ onUploadCompleteAction, currentFolderId, av
     const [uploadProgress, setUploadProgress] = useState<number>(0)
     const [isUploading, setIsUploading] = useState<boolean>(false)
     const [step, setStep] = useState(1) // 1: file select, 2: metadata, 3: uploading
-    const { toast } = useToast()
 
     const [metadata, setMetadata] = useState<Omit<FileItem, "id" | "updatedAt" | "url">>({
         title: "",
@@ -101,19 +100,15 @@ export function EnhancedFileUpload({ onUploadCompleteAction, currentFolderId, av
 
     const handleUpload = async () => {
         if (!file) {
-            toast({
-                title: "No file selected",
+            toast("No file selected", {
                 description: "Please select a file to upload.",
-                variant: "destructive",
             })
             return
         }
 
         if (!metadata.title || !metadata.type || !metadata.category) {
-            toast({
-                title: "Missing Metadata",
+            toast("Missing Metadata", {
                 description: "Please fill in file title, type, and category.",
-                variant: "destructive",
             })
             return
         }
@@ -148,8 +143,7 @@ export function EnhancedFileUpload({ onUploadCompleteAction, currentFolderId, av
 
             const result = await response.json()
             console.log("Upload successful:", result)
-            toast({
-                title: "Upload Successful",
+            toast("Upload Successful", {
                 description: `File "${result.file.title}" uploaded successfully!`,
             })
             onUploadCompleteAction(result.file) // Pass the new file item back to parent
@@ -157,10 +151,8 @@ export function EnhancedFileUpload({ onUploadCompleteAction, currentFolderId, av
             setStep(1) // Reset to first step
         } catch (error) {
             console.error("Upload error:", error)
-            toast({
-                title: "Upload Failed",
+            toast("Upload Failed", {
                 description: "There was an error uploading your file. Please try again.",
-                variant: "destructive",
             })
             setIsUploading(false)
             setUploadProgress(0)

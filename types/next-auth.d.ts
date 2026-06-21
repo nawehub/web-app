@@ -1,6 +1,4 @@
-import NextAuth from "next-auth"
 import { DefaultSession } from "next-auth";
-import {User} from "@/types/api-types";
 import {UserRole} from "@/types/user";
 
 declare module "next-auth" {

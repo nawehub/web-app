@@ -1,30 +1,31 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import React, { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { Menu, X, ChevronRight } from "lucide-react";
-import { createPortal } from "react-dom";
-import { cn } from "@/lib/utils";
+import {Button} from "@/components/ui/button";
+import React, {useEffect, useState} from "react";
+import {usePathname} from "next/navigation";
+import {useSession} from "next-auth/react";
+import {ThemeToggle} from "@/components/theme-toggle";
+import {Menu, X, ChevronRight} from "lucide-react";
+import {createPortal} from "react-dom";
+import {cn} from "@/lib/utils";
 
 const HeaderNavs = [
-    { name: "Home", link: "/" },
-    { name: "Love Your District", link: "/lyd" },
-    { name: "Vetted Entrepreneurs", link: "/vetted-entrepreneurs" },
-    { name: "LYD Projects", link: "/lyd/projects" },
-    { name: "Contact Us", link: "/contact" },
-    { name: "FAQ", link: "/faq" },
+    {name: "Home", link: "/"},
+    // { name: "Love Your District", link: "/lyd" },
+    {name: "Vetted Entrepreneurs", link: "/vetted-entrepreneurs"},
+    {name: "Next Big Idea", link: "/next-big-idea"},
+    // { name: "LYD Projects", link: "/lyd/projects" },
+    {name: "Contact Us", link: "/contact"},
+    {name: "FAQ", link: "/faq"},
 ];
 
 interface AppHeaderProps {
     isVisible: boolean;
 }
 
-export default function AppHeader({ isVisible }: AppHeaderProps) {
-    const { data: session } = useSession();
+export default function AppHeader({isVisible}: AppHeaderProps) {
+    const {data: session} = useSession();
     const pathname = usePathname();
 
     // Mobile menu state
@@ -153,12 +154,12 @@ export default function AppHeader({ isVisible }: AppHeaderProps) {
                             {session?.user ? "Go To Dashboard" : "Sign In"}
                         </Button>
                     </Link>
-                    <ThemeToggle />
+                    <ThemeToggle/>
                 </div>
 
                 {/* Mobile Actions */}
                 <div className="lg:hidden flex items-center gap-2">
-                    <ThemeToggle />
+                    <ThemeToggle/>
                     <Button
                         variant="ghost"
                         size="icon"
@@ -168,7 +169,7 @@ export default function AppHeader({ isVisible }: AppHeaderProps) {
                         onClick={() => setMobileOpen(true)}
                         className="h-11 w-11"
                     >
-                        <Menu className="h-6 w-6" />
+                        <Menu className="h-6 w-6"/>
                     </Button>
                 </div>
             </div>
@@ -227,7 +228,7 @@ export default function AppHeader({ isVisible }: AppHeaderProps) {
                                     onClick={() => setMobileOpen(false)}
                                     className="h-11 w-11"
                                 >
-                                    <X className="h-6 w-6" />
+                                    <X className="h-6 w-6"/>
                                 </Button>
                             </div>
 

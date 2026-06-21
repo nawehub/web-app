@@ -1,120 +1,72 @@
-import {Quote} from "lucide-react";
-import {Badge} from '@/components/ui/badge';
-import {testimonials} from "@/types/testimonies";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import { Quote } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { testimonials } from "@/types/testimonies";
+
+const BRAND_GRADIENT =
+    'linear-gradient(90deg, #F0A03C 0%, #E94FA8 25%, #BC2AD5 50%, #1F8FE0 75%, #13BF97 100%)'
+
+type Testimonial = (typeof testimonials)[number]
+
+function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
+    return (
+        <div className="w-96 flex-shrink-0 rounded-2xl border border-border bg-gradient-to-br from-card to-muted/30 p-6 shadow-[var(--shadow-lg)] transition-shadow duration-300 hover:shadow-[var(--shadow-xl)]">
+            <div className="flex items-center gap-4">
+                <div className="relative shrink-0">
+                    <img
+                        src={testimonial.image}
+                        alt={testimonial.name}
+                        className="h-16 w-16 rounded-full object-cover ring-4 ring-background"
+                    />
+                    <div className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-accent">
+                        <Quote className="h-3 w-3 text-accent-foreground" />
+                    </div>
+                </div>
+                <div className="min-w-0 flex-1">
+                    <p className="truncate font-semibold text-foreground [font-family:var(--font-display)]">
+                        {testimonial.name}
+                    </p>
+                    <p className="truncate text-sm font-medium text-primary">{testimonial.position}</p>
+                    <p className="truncate text-xs text-muted-foreground">{testimonial.company}</p>
+                </div>
+            </div>
+            <blockquote className="mt-4 line-clamp-6 leading-relaxed text-foreground/80">
+                &ldquo;{testimonial.message}&rdquo;
+            </blockquote>
+        </div>
+    );
+}
 
 export default function Testimonies() {
     return (
-        <section id="testimonials" className="py-20 sm:py-32 overflow-hidden">
-            <div className="w-full">
-                <div className="mx-auto max-w-2xl text-center mb-16">
+        <section id="testimonials" className="overflow-hidden py-20 sm:py-32">
+            <div className="container mx-auto px-4">
+                <div className="mx-auto mb-16 max-w-2xl text-center">
                     <Badge variant="secondary" className="mb-6 px-4 py-2 text-sm font-medium">
-                        <Quote className="mr-2 h-4 w-4"/>
+                        <Quote className="mr-2 h-4 w-4" />
                         What Our Community Says
                     </Badge>
-                    <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+                    <h2 className="text-3xl font-semibold tracking-tight text-foreground [font-family:var(--font-display)] sm:text-4xl">
                         Trusted by Leaders Across{' '}
-                        <span
-                            className="bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent">
+                        <span style={{ backgroundImage: BRAND_GRADIENT }} className="bg-clip-text text-transparent">
                             Sierra Leone
                         </span>
                     </h2>
-                    <p className="mt-4 text-lg text-gray-600 dark:text-gray-200">
-                        From entrepreneurs to government officials, see how NaWeHub is transforming communities and
-                        businesses.
+                    <p className="mt-4 text-lg text-muted-foreground">
+                        From entrepreneurs to government officials, see how NaWeHub is transforming
+                        communities and businesses.
                     </p>
                 </div>
+            </div>
 
-                {/* Auto-scrolling testimonials */}
-                <div className="relative">
-                    <div className="flex animate-scroll space-x-6">
-                        {/* First set of testimonials */}
-                        {testimonials.map((testimonial, index) => (
-                            <Card
-                                key={`first-${index}`}
-                                className="flex-shrink-0 w-96 bg-gradient-to-br from-white to-gray-50/50 border-0 shadow-lg hover:shadow-xl transition-all duration-300 group"
-                            >
-                                <CardHeader className="pb-4">
-                                    <div className="flex items-center space-x-4">
-                                        <div className="relative">
-                                            <img
-                                                src={testimonial.image}
-                                                alt={testimonial.name}
-                                                className="w-16 h-16 rounded-full object-cover ring-4 ring-white shadow-lg group-hover:ring-blue-100 transition-all duration-300"
-                                            />
-                                            <div
-                                                className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
-                                                <Quote className="w-3 h-3 text-white"/>
-                                            </div>
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-400 truncate">
-                                                {testimonial.name}
-                                            </CardTitle>
-                                            <CardDescription className="text-sm font-medium text-blue-600 truncate">
-                                                {testimonial.position}
-                                            </CardDescription>
-                                            <CardDescription className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                                                {testimonial.company}
-                                            </CardDescription>
-                                        </div>
-                                    </div>
-                                </CardHeader>
-                                <CardContent>
-                                    <blockquote className="text-gray-700 dark:text-gray-300 leading-relaxed line-clamp-6">
-                                        "{testimonial.message}"
-                                    </blockquote>
-                                </CardContent>
-                            </Card>
-                        ))}
-
-                        {/* Duplicate set for seamless loop */}
-                        {testimonials.map((testimonial, index) => (
-                            <Card
-                                key={`second-${index}`}
-                                className="flex-shrink-0 w-96 bg-gradient-to-br from-white dark:from-gray-900 to-gray-50/50 border-0 shadow-lg hover:shadow-xl transition-all duration-300 group"
-                            >
-                                <CardHeader className="pb-4">
-                                    <div className="flex items-center space-x-4">
-                                        <div className="relative">
-                                            <img
-                                                src={testimonial.image}
-                                                alt={testimonial.name}
-                                                className="w-16 h-16 rounded-full object-cover ring-4 ring-white shadow-lg group-hover:ring-blue-100 transition-all duration-300"
-                                            />
-                                            <div
-                                                className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
-                                                <Quote className="w-3 h-3 text-white"/>
-                                            </div>
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <CardTitle className="text-lg font-semibold text-gray-900 truncate">
-                                                {testimonial.name}
-                                            </CardTitle>
-                                            <CardDescription className="text-sm font-medium text-blue-600 truncate">
-                                                {testimonial.position}
-                                            </CardDescription>
-                                            <CardDescription className="text-xs text-gray-500 truncate">
-                                                {testimonial.company}
-                                            </CardDescription>
-                                        </div>
-                                    </div>
-                                </CardHeader>
-                                <CardContent>
-                                    <blockquote className="text-gray-700 leading-relaxed line-clamp-6">
-                                        "{testimonial.message}"
-                                    </blockquote>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
-
-                    {/*    /!* Gradient overlays for a smooth fade effect *!/*/}
-                    <div
-                        className="absolute left-0.5 top-0 bottom-0 w-32 bg-gradient-to-r from-white to-transparent pointer-events-none z-10"/>
-                    <div
-                        className="absolute right-0.5 top-0 bottom-0 w-32 bg-gradient-to-l from-white to-transparent pointer-events-none z-10"/>
+            <div className="relative">
+                <div className="flex animate-scroll gap-6">
+                    {[...testimonials, ...testimonials].map((testimonial, index) => (
+                        <TestimonialCard key={`${testimonial.name}-${index}`} testimonial={testimonial} />
+                    ))}
                 </div>
+
+                <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-background to-transparent sm:w-32" />
+                <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-background to-transparent sm:w-32" />
             </div>
         </section>
     );

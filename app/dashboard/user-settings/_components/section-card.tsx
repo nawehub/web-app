@@ -57,7 +57,7 @@ export function SectionCard({
                         </button>
                     )}
                     {showToggle && (
-                        <VisibilityToggle isPublic={!!isPublic} onToggle={onToggleVisibility!} />
+                        <VisibilityToggle isPublic={!!isPublic} onToggleAction={onToggleVisibility!} />
                     )}
                 </div>
             </div>
@@ -68,10 +68,10 @@ export function SectionCard({
 
 export function VisibilityToggle({
     isPublic,
-    onToggle,
+    onToggleAction,
 }: {
     isPublic: boolean;
-    onToggle: () => void;
+    onToggleAction: () => void;
 }) {
     return (
         // A plain <button> wrapping a custom visual track — we deliberately avoid
@@ -79,7 +79,7 @@ export function VisibilityToggle({
         // button-in-button is invalid HTML (hydration error).
         <button
             type="button"
-            onClick={onToggle}
+            onClick={onToggleAction}
             role="switch"
             aria-checked={isPublic}
             aria-label="Section visibility"

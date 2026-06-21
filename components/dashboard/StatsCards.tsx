@@ -1,64 +1,76 @@
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
-import {Building2, DollarSign, TrendingUp, Users} from "lucide-react";
+/**
+ * NaWeHub Dashboard — StatsCards
+ * --------------------------------------
+ * Location: components/dashboard/StatsCards.tsx
+ *
+ * This one was already mostly theme-safe (just Card/CardHeader/CardContent
+ * defaults). Two changes: the "+15 this month" deltas were hardcoded
+ * `text-green-600`, swapped for your own `--color-success` token; and the
+ * big stat numbers now use the mono ledger-numeral treatment from the
+ * public site's stats sections, which ties the dashboard back to the same
+ * visual language instead of feeling like a different app.
+ */
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Building2, DollarSign, TrendingUp, Users } from "lucide-react";
 
 interface StatsCardProps {
     opportunities: number,
-     users: number,
-     businesses: number,
-     projects?: number,
+    users: number,
+    businesses: number,
+    projects?: number,
 }
 
-export const StatsCards = ({opportunities, users, businesses, projects}: StatsCardProps) => {
+const statDefs = (opportunities: number, users: number, businesses: number, projects?: number) => [
+    {
+        title: "Total Active Users",
+        value: users,
+        delta: "15 Registered",
+        icon: Users,
+    },
+    {
+        title: "Funding Opportunities",
+        value: opportunities,
+        delta: "31 Added",
+        icon: DollarSign,
+    },
+    {
+        title: "Registered Businesses",
+        value: businesses,
+        delta: "100 Registered",
+        icon: Building2,
+    },
+    {
+        title: "Funded Projects",
+        value: projects ?? 89,
+        delta: "3 projects",
+        icon: TrendingUp,
+    },
+]
+
+export const StatsCards = ({ opportunities, users, businesses, projects }: StatsCardProps) => {
+    const stats = statDefs(opportunities, users, businesses, projects)
+
     return (
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            <Card className={"transition-all duration-200 md:hover:scale-[1.02]"}>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Total Active Users</CardTitle>
-                    <Users className="h-4 w-4 text-muted-foreground"/>
-                </CardHeader>
-                <CardContent>
-                    <div className="text-2xl font-bold">{users}</div>
-                    <p className="text-xs text-muted-foreground">
-                        <span className="text-green-600">15 Registered</span> this month
-                    </p>
-                </CardContent>
-            </Card>
-            <Card className={"transition-all duration-200 md:hover:scale-[1.02]"}>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Funding Opportunities</CardTitle>
-                    <DollarSign className="h-4 w-4 text-muted-foreground"/>
-                </CardHeader>
-                <CardContent>
-                    <div className="text-2xl font-bold">{opportunities}</div>
-                    <p className="text-xs text-muted-foreground">
-                        <span className="text-green-600">31 Added</span> this month
-                    </p>
-                </CardContent>
-            </Card>
-            <Card className={"transition-all duration-200 md:hover:scale-[1.02]"}>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Registered Businesses</CardTitle>
-                    <Building2 className="h-4 w-4 text-muted-foreground"/>
-                </CardHeader>
-                <CardContent>
-                    <div className="text-2xl font-bold">{businesses}</div>
-                    <p className="text-xs text-muted-foreground">
-                        <span className="text-green-600">100 Registered</span> this month
-                    </p>
-                </CardContent>
-            </Card>
-            <Card className={"transition-all duration-200 md:hover:scale-[1.02]"}>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Funded Projects</CardTitle>
-                    <TrendingUp className="h-4 w-4 text-muted-foreground"/>
-                </CardHeader>
-                <CardContent>
-                    <div className="text-2xl font-bold">{projects || 89}</div>
-                    <p className="text-xs text-muted-foreground">
-                        <span className="text-green-600">3 projects</span> this month
-                    </p>
-                </CardContent>
-            </Card>
+            {stats.map((stat) => (
+                <Card key={stat.title} className="transition-all duration-200 md:hover:-translate-y-0.5 md:hover:shadow-[var(--shadow-md)]">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium text-muted-foreground">{stat.title}</CardTitle>
+                        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                            <stat.icon className="h-4 w-4" />
+                        </span>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-semibold text-foreground [font-family:var(--font-mono)]">
+                            {stat.value}
+                        </div>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                            <span className="font-medium text-[hsl(var(--color-success))]">{stat.delta}</span> this month
+                        </p>
+                    </CardContent>
+                </Card>
+            ))}
         </div>
     )
 }

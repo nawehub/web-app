@@ -2,7 +2,6 @@
 import {
   AccessLevel,
   ActivityType,
-  FileFormat,
   UserRole,
   UserType,
   MimeType,
@@ -15,6 +14,7 @@ import {
   NetworkEventStatus,
   ConversationType, MessageType, NotificationVariant, DownloadType, NotificationType, FundingStatus, FundingType
 } from "@/lib/enums/db-enums";
+import {FileFormat} from "@/types/files";
 
 export interface AuthSession {
   id: string;

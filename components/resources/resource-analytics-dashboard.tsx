@@ -9,7 +9,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { Download, Eye, TrendingUp, Users, FileText, Star } from "lucide-react"
 import type { Resource } from "@/lib/database/types"
 import { comprehensiveDb } from "@/lib/database/comprehensive-db"
-import { useAuth } from "@/lib/auth/auth-context"
+import { useAuth } from "@/hooks/auth/auth-context"
 import { formatDistanceToNow } from "date-fns"
 
 interface ResourceAnalyticsDashboardProps {

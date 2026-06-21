@@ -1,10 +1,53 @@
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {SelectContent, SelectItem, SelectTrigger, SelectValue, Select} from "@/components/ui/select";
-import {ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart";
-import {CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis} from "recharts";
-import {Building2, Clock, DollarSign, Star, TrendingUp} from "lucide-react";
-import {mockRecentActivity, mockUserActivity} from "@/lib/mock-data";
-import {useState} from "react";
+/**
+ * NaWeHub Dashboard — UserActivity
+ * --------------------------------------
+ * Location: components/dashboard/UserActivity.tsx
+ *
+ * - `text-gray-900 dark:text-gray-100` → `text-foreground`.
+ * - Switched from a line chart to a bar chart for monthly active users.
+ * - Color fix: the original hardcoded `stroke="#8884d8"` (recharts
+ *   boilerplate purple) had nothing to do with the brand. I'd first tried
+ *   wiring it through `ChartContainer`'s `--chart-1` config variable, but
+ *   that token was never actually confirmed to exist in your globals.css —
+ *   if it's only defined under one theme (or not at all), the chart would
+ *   render wrong or invisible in light mode specifically. So instead this
+ *   uses the same literal brand green already established elsewhere in
+ *   this codebase (`hsl(160 84% 39%)`, used for the home page's SVG
+ *   underline for the same reason: presentational color attributes on
+ *   SVG/chart elements don't reliably resolve CSS custom properties).
+ *   Guaranteed correct in both themes without depending on an unverified
+ *   token — swap back to `var(--color-users)` once you've confirmed
+ *   `--chart-1` is defined for both light and dark.
+ * - Each bar now gets its own color via per-entry `<Cell>` elements,
+ *   cycling through a small on-brand palette (graduated shades of the
+ *   established green plus the established accent orange) rather than
+ *   introducing hues I don't have a verified value for — same reasoning
+ *   as above. The palette repeats if there are more months than colors.
+ * - Card surfaces, badges, and spacing otherwise untouched — this file was
+ *   already relying on theme-safe Card/Select primitives.
+ */
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { SelectContent, SelectItem, SelectTrigger, SelectValue, Select } from "@/components/ui/select";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, XAxis, YAxis } from "recharts";
+import { Building2, Clock, DollarSign, Star, TrendingUp } from "lucide-react";
+import { mockRecentActivity, mockUserActivity } from "@/lib/mock-data";
+import { useState } from "react";
+
+const BRAND_GREEN = "hsl(160 84% 39%)"
+
+// Cycling palette for per-bar coloring — graduated shades of the
+// established brand green plus the established accent orange, rather than
+// arbitrary hues. Repeats if there are more data points than colors.
+const BAR_COLORS = [
+    "hsl(160 84% 28%)",
+    BRAND_GREEN,
+    "hsl(160 70% 50%)",
+    "hsl(160 55% 62%)",
+    "hsl(25 95% 53%)",
+    "hsl(25 90% 65%)",
+]
 
 export const UserActivity = () => {
     const [selectedYear, setSelectedYear] = useState("2024")
@@ -59,25 +102,23 @@ export const UserActivity = () => {
                         config={{
                             users: {
                                 label: "Active Users",
-                                color: "hsl(var(--chart-1))",
+                                color: BRAND_GREEN,
                             },
                         }}
                         className="h-[300px]"
                     >
                         <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={mockUserActivity}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="month" />
-                                <YAxis />
-                                <ChartTooltip content={<ChartTooltipContent />} />
-                                <Line
-                                    type="monotone"
-                                    dataKey="users"
-                                    stroke="#8884d8"
-                                    strokeWidth={2}
-                                    dot={{ fill: "#82ca9d" }}
-                                />
-                            </LineChart>
+                            <BarChart data={mockUserActivity}>
+                                <CartesianGrid strokeDasharray="3 3" className="stroke-border" vertical={false} />
+                                <XAxis dataKey="month" className="fill-muted-foreground text-xs" />
+                                <YAxis className="fill-muted-foreground text-xs" />
+                                <ChartTooltip content={<ChartTooltipContent />} cursor={{ fill: "hsl(var(--muted))" }} />
+                                <Bar dataKey="users" radius={[6, 6, 0, 0]} maxBarSize={40}>
+                                    {mockUserActivity.map((entry, index) => (
+                                        <Cell key={`bar-${index}`} fill={BAR_COLORS[index % BAR_COLORS.length]} />
+                                    ))}
+                                </Bar>
+                            </BarChart>
                         </ResponsiveContainer>
                     </ChartContainer>
                 </CardContent>
@@ -93,12 +134,12 @@ export const UserActivity = () => {
                     <div className="space-y-4">
                         {mockRecentActivity.map((activity) => (
                             <div key={activity.id} className="flex items-start space-x-3">
-                                <div className="flex-shrink-0 w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
                                     {getActivityIcon(activity.type)}
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{activity.description}</p>
-                                    <div className="flex items-center space-x-2 mt-1">
+                                <div className="min-w-0 flex-1">
+                                    <p className="text-sm font-medium text-foreground">{activity.description}</p>
+                                    <div className="mt-1 flex items-center space-x-2">
                                         {activity.user && <p className="text-xs text-muted-foreground">{activity.user}</p>}
                                         <p className="text-xs text-muted-foreground">{formatDate(activity.timestamp)}</p>
                                     </div>

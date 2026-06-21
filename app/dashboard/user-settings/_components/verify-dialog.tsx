@@ -26,8 +26,8 @@ export interface VerifyTarget {
 
 interface VerifyDialogProps {
     target: VerifyTarget | null;
-    onClose: () => void;
-    onComplete: (key: VerificationKey, status: "review" | "verified") => void;
+    onCloseAction: () => void;
+    onCompleteAction: (key: VerificationKey, status: "review" | "verified") => void;
 }
 
 interface FlowProps {
@@ -36,19 +36,19 @@ interface FlowProps {
     onComplete: (key: VerificationKey, status: "review" | "verified") => void;
 }
 
-export function VerifyDialog({ target, onClose, onComplete }: VerifyDialogProps) {
+export function VerifyDialog({ target, onCloseAction, onCompleteAction }: VerifyDialogProps) {
     if (!target) return null;
     return (
-        <Dialog open={!!target} onOpenChange={(o) => !o && onClose()}>
+        <Dialog open={!!target} onOpenChange={(o) => !o && onCloseAction()}>
             <DialogContent className="top-[7vh] max-h-[86vh] translate-y-0 overflow-y-auto sm:max-w-lg">
                 {target.kind === "doc" && (
-                    <DocFlow target={target} onClose={onClose} onComplete={onComplete} />
+                    <DocFlow target={target} onClose={onCloseAction} onComplete={onCompleteAction} />
                 )}
                 {target.kind === "selfie" && (
-                    <SelfieFlow target={target} onClose={onClose} onComplete={onComplete} />
+                    <SelfieFlow target={target} onClose={onCloseAction} onComplete={onCompleteAction} />
                 )}
                 {target.kind === "code" && (
-                    <CodeFlow target={target} onClose={onClose} onComplete={onComplete} />
+                    <CodeFlow target={target} onClose={onCloseAction} onComplete={onCompleteAction} />
                 )}
             </DialogContent>
         </Dialog>

@@ -1,6 +1,6 @@
 // OpportunityDetails.tsx
 import React from "react";
-import type { FundingOpportunityDto } from "@/lib/types/funding"; // adjust import path
+import type { FundingOpportunityDto } from "@/types/funding"; // adjust import path
 import { motion } from "framer-motion";
 import { CalendarDays, Landmark, Star, ExternalLink, CheckCircle2, XCircle, ArrowRight } from "lucide-react";
 import clsx from "clsx";

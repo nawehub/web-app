@@ -33,6 +33,10 @@ export const setPasswordForm = z.object({
     confirmPassword: z.string({message: 'password is required'}),
 });
 
+export const resendOtpForm = z.object({
+    email: z.string().email({message: 'must be a valid email'}),
+});
+
 interface ApiClientConfig {
     token?: string | null;
 }
@@ -55,6 +59,12 @@ export const authService = () => {
                     method: 'POST',
                     body: JSON.stringify(req),
                 }),
+            resendOtp: async (req: z.infer<typeof resendOtpForm>) =>
+                api4app('/auth/resend-otp', {
+                    method: 'POST',
+                    body: JSON.stringify(req),
+                }),
+
         },
     };
 }

@@ -15,7 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Calendar, Upload, X } from 'lucide-react';
 import { useCreateEventMutation } from '@/hooks/repository/use-events';
-import { useToast } from '@/hooks/use-toast';
+import {toast} from 'sonner';
 import dynamic from 'next/dynamic';
 import QuillEditor from "@/components/QuillEditor";
 
@@ -33,7 +33,6 @@ export function CreateEventDialog({ open, onOpenChangeAction }: CreateEventDialo
     const [endDate, setEndDate] = useState('');
     const [hostWebsite, setHostWebsite] = useState('');
 
-    const { toast } = useToast();
     const createEventMutation = useCreateEventMutation();
 
     // Rich text editor configuration
@@ -72,20 +71,16 @@ export function CreateEventDialog({ open, onOpenChangeAction }: CreateEventDialo
         if (selectedFile) {
             // Validate file type
             if (!selectedFile.type.startsWith('image/')) {
-                toast({
-                    title: 'Invalid file type',
+                toast("Invalid file type", {
                     description: 'Please select an image file for the event flier.',
-                    variant: 'destructive',
                 });
                 return;
             }
 
             // Validate file size (max 5MB)
             if (selectedFile.size > 5 * 1024 * 1024) {
-                toast({
-                    title: 'File too large',
+                toast('File too large', {
                     description: 'Please select an image smaller than 5MB.',
-                    variant: 'destructive',
                 });
                 return;
             }
@@ -98,55 +93,43 @@ export function CreateEventDialog({ open, onOpenChangeAction }: CreateEventDialo
         e.preventDefault();
 
         if (!title.trim()) {
-            toast({
-                title: 'Error',
+            toast('Error', {
                 description: 'Please enter an event title',
-                variant: 'destructive',
             });
             return;
         }
 
         if (!description.trim()) {
-            toast({
-                title: 'Error',
+            toast('Error', {
                 description: 'Please enter an event description',
-                variant: 'destructive',
             });
             return;
         }
 
         if (!about.trim()) {
-            toast({
-                title: 'Error',
+            toast('Error', {
                 description: 'Please enter event details in the About section',
-                variant: 'destructive',
             });
             return;
         }
 
         if (!flier) {
-            toast({
-                title: 'Error',
+            toast('Error', {
                 description: 'Please upload an event flier',
-                variant: 'destructive',
             });
             return;
         }
 
         if (!startDate || !endDate) {
-            toast({
-                title: 'Error',
+            toast('Error', {
                 description: 'Please select start and end dates',
-                variant: 'destructive',
             });
             return;
         }
 
         if (new Date(startDate) >= new Date(endDate)) {
-            toast({
-                title: 'Error',
+            toast('Error', {
                 description: 'End date must be after start date',
-                variant: 'destructive',
             });
             return;
         }
@@ -173,8 +156,7 @@ export function CreateEventDialog({ open, onOpenChangeAction }: CreateEventDialo
 
             await createEventMutation.mutateAsync(formData);
 
-            toast({
-                title: 'Success',
+            toast('Success',{
                 description: 'Event created successfully',
             });
 
@@ -188,10 +170,8 @@ export function CreateEventDialog({ open, onOpenChangeAction }: CreateEventDialo
             setHostWebsite('');
             onOpenChangeAction(false);
         } catch (error) {
-            toast({
-                title: 'Error',
+            toast('Error', {
                 description: 'Failed to create event',
-                variant: 'destructive',
             });
         }
     };

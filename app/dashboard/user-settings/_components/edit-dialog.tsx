@@ -72,14 +72,14 @@ export interface EditDialogConfig {
 
 interface EditDialogProps {
     config: EditDialogConfig | null;
-    onClose: () => void;
+    onCloseAction: () => void;
 }
 
 /**
  * Schema-driven editor used by every profile section. Holds its own draft
  * state so edits are only committed on Save (mirrors the design's modal).
  */
-export function EditDialog({ config, onClose }: EditDialogProps) {
+export function EditDialog({ config, onCloseAction }: EditDialogProps) {
     const [draft, setDraft] = useState<FormValues>({});
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [showErrors, setShowErrors] = useState(false);
@@ -136,7 +136,7 @@ export function EditDialog({ config, onClose }: EditDialogProps) {
             }
         }
         config.onSave(normalize(draft));
-        onClose();
+        onCloseAction();
     };
 
     // Cancel / dismiss: discard any preview created in this dialog that was never saved.
@@ -146,12 +146,12 @@ export function EditDialog({ config, onClose }: EditDialogProps) {
                 revokePreview(draft[f.key]);
             }
         }
-        onClose();
+        onCloseAction();
     };
 
     const handleDelete = () => {
         config.onDelete?.();
-        onClose();
+        onCloseAction();
     };
 
     return (

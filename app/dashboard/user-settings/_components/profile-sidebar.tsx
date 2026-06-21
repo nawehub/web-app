@@ -53,14 +53,14 @@ function buildChecklist(profile: EntrepreneurProfile): ChecklistEntry[] {
 interface ProfileSidebarProps {
     profile: EntrepreneurProfile;
     visibility: Visibility;
-    onToggleVisibility: (key: SectionKey) => void;
+    onToggleVisibilityAction: (key: SectionKey) => void;
     onChecklistAction?: (key: ChecklistKey) => void;
 }
 
 export function ProfileSidebar({
     profile,
     visibility,
-    onToggleVisibility,
+    onToggleVisibilityAction,
     onChecklistAction,
 }: ProfileSidebarProps) {
     const checklist = buildChecklist(profile);
@@ -132,7 +132,7 @@ export function ProfileSidebar({
                                 <span className="flex-1 text-neutral-700">{s.label}</span>
                                 <button
                                     type="button"
-                                    onClick={() => onToggleVisibility(s.key)}
+                                    onClick={() => onToggleVisibilityAction(s.key)}
                                     className={cn(
                                         "rounded-full px-2.5 py-1 font-display text-[11.5px] font-bold transition-colors",
                                         isPublic

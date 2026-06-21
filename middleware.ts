@@ -5,35 +5,33 @@ import { getToken } from "next-auth/jwt";
 const DASHBOARD_PREFIX = "/dashboard";
 const PUBLIC_PATHS = [
     "/",                // landing
-    "/login",
+    "/web",
+    "/web/login",
     "/register",
-    "/verify-otp",
-    "/pending-approval",
-    "/forgot-password",
-    "/reset-password",
-    "/lyd",
-    "/business-registration",
-    "/contact",
-    "/faq",
-    "/privacy",
-    "/services",
-    "/projects",
+    "/web/verify-otp",
+    "/web/pending-approval",
+    "/web/forgot-password",
+    "/web/reset-password",
+    "/web/next-big-idea",
+    "/web/vetted-entrepreneurs",
+    "/web/register-business",
+    "/web/contact",
+    "/web/faq",
+    "/web/privacy",
+    "/web/services",
+    "/web/projects",
     "/api"
 ];
 
 function isPublicPath(pathname: string) {
     if (PUBLIC_PATHS.includes(pathname)) return true;
     // Allow Next internals and static assets
-    if (
-        pathname.startsWith("/_next") ||
+    return pathname.startsWith("/_next") ||
         pathname.startsWith("/static") ||
         pathname.startsWith("/images") ||
         pathname.startsWith("/favicon") ||
-        pathname.startsWith("/api/webhooks")
-    ) {
-        return true;
-    }
-    return false;
+        pathname.startsWith("/api/webhooks");
+
 }
 
 export async function middleware(req: NextRequest) {
@@ -60,13 +58,13 @@ export async function middleware(req: NextRequest) {
     // If user is NOT approved and trying to access any dashboard route, redirect to pending-approval
     if (!approved && pathname.startsWith(DASHBOARD_PREFIX)) {
         const url = req.nextUrl.clone();
-        url.pathname = "/pending-approval";
+        url.pathname = "/web/pending-approval";
         url.search = ""; // clear query params
         return NextResponse.redirect(url);
     }
 
     // If approved user tries to visit pending-approval, send them to dashboard
-    if (approved && pathname === "/pending-approval") {
+    if (approved && pathname === "/web/pending-approval") {
         const url = req.nextUrl.clone();
         url.pathname = DASHBOARD_PREFIX;
         url.search = "";

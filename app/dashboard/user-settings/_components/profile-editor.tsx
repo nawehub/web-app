@@ -596,7 +596,7 @@ export function ProfileEditor({ profile: initial }: ProfileEditorProps) {
                         <ProfileSidebar
                             profile={profile}
                             visibility={visibility}
-                            onToggleVisibility={toggle}
+                            onToggleVisibilityAction={toggle}
                             onChecklistAction={(key) => {
                                 const actions: Record<string, () => void> = {
                                     about: editAbout,
@@ -630,11 +630,11 @@ export function ProfileEditor({ profile: initial }: ProfileEditorProps) {
                 }}
             />
 
-            <EditDialog config={editor} onClose={() => setEditor(null)} />
+            <EditDialog config={editor} onCloseAction={() => setEditor(null)} />
             <VerifyDialog
                 target={verifyTarget}
-                onClose={() => setVerifyTarget(null)}
-                onComplete={completeVerify}
+                onCloseAction={() => setVerifyTarget(null)}
+                onCompleteAction={completeVerify}
             />
         </div>
     );

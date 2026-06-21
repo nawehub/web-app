@@ -34,7 +34,7 @@ export function ApproveRejectOpportunityDialog({oppId, action, openAlert, openAl
         startTransition(async () => {
             try {
                 await approveRejectMutation.mutateAsync({
-                    isFeatured,
+                    isFeatured: isFeatured,
                     action,
                     rejectionReason,
                 })

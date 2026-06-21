@@ -21,3 +21,9 @@ export function useSetPasswordMutation() {
     });
 }
 
+export function useResendOtpMutation() {
+    return useMutation({
+        mutationFn: (data: { email: string }) => authService().auth.resendOtp(data),
+    });
+}
+

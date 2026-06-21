@@ -11,10 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
     ArrowLeft,
     MapPin,
-    Calendar,
     DollarSign,
-    Users,
-    MessageCircle,
     Eye,
     Share2,
     Heart,
@@ -28,7 +25,7 @@ import {
 } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
 // Sample project data - in real app this would come from API
@@ -131,7 +128,6 @@ const getTimelineStatus = (status: string) => {
 
 export default function ProjectDetailPage() {
     const params = useParams();
-    const { toast } = useToast();
     const [projectStatus, setProjectStatus] = useState(sampleProject.status);
     const [newComment, setNewComment] = useState('');
     const [isSubmittingComment, setIsSubmittingComment] = useState(false);
@@ -182,18 +178,15 @@ export default function ProjectDetailPage() {
 
     const handleApprove = () => {
         setProjectStatus('APPROVED - IMPLEMENTATION ONGOING');
-        toast({
-            title: 'Project Approved',
+        toast('Project Approved', {
             description: 'The project has been approved and is now ready for implementation.',
         });
     };
 
     const handleReject = () => {
         setProjectStatus('REJECTED');
-        toast({
-            title: 'Project Rejected',
+        toast('Project Rejected', {
             description: 'The project has been rejected and will not proceed.',
-            variant: 'destructive',
         });
     };
 
@@ -201,10 +194,8 @@ export default function ProjectDetailPage() {
         e.preventDefault();
 
         if (!newComment.trim()) {
-            toast({
-                title: 'Error',
+            toast('Error', {
                 description: 'Please enter a comment',
-                variant: 'destructive',
             });
             return;
         }
@@ -225,8 +216,7 @@ export default function ProjectDetailPage() {
             setComments(prev => [newCommentObj, ...prev]);
             setIsSubmittingComment(false);
             setNewComment('');
-            toast({
-                title: 'Comment posted',
+            toast('Comment posted', {
                 description: 'Your comment has been added successfully.',
             });
         }, 1000);
