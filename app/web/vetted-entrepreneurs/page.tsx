@@ -6,6 +6,8 @@ import {
     ArrowRight,
     BadgeCheck,
     Briefcase,
+    ChevronDown,
+    ChevronUp,
     CircleDollarSign,
     FileText,
     Heart,
@@ -16,6 +18,7 @@ import {
     Search,
     ShieldCheck,
     SlidersHorizontal,
+    Star,
     TrendingUp,
     Users,
 } from "lucide-react";
@@ -31,7 +34,6 @@ import {
     VettedEntrepreneur,
     VettedEntrepreneursFilters,
 } from "@/types/entrepreneurs";
-import {Input} from "@/components/ui/input";
 import {ClothBorder} from "@/components/icons";
 
 const STAGE_TONE: Record<StageTone, string> = {
@@ -83,6 +85,7 @@ export default function VettedEntrepreneursPage() {
     const [industry, setIndustry] = useState<string>(INDUSTRY_OPTIONS[0]);
     const [stage, setStage] = useState<string>(STAGE_OPTIONS[0]);
     const [district, setDistrict] = useState<string>(DISTRICT_OPTIONS[0]);
+    const [showAllEntrepreneurs, setShowAllEntrepreneurs] = useState(false);
 
     const filters = useDeferredValue<VettedEntrepreneursFilters>({
         query,
@@ -93,12 +96,24 @@ export default function VettedEntrepreneursPage() {
 
     const { data: entrepreneurs = [], isLoading, isError } = useVettedEntrepreneursQuery(filters);
 
+    const featuredEntrepreneurs = entrepreneurs
+        .filter((e) => e.featured)
+        .sort((a, b) => (a.featuredOrder ?? 0) - (b.featuredOrder ?? 0));
+    const otherEntrepreneurs = entrepreneurs.filter((e) => !e.featured);
+
     const clearAll = () => {
         setQuery("");
         setIndustry(INDUSTRY_OPTIONS[0]);
         setStage(STAGE_OPTIONS[0]);
         setDistrict(DISTRICT_OPTIONS[0]);
+        setShowAllEntrepreneurs(false);
     };
+
+    const hasActiveFilters =
+        query.trim() !== "" ||
+        industry !== INDUSTRY_OPTIONS[0] ||
+        stage !== STAGE_OPTIONS[0] ||
+        district !== DISTRICT_OPTIONS[0];
 
     return (
         <div>
@@ -112,14 +127,13 @@ export default function VettedEntrepreneursPage() {
                             <span className="text-primary">Vetted Entrepreneurs</span>
                         </h1>
                         <p className="mt-5 max-w-[480px] text-lg text-foreground/80">
-                            Discover innovative and trusted entrepreneurs building solutions that
-                            drive progress in Sierra Leone. Every profile on NaWeHub is vetted for
-                            credibility, capability, and impact.
+                            Discover trusted, high-impact entrepreneurs vetted by NaWeHub. Start with
+                            our featured spotlight profiles, then explore the full vetted directory.
                         </p>
                         <div className="mt-7 flex flex-wrap gap-3">
                             <Button asChild size="lg" className="rounded-full">
                                 <Link href="#featured">
-                                    Explore Entrepreneurs <ArrowRight className="h-4 w-4" />
+                                    Explore Featured <ArrowRight className="h-4 w-4" />
                                 </Link>
                             </Button>
                             <Button asChild size="lg" variant="outline" className="rounded-full">
@@ -189,45 +203,60 @@ export default function VettedEntrepreneursPage() {
                             <RotateCcw className="h-3.5 w-3.5" /> Clear all
                         </button>
                     </div>
-                    <div className="grid gap-3 lg:grid-cols-[2fr_1fr_1fr_1fr_auto]">
-                        <div className={'mt-5'}>
-                            <Input
-                                leftIcon={<Search className="h-4 w-4 text-muted-foreground" />}
-                                type="text"
-                                value={query}
-                                onChange={(e) => setQuery(e.target.value)}
-                                placeholder="Search by name, business or keyword…"
-                                className="h-11 w-full rounded-[10px] border border-input bg-background pl-10 pr-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                            />
-                        </div>
+                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] lg:items-end">
+                        <label className="flex min-w-0 flex-col sm:col-span-2 lg:col-span-1">
+                            <FilterFieldLabel>Search</FilterFieldLabel>
+                            <div className="relative">
+                                <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                                <input
+                                    type="text"
+                                    value={query}
+                                    onChange={(e) => setQuery(e.target.value)}
+                                    placeholder="Search by name, business or keyword…"
+                                    className="h-11 w-full rounded-[10px] border border-input bg-background pl-10 pr-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                />
+                            </div>
+                        </label>
                         <FilterSelect label="Industry" value={industry} onChange={setIndustry} options={[...INDUSTRY_OPTIONS]} />
                         <FilterSelect label="Stage" value={stage} onChange={setStage} options={[...STAGE_OPTIONS]} />
                         <FilterSelect label="Location" value={district} onChange={setDistrict} options={[...DISTRICT_OPTIONS]} />
-                        <Button
-                            type="button"
-                            className="h-11 self-end rounded-[10px] bg-[hsl(var(--color-neutral-900))] text-[hsl(var(--color-neutral-50))] hover:bg-[hsl(var(--color-neutral-800))]"
-                        >
-                            <SlidersHorizontal className="h-4 w-4" /> Filter
-                        </Button>
+                        <div className="flex flex-col sm:col-span-2 lg:col-span-1">
+                            <FilterFieldLabel className="invisible select-none" aria-hidden>
+                                Apply
+                            </FilterFieldLabel>
+                            <Button
+                                type="button"
+                                className="h-11 w-full rounded-[10px] bg-[hsl(var(--color-neutral-900))] text-[hsl(var(--color-neutral-50))] hover:bg-[hsl(var(--color-neutral-800))] lg:w-auto lg:min-w-[108px]"
+                            >
+                                <SlidersHorizontal className="h-4 w-4" /> Filter
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <ClothBorder />
 
-            {/* Featured */}
+            {/* Featured — default view */}
             <section id="featured" className="container mx-auto px-4 py-14">
-                <div className="mb-6 flex items-end justify-between gap-4">
-                    <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
-                        Featured Vetted Entrepreneurs
-                    </h2>
+                <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                        <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 font-display text-[11px] font-bold uppercase tracking-wide text-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
+                            <Star className="h-3.5 w-3.5 fill-current" /> Featured &amp; vetted
+                        </div>
+                        <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
+                            Featured Vetted Entrepreneurs
+                        </h2>
+                        <p className="mt-1 max-w-xl text-sm text-muted-foreground">
+                            Hand-picked profiles with the strongest vetting scores, traction, and
+                            investor readiness — our premium spotlight cohort.
+                        </p>
+                    </div>
                     <span className="inline-flex items-center gap-1.5 font-display text-sm font-bold text-primary">
                         {isLoading ? (
                             <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
-                            <>
-                                {entrepreneurs.length} result{entrepreneurs.length === 1 ? "" : "s"}
-                            </>
+                            <>{featuredEntrepreneurs.length} featured</>
                         )}
                     </span>
                 </div>
@@ -243,7 +272,131 @@ export default function VettedEntrepreneursPage() {
                     </div>
                 ) : isLoading ? (
                     <EntrepreneurCardSkeletonGrid />
-                ) : entrepreneurs.length === 0 ? (
+                ) : featuredEntrepreneurs.length === 0 ? (
+                    <div className="rounded-2xl border bg-card p-12 text-center">
+                        <p className="font-display text-lg font-bold text-neutral-900">
+                            {hasActiveFilters
+                                ? "No featured entrepreneurs match your filters"
+                                : "No featured entrepreneurs yet"}
+                        </p>
+                        <p className="mt-1.5 text-sm text-muted-foreground">
+                            {otherEntrepreneurs.length > 0
+                                ? "Browse all vetted entrepreneurs — every profile is verified by NaWeHub."
+                                : "Try clearing some filters to see more results."}
+                        </p>
+                        <div className="mt-4 flex flex-wrap justify-center gap-3">
+                            {otherEntrepreneurs.length > 0 && (
+                                <Button
+                                    onClick={() => setShowAllEntrepreneurs(true)}
+                                    className="rounded-full"
+                                >
+                                    Show all vetted entrepreneurs
+                                    <ArrowRight className="h-4 w-4" />
+                                </Button>
+                            )}
+                            {hasActiveFilters && (
+                                <Button onClick={clearAll} variant="outline" className="rounded-full">
+                                    <RotateCcw className="h-4 w-4" /> Clear filters
+                                </Button>
+                            )}
+                        </div>
+                    </div>
+                ) : (
+                    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                        {featuredEntrepreneurs.map((e) => (
+                            <EntrepreneurCard key={e.id} e={e} showFeaturedBadge />
+                        ))}
+                    </div>
+                )}
+
+                {/* Expand to full vetted directory */}
+                {!isLoading && !isError && entrepreneurs.length > 0 && (
+                    <div className="mt-10 flex flex-col items-center gap-4">
+                        {!showAllEntrepreneurs && otherEntrepreneurs.length > 0 && (
+                            <div className="w-full max-w-2xl rounded-2xl border bg-gradient-to-b from-muted/50 to-card p-6 text-center shadow-sm">
+                                <p className="font-display text-base font-bold text-neutral-900">
+                                    Looking for more vetted entrepreneurs?
+                                </p>
+                                <p className="mt-1.5 text-sm text-muted-foreground">
+                                    Every NaWeHub profile is vetted. Featured entrepreneurs are our
+                                    spotlight cohort — explore{" "}
+                                    <strong className="font-semibold text-foreground">
+                                        {otherEntrepreneurs.length} more
+                                    </strong>{" "}
+                                    verified founder{otherEntrepreneurs.length === 1 ? "" : "s"} in
+                                    the full directory.
+                                </p>
+                                <Button
+                                    type="button"
+                                    size="lg"
+                                    variant="outline"
+                                    className="mt-4 rounded-full border-primary-200 bg-card hover:bg-primary-50"
+                                    onClick={() => {
+                                        setShowAllEntrepreneurs(true);
+                                        document.getElementById("all")?.scrollIntoView({
+                                            behavior: "smooth",
+                                            block: "start",
+                                        });
+                                    }}
+                                >
+                                    Show all vetted entrepreneurs
+                                    <ChevronDown className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        )}
+
+                        {showAllEntrepreneurs && (
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                className="rounded-full text-primary-600 hover:text-primary-700"
+                                onClick={() => {
+                                    setShowAllEntrepreneurs(false);
+                                    document.getElementById("featured")?.scrollIntoView({
+                                        behavior: "smooth",
+                                        block: "start",
+                                    });
+                                }}
+                            >
+                                <ChevronUp className="h-4 w-4" />
+                                Show featured only
+                            </Button>
+                        )}
+                    </div>
+                )}
+            </section>
+
+            {/* All vetted — revealed on demand */}
+            {showAllEntrepreneurs && !isLoading && !isError && otherEntrepreneurs.length > 0 && (
+                <section id="all" className="container mx-auto px-4 pb-14">
+                    <div className="mb-6 flex flex-col gap-3 border-t pt-10 sm:flex-row sm:items-end sm:justify-between">
+                        <div>
+                            <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-primary-100 px-3 py-1 font-display text-[11px] font-bold uppercase tracking-wide text-primary-700">
+                                <BadgeCheck className="h-3.5 w-3.5" /> Vetted
+                            </div>
+                            <h2 className="font-display text-2xl font-extrabold tracking-tight text-neutral-900 sm:text-3xl">
+                                All Vetted Entrepreneurs
+                            </h2>
+                            <p className="mt-1 max-w-xl text-sm text-muted-foreground">
+                                The complete NaWeHub directory — every entrepreneur below has passed
+                                our verification process.
+                            </p>
+                        </div>
+                        <span className="font-display text-sm font-bold text-primary-600">
+                            {otherEntrepreneurs.length} profile
+                            {otherEntrepreneurs.length === 1 ? "" : "s"}
+                        </span>
+                    </div>
+                    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                        {otherEntrepreneurs.map((e) => (
+                            <EntrepreneurCard key={e.id} e={e} />
+                        ))}
+                    </div>
+                </section>
+            )}
+
+            {!isLoading && !isError && entrepreneurs.length === 0 && (
+                <section className="container mx-auto px-4 pb-14">
                     <div className="rounded-2xl border bg-card p-12 text-center">
                         <p className="font-display text-lg font-bold text-foreground">
                             No entrepreneurs match your filters
@@ -255,16 +408,10 @@ export default function VettedEntrepreneursPage() {
                             <RotateCcw className="h-4 w-4" /> Clear filters
                         </Button>
                     </div>
-                ) : (
-                    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                        {entrepreneurs.map((e) => (
-                            <EntrepreneurCard key={e.id} e={e} />
-                        ))}
-                    </div>
-                )}
-            </section>
+                </section>
+            )}
 
-            {/* Investor band */}
+            {/* Investor band - was below featured, keep placement */}
             <section id="investor" className="container mx-auto px-4 pb-14">
                 <div className="grid items-center gap-8 rounded-3xl border bg-muted/40 p-8 sm:p-9 lg:grid-cols-[1.3fr_2fr]">
                     <div className="flex items-start gap-4">
@@ -326,6 +473,24 @@ export default function VettedEntrepreneursPage() {
     );
 }
 
+function FilterFieldLabel({
+    children,
+    className,
+    ...props
+}: React.LabelHTMLAttributes<HTMLSpanElement>) {
+    return (
+        <span
+            className={cn(
+                "mb-1 ml-0.5 block font-display text-[11px] font-bold uppercase tracking-wide text-muted-foreground",
+                className
+            )}
+            {...props}
+        >
+            {children}
+        </span>
+    );
+}
+
 function FilterSelect({
                           label,
                           value,
@@ -338,10 +503,8 @@ function FilterSelect({
     options: string[];
 }) {
     return (
-        <label className="flex flex-col">
-            <span className="mb-1 ml-0.5 font-display text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
-                {label}
-            </span>
+        <label className="flex min-w-0 flex-col">
+            <FilterFieldLabel>{label}</FilterFieldLabel>
             <select
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
@@ -378,7 +541,13 @@ function EntrepreneurCardSkeletonGrid() {
     );
 }
 
-function EntrepreneurCard({ e }: { e: VettedEntrepreneur }) {
+function EntrepreneurCard({
+    e,
+    showFeaturedBadge = false,
+}: {
+    e: VettedEntrepreneur;
+    showFeaturedBadge?: boolean;
+}) {
     return (
         <Link
             href={`/web/vetted-entrepreneurs/${e.id}`}
@@ -405,6 +574,11 @@ function EntrepreneurCard({ e }: { e: VettedEntrepreneur }) {
                 <span className="absolute left-3 top-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-neutral-900/55 px-2.5 py-1 font-display text-[12px] font-bold text-white backdrop-blur-sm">
                     <BadgeCheck className="h-3.5 w-3.5" /> Verified
                 </span>
+                {showFeaturedBadge && (
+                    <span className="absolute right-3 top-3 z-10 inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-gradient-to-r from-amber-200 via-amber-300 to-amber-400 px-2.5 py-1 font-display text-[11px] font-bold text-amber-950 shadow-sm">
+                        Featured
+                    </span>
+                )}
             </div>
             <div className="flex flex-1 flex-col px-4 pb-4 pt-2">
                 <span className="relative z-10 -mt-5 mb-2 inline-flex h-[34px] max-w-[calc(100%-0.5rem)] items-center gap-1.5 rounded-full border bg-card pl-2 pr-3 font-display text-[12.5px] font-bold text-foreground shadow-sm">

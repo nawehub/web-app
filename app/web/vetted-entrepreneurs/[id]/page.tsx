@@ -14,7 +14,7 @@ export default function VettedEntrepreneurProfilePage() {
     const { data: profile, isLoading, isError } = usePublicProfileQuery(id);
 
     return (
-        <div>
+        <div className="bg-gradient-to-b from-primary-50 to-background dark:from-primary/10 dark:to-background">
             {isLoading ? (
                 <main className="flex-1 px-4 py-6 pt-20 sm:py-8">
                     <div className="mx-auto max-w-[820px]">
@@ -33,7 +33,7 @@ export default function VettedEntrepreneurProfilePage() {
                             Something went wrong while loading this entrepreneur&apos;s profile.
                         </p>
                         <Button asChild className="mt-5 rounded-full">
-                            <Link href="/vetted-entrepreneurs">
+                            <Link href="/web/vetted-entrepreneurs">
                                 <ArrowLeft className="h-4 w-4" /> Back to entrepreneurs
                             </Link>
                         </Button>
@@ -41,7 +41,7 @@ export default function VettedEntrepreneurProfilePage() {
                 </main>
             ) : profile ? (
                 <>
-                    <div className="border-b bg-card pt-16">
+                    <div className="border-b border-border bg-card pt-16">
                         <div className="mx-auto flex max-w-[820px] items-center gap-3 px-4 py-3.5">
                             <Link
                                 href="/web/vetted-entrepreneurs"
@@ -49,13 +49,13 @@ export default function VettedEntrepreneurProfilePage() {
                             >
                                 <ArrowLeft className="h-4 w-4" /> All entrepreneurs
                             </Link>
-                            <span className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-2.5 py-1 font-display text-xs font-semibold text-primary-700">
+                            <span className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 font-display text-xs font-semibold text-primary dark:bg-primary/15">
                                 <ShieldCheck className="h-3.5 w-3.5" /> NaWeHub Verified Profile
                             </span>
                         </div>
                     </div>
 
-                    <main className="flex-1 px-4 py-6 sm:py-8">
+                    <main className="flex-1 bg-background px-4 py-6 sm:py-8">
                         <PublicProfileView profile={profile} />
                     </main>
                 </>

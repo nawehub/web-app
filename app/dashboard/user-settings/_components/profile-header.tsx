@@ -75,7 +75,7 @@ export function ProfileHeader({ profile, onEdit, onPickPhoto }: ProfileHeaderPro
                                 background: `conic-gradient(hsl(var(--primary)) ${score}%, hsl(var(--color-primary-100)) 0)`,
                             }}
                         >
-                            <span className="grid h-[50px] w-[50px] place-items-center rounded-full bg-card font-display text-lg font-extrabold text-primary-700">
+                            <span className="grid h-[50px] w-[50px] place-items-center rounded-full bg-card font-display text-lg font-extrabold text-primary">
                                 {score}
                             </span>
                         </div>
@@ -90,7 +90,7 @@ export function ProfileHeader({ profile, onEdit, onPickPhoto }: ProfileHeaderPro
 
                 {/* Name */}
                 <div className="mt-3.5 flex flex-wrap items-center gap-2.5">
-                    <h1 className="text-2xl font-extrabold font-display tracking-tight sm:text-[27px]">
+                    <h1 className="text-2xl font-extrabold font-display tracking-tight text-foreground sm:text-[27px]">
                         {profile.name}
                     </h1>
                     {profile.pronouns && (
@@ -100,7 +100,7 @@ export function ProfileHeader({ profile, onEdit, onPickPhoto }: ProfileHeaderPro
                     )}
                 </div>
 
-                <p className="mt-1.5 max-w-[620px] text-[15px] leading-relaxed text-neutral-700">
+                <p className="mt-1.5 max-w-[620px] text-[15px] leading-relaxed text-foreground/80">
                     {profile.headline}
                 </p>
 
@@ -137,7 +137,7 @@ function VerifChip({ on, label }: { on: boolean; label: string }) {
         <span
             className={cn(
                 "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 font-display text-xs font-semibold",
-                on ? "bg-primary-50 text-primary-700" : "bg-muted text-muted-foreground"
+                on ? "bg-primary/10 text-primary dark:bg-primary/15" : "bg-muted text-muted-foreground"
             )}
         >
             {on ? (

@@ -13,7 +13,7 @@ import {cn} from "@/lib/utils";
 const HeaderNavs = [
     {name: "Home", link: "/"},
     // { name: "Love Your District", link: "/lyd" },
-    {name: "Vetted Entrepreneurs", link: "/vetted-entrepreneurs"},
+    {name: "Vetted Entrepreneurs", link: "/web/vetted-entrepreneurs"},
     {name: "Next Big Idea", link: "/next-big-idea"},
     // { name: "LYD Projects", link: "/lyd/projects" },
     {name: "Contact Us", link: "/contact"},

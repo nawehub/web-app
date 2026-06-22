@@ -35,7 +35,7 @@ export function AboutSection({ profile, isPublic, onToggleVisibility, onEdit }: 
             onEdit={onEdit}
         >
             {profile.about ? (
-                <p className="whitespace-pre-wrap text-[15px] leading-relaxed text-neutral-700">
+                <p className="whitespace-pre-wrap text-[15px] leading-relaxed text-foreground/80">
                     {profile.about}
                 </p>
             ) : onEdit ? (
@@ -91,15 +91,15 @@ export function JourneySection({
                                 type={onEditItem ? "button" : undefined}
                                 onClick={onEditItem ? () => onEditItem(i) : undefined}
                                 className={cn(
-                                    "grid grid-cols-[64px_1fr] gap-3.5 border-b border-neutral-100 py-3.5 text-left last:border-0 last:pb-0",
+                                    "grid grid-cols-[64px_1fr] gap-3.5 border-b border-border py-3.5 text-left last:border-0 last:pb-0",
                                     onEditItem && "-mx-2 rounded-lg px-2 transition-colors hover:bg-muted/60"
                                 )}
                             >
-                                <div className="font-display text-sm font-extrabold text-primary-700">
+                                <div className="font-display text-sm font-extrabold text-primary">
                                     {j.year}
                                 </div>
                                 <div>
-                                    <h4 className="font-display text-[15px] font-semibold">{j.title}</h4>
+                                    <h4 className="font-display text-[15px] font-semibold text-foreground">{j.title}</h4>
                                     {j.desc && (
                                         <p className="mt-1 text-[13.5px] leading-normal text-muted-foreground">
                                             {j.desc}
@@ -270,7 +270,7 @@ export function ImpactSection({ profile, isPublic, onToggleVisibility, onEdit }:
                         {im.environmental.map((e) => (
                             <span
                                 key={e}
-                                className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-2.5 py-1.5 font-display text-xs font-semibold text-primary-700"
+                                className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1.5 font-display text-xs font-semibold text-primary dark:bg-primary/15"
                             >
                                 <Leaf className="h-3.5 w-3.5" />
                                 {e}
@@ -283,7 +283,7 @@ export function ImpactSection({ profile, isPublic, onToggleVisibility, onEdit }:
             {im.stories && (
                 <>
                     <SubHead>Success story</SubHead>
-                    <p className="text-sm leading-relaxed text-neutral-700">{im.stories}</p>
+                    <p className="text-sm leading-relaxed text-foreground/80">{im.stories}</p>
                 </>
             )}
         </SectionCard>
@@ -321,11 +321,11 @@ export function FundingSection({ profile, isPublic, onToggleVisibility, onEdit }
                 </div>
                 <div>
                     <SubHead>Current funding need</SubHead>
-                    <div className="rounded-xl border border-secondary-100 bg-gradient-to-br from-secondary-50 to-card p-4">
-                        <div className="font-display text-[22px] font-extrabold text-secondary-600">
+                    <div className="rounded-xl border border-border bg-gradient-to-br from-muted/60 to-card p-4">
+                        <div className="font-display text-[22px] font-extrabold text-accent">
                             {f.needAmount || "—"}
                         </div>
-                        <p className="mt-1 text-[13px] text-neutral-600">{f.needNote}</p>
+                        <p className="mt-1 text-[13px] text-muted-foreground">{f.needNote}</p>
                     </div>
                 </div>
             </div>
@@ -367,9 +367,9 @@ export function ContactSection({ profile, isPublic, onToggleVisibility, onEdit }
                     .map((r) => (
                         <div
                             key={r.label}
-                            className="flex items-center gap-3 rounded-xl border border-neutral-100 p-3"
+                            className="flex items-center gap-3 rounded-xl border border-border p-3"
                         >
-                            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary-50 text-primary-600">
+                            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary dark:bg-primary/15">
                                 {r.icon}
                             </div>
                             <div className="min-w-0">
@@ -390,7 +390,7 @@ export function ContactSection({ profile, isPublic, onToggleVisibility, onEdit }
    ============================================================ */
 export function Chip({ children, onRemove }: { children: ReactNode; onRemove?: () => void }) {
     return (
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-1.5 font-display text-[13px] font-semibold text-primary-700">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 font-display text-[13px] font-semibold text-primary dark:bg-primary/15">
             {children}
             {onRemove && (
                 <button
@@ -411,7 +411,7 @@ export function ChipAdd({ children, onClick }: { children: ReactNode; onClick?: 
         <button
             type="button"
             onClick={onClick}
-            className="inline-flex items-center gap-1.5 rounded-full border border-dashed bg-card px-3 py-1.5 font-display text-[13px] font-semibold text-muted-foreground transition-colors hover:border-primary-500 hover:text-primary-600"
+            className="inline-flex items-center gap-1.5 rounded-full border border-dashed bg-card px-3 py-1.5 font-display text-[13px] font-semibold text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
         >
             <Plus className="h-3.5 w-3.5" />
             {children}
@@ -425,7 +425,7 @@ function Tag({ children, tone }: { children: ReactNode; tone?: "gray" | "amber" 
             className={cn(
                 "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-display text-[12.5px] font-semibold",
                 tone === "amber"
-                    ? "bg-secondary-50 text-secondary-600"
+                    ? "bg-[hsl(var(--warning)/0.15)] text-[hsl(var(--warning))]"
                     : "bg-muted text-muted-foreground"
             )}
         >
@@ -437,7 +437,7 @@ function Tag({ children, tone }: { children: ReactNode; tone?: "gray" | "amber" 
 function Stat({ value, label }: { value: string; label: string }) {
     return (
         <div className="rounded-xl bg-muted/70 p-3.5 text-center">
-            <b className="font-display text-[22px] font-extrabold text-primary-700">{value}</b>
+            <b className="font-display text-[22px] font-extrabold text-primary">{value}</b>
             <span className="mt-0.5 block text-[11.5px] text-muted-foreground">{label}</span>
         </div>
     );
@@ -462,24 +462,24 @@ function SimpleListItem({
             type={onClick ? "button" : undefined}
             onClick={onClick}
             className={cn(
-                "flex w-full items-start gap-3 rounded-xl border border-neutral-100 p-3 text-left",
-                onClick && "transition-colors hover:border-primary-100 hover:bg-muted/50"
+                "flex w-full items-start gap-3 rounded-xl border border-border p-3 text-left",
+                onClick && "transition-colors hover:border-primary/30 hover:bg-muted/50"
             )}
         >
             <div
                 className={cn(
                     "grid h-9 w-9 shrink-0 place-items-center rounded-lg",
                     tone === "amber"
-                        ? "bg-secondary-50 text-secondary-600"
+                        ? "bg-[hsl(var(--warning)/0.15)] text-[hsl(var(--warning))]"
                         : tone === "blue"
                           ? "bg-info/10 text-info"
-                          : "bg-primary-50 text-primary-600"
+                          : "bg-primary/10 text-primary dark:bg-primary/15"
                 )}
             >
                 {icon}
             </div>
             <div className="min-w-0">
-                <h4 className="font-display text-[14.5px] font-semibold">{title}</h4>
+                <h4 className="font-display text-[14.5px] font-semibold text-foreground">{title}</h4>
                 <span className="text-[12.5px] text-muted-foreground">{sub}</span>
             </div>
         </Comp>

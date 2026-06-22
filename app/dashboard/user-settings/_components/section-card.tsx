@@ -43,7 +43,7 @@ export function SectionCard({
             )}
         >
             <div className="flex items-center gap-3 px-5 pt-5 sm:px-6">
-                <h2 className="flex-1 text-lg font-bold font-display tracking-tight">{title}</h2>
+                <h2 className="flex-1 text-lg font-bold font-display tracking-tight text-foreground">{title}</h2>
                 <div className="flex items-center gap-1.5">
                     {onEdit && (
                         <button
@@ -51,7 +51,7 @@ export function SectionCard({
                             onClick={onEdit}
                             title="Edit section"
                             aria-label="Edit section"
-                            className="grid h-9 w-9 place-items-center rounded-lg border bg-card text-muted-foreground transition-colors hover:border-primary-100 hover:bg-primary-50 hover:text-primary-600"
+                            className="grid h-9 w-9 place-items-center rounded-lg border bg-card text-muted-foreground transition-colors hover:border-primary/30 hover:bg-primary/10 hover:text-primary"
                         >
                             <Pencil className="h-4 w-4" />
                         </button>
@@ -89,7 +89,7 @@ export function VisibilityToggle({
             <span
                 className={cn(
                     "inline-flex items-center gap-1.5 font-display text-xs font-semibold",
-                    isPublic ? "text-primary-700" : "text-muted-foreground"
+                    isPublic ? "text-primary" : "text-muted-foreground"
                 )}
             >
                 {isPublic ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
@@ -127,11 +127,11 @@ export function AddPrompt({
             type="button"
             onClick={onClick}
             className={cn(
-                "flex w-full items-center gap-3 rounded-xl border border-dashed bg-muted/60 font-display text-sm font-semibold text-muted-foreground transition-colors hover:border-primary-500 hover:bg-primary-50 hover:text-primary-700",
+                "flex w-full items-center gap-3 rounded-xl border border-dashed bg-muted/60 font-display text-sm font-semibold text-muted-foreground transition-colors hover:border-primary/40 hover:bg-primary/10 hover:text-primary",
                 compact ? "p-3" : "p-4"
             )}
         >
-            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border bg-card text-primary-600">
+            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border bg-card text-primary">
                 <Plus className="h-4 w-4" />
             </span>
             {label}

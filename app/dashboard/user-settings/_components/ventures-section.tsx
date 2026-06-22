@@ -63,7 +63,7 @@ function VentureCard({ venture: v, onEdit }: { venture: Venture; onEdit?: () => 
     const [from, to] = SECTOR_GRADIENT[v.sector] ?? SECTOR_GRADIENT.Other;
 
     return (
-        <div className="overflow-hidden rounded-xl border transition-colors hover:border-primary-100 hover:shadow-sm">
+        <div className="overflow-hidden rounded-xl border border-border transition-colors hover:border-primary/30 hover:shadow-sm">
             {/* Top */}
             <div className="flex items-start gap-3.5 p-4">
                 <div
@@ -73,7 +73,7 @@ function VentureCard({ venture: v, onEdit }: { venture: Venture; onEdit?: () => 
                     {initials(v.name)}
                 </div>
                 <div className="min-w-0 flex-1">
-                    <h3 className="flex flex-wrap items-center gap-2 font-display text-base font-bold">
+                    <h3 className="flex flex-wrap items-center gap-2 font-display text-base font-bold text-foreground">
                         {v.name}
                         {onEdit && (
                             <button
@@ -81,7 +81,7 @@ function VentureCard({ venture: v, onEdit }: { venture: Venture; onEdit?: () => 
                                 onClick={onEdit}
                                 title="Edit venture"
                                 aria-label="Edit venture"
-                                className="grid h-7 w-7 place-items-center rounded-lg border bg-card text-muted-foreground transition-colors hover:border-primary-100 hover:bg-primary-50 hover:text-primary-600"
+                                className="grid h-7 w-7 place-items-center rounded-lg border bg-card text-muted-foreground transition-colors hover:border-primary/30 hover:bg-primary/10 hover:text-primary"
                             >
                                 <Pencil className="h-3.5 w-3.5" />
                             </button>
@@ -99,7 +99,7 @@ function VentureCard({ venture: v, onEdit }: { venture: Venture; onEdit?: () => 
                     </div>
                 </div>
                 <div className="shrink-0 text-center">
-                    <div className="font-display text-lg font-extrabold text-primary-700">{v.score}</div>
+                    <div className="font-display text-lg font-extrabold text-primary">{v.score}</div>
                     <div className="text-[10px] uppercase leading-tight tracking-wide text-muted-foreground">
                         Venture
                         <br />
@@ -118,7 +118,7 @@ function VentureCard({ venture: v, onEdit }: { venture: Venture; onEdit?: () => 
                         <PCard title="Business model">{v.model}</PCard>
                     </div>
 
-                    <div className="mt-3 flex flex-wrap gap-x-6 gap-y-3 border-t border-neutral-100 py-3">
+                    <div className="mt-3 flex flex-wrap gap-x-6 gap-y-3 border-t border-border py-3">
                         <Metric value={`${v.jobs}`} label="Jobs created" />
                         <Metric value={compactNumber(v.customersReached)} label="Customers reached" />
                         <Metric value={compactNumber(v.beneficiaries)} label="Beneficiaries" />
@@ -145,7 +145,7 @@ function VentureCard({ venture: v, onEdit }: { venture: Venture; onEdit?: () => 
             )}
 
             {/* Foot */}
-            <div className="flex items-center gap-2.5 border-t border-neutral-100 bg-muted/60 px-4 py-2.5">
+            <div className="flex items-center gap-2.5 border-t border-border bg-muted/60 px-4 py-2.5">
                 <Tag tone="amber">
                     <BadgeCheck className="h-3.5 w-3.5" /> {v.rating}
                 </Tag>
@@ -153,7 +153,7 @@ function VentureCard({ venture: v, onEdit }: { venture: Venture; onEdit?: () => 
                 <button
                     type="button"
                     onClick={() => setOpen((o) => !o)}
-                    className="inline-flex items-center gap-1.5 font-display text-[13px] font-bold text-primary-600"
+                    className="inline-flex items-center gap-1.5 font-display text-[13px] font-bold text-primary"
                 >
                     Details
                     <ChevronDown
@@ -171,7 +171,7 @@ function PCard({ title, children }: { title: string; children: React.ReactNode }
             <h5 className="mb-1.5 font-display text-[11.5px] font-bold uppercase tracking-wide text-muted-foreground">
                 {title}
             </h5>
-            <p className="text-[13.5px] leading-normal text-neutral-700">{children}</p>
+            <p className="text-[13.5px] leading-normal text-foreground/80">{children}</p>
         </div>
     );
 }
@@ -197,12 +197,12 @@ function Tag({
             className={cn(
                 "inline-flex items-center gap-1 rounded-full px-2.5 py-1 font-display text-[12.5px] font-semibold",
                 tone === "amber"
-                    ? "bg-secondary-50 text-secondary-600"
+                    ? "bg-[hsl(var(--warning)/0.15)] text-[hsl(var(--warning))]"
                     : tone === "gray"
                       ? "bg-muted text-muted-foreground"
                       : tone === "green"
-                        ? "bg-primary-50 text-primary-700"
-                        : "bg-primary-100 text-primary-700"
+                        ? "bg-primary/10 text-primary dark:bg-primary/15"
+                        : "bg-primary/15 text-primary dark:bg-primary/20"
             )}
         >
             {children}
