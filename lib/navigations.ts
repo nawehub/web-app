@@ -3,6 +3,7 @@ import {Building2, Lightbulb, TrendingUp} from "lucide-react";
 
 export const platformLinks = [
     { label: 'Home', href: '/web' },
+    { label: 'Opportunities', href: '/web/opportunities' },
     { label: 'Vetted Entrepreneurs', href: '/web/vetted-entrepreneurs' },
     { label: 'Next Big Idea', href: '/web/next-big-idea' },
     { label: 'FAQ', href: '/web/faq' },
