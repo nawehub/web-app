@@ -4,14 +4,14 @@ import {Building2, Lightbulb, TrendingUp} from "lucide-react";
 export const platformLinks = [
     { label: 'Home', href: '/web' },
     { label: 'Vetted Entrepreneurs', href: '/web/vetted-entrepreneurs' },
+    { label: 'Opportunities', href: '/web/opportunities' },
     { label: 'Next Big Idea', href: '/web/next-big-idea' },
     { label: 'FAQ', href: '/web/faq' },
     { label: 'Contact', href: '/web/contact' },
 ]
 
 export const getStartedLinks = [
-    { label: 'Register as Investor', href: '/web/register/investor', icon: TrendingUp },
-    { label: 'Register as Entrepreneur', href: '/web/register/entrepreneur', icon: Lightbulb },
+    { label: 'Register as Entrepreneur', href: '/web/register', icon: Lightbulb },
     { label: 'Register Your Business', href: '/web/register-business', icon: Building2 },
 ]
 
