@@ -94,14 +94,14 @@ export default function WebHome() {
                         </p>
 
                         <div className="flex flex-col items-center justify-center gap-4 pt-2 sm:flex-row">
-                            <Link href="/register" className="w-full sm:w-auto">
+                            <Link href="/web/register" className="w-full sm:w-auto">
                                 <button className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-8 py-4 text-lg font-semibold text-primary-foreground shadow-[var(--shadow-lg)] transition-colors hover:bg-primary/90 sm:w-auto">
                                     <Rocket className="h-5 w-5" />
                                     Start Your Journey
                                     <ChevronRight className="h-5 w-5" />
                                 </button>
                             </Link>
-                            <Link href="/next-big-idea" className="w-full sm:w-auto">
+                            <Link href="/web/next-big-idea" className="w-full sm:w-auto">
                                 <button className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-border bg-card px-8 py-4 text-lg font-semibold text-foreground transition-colors hover:border-accent hover:text-accent sm:w-auto">
                                     <Heart className="h-5 w-5 text-accent" />
                                     Next Big Idea
@@ -190,7 +190,7 @@ export default function WebHome() {
                                 ))}
                             </div>
 
-                            <Link href="/register" className="mt-auto block pt-8">
+                            <Link href="/web/register" className="mt-auto block pt-8">
                                 <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-4 font-semibold text-primary-foreground transition-colors hover:bg-primary/90">
                                     Get Started Free
                                     <ArrowRight className="h-5 w-5" />
@@ -225,7 +225,7 @@ export default function WebHome() {
                                 ))}
                             </div>
 
-                            <Link href="/next-big-idea" className="mt-auto block pt-8">
+                            <Link href="/web/next-big-idea" className="mt-auto block pt-8">
                                 <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-6 py-4 font-semibold text-accent-foreground transition-colors hover:bg-[hsl(var(--color-secondary-400))]">
                                     Contribute Now
                                     <Heart className="h-5 w-5" />
@@ -307,13 +307,13 @@ export default function WebHome() {
                         Sierra Leone together.
                     </p>
                     <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-                        <Link href="/register">
+                        <Link href="/web/register">
                             <button className="inline-flex items-center gap-2 rounded-2xl bg-primary px-8 py-4 font-semibold text-primary-foreground shadow-[var(--shadow-lg)] transition-colors hover:bg-primary/90">
                                 Register Now
                                 <ArrowRight className="h-5 w-5" />
                             </button>
                         </Link>
-                        <Link href="/contact">
+                        <Link href="/web/contact">
                             <button className="inline-flex items-center gap-2 rounded-2xl border border-border bg-card px-8 py-4 font-semibold text-foreground transition-colors hover:border-primary/40">
                                 Contact Us
                             </button>

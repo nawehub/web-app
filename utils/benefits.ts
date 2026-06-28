@@ -1,4 +1,4 @@
-import {Activity, Brain, Heart, Stethoscope, Syringe, UserCog} from "lucide-react";
+import {Brain, Heart, Stethoscope} from "lucide-react";
 
 export const services = [
     {
@@ -22,7 +22,8 @@ export const services = [
         title: "Communities/Diaspora",
         subTitle: "(why they should contribute)",
         badge: "Lovers",
-        description: "An easy, transparent way to fund local projects, strengthen home-district development, and gain recognition as contributors/taxpayers driving positive change.",
+        description: "Support youth-led innovation through affordable micro-contributions. Help young entrepreneurs develop practical solutions that improve communities, " +
+            "transform lives, and protect the environment across Sierra Leone.",
         illustration: "/images/benefit/love-img.jpeg"
     },
 ];
