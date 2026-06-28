@@ -112,13 +112,13 @@ export default function OpportunitiesPage() {
                                 </Link>
                                 <Link href="/web/opportunities/submit">
                                     <Button variant="outline"
-                                            className="border-[hsl(var(--color-neutral-600))] text-[hsl(var(--color-neutral-50))] hover:border-primary hover:text-primary">
+                                            className="border-[hsl(var(--color-neutral-600))] text-[hsl(var(--color-neutral-50))] hover:border-primary">
                                         <Send className="h-4 w-4"/> Submit Opportunity
                                     </Button>
                                 </Link>
                                 <Link href="#events">
                                     <Button variant="outline"
-                                            className="border-[hsl(var(--color-neutral-600))] text-[hsl(var(--color-neutral-50))] hover:border-primary hover:text-primary">
+                                            className="border-[hsl(var(--color-neutral-600))] text-[hsl(var(--color-neutral-50))] hover:border-primary">
                                         <Calendar className="h-4 w-4"/> Upcoming Events
                                     </Button>
                                 </Link>
