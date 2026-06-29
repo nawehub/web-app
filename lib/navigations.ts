@@ -16,8 +16,8 @@ export const getStartedLinks = [
 ]
 
 export const socials = [
-    { label: 'Facebook', href: 'https://facebook.com', icon: FacebookGlyph },
-    { label: 'X (Twitter)', href: 'https://x.com', icon: XGlyph },
-    { label: 'Instagram', href: 'https://instagram.com', icon: InstagramGlyph },
-    { label: 'LinkedIn', href: 'https://linkedin.com', icon: LinkedinGlyph },
+    { label: 'Facebook', href: 'https://facebook.com/Ewomensl', icon: FacebookGlyph },
+    { label: 'X (Twitter)', href: 'https://x.com/Ewomensl', icon: XGlyph },
+    { label: 'Instagram', href: 'https://instagram.com/Ewomensl', icon: InstagramGlyph },
+    { label: 'LinkedIn', href: 'https://linkedin.com/in/Ewomensl', icon: LinkedinGlyph },
 ]

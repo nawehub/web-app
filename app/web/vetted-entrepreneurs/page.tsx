@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeferredValue, useState } from "react";
+import React, { useDeferredValue, useState } from "react";
 import Link from "next/link";
 import {
     ArrowRight,
@@ -33,6 +33,8 @@ import {
 } from "@/types/entrepreneurs";
 import {Input} from "@/components/ui/input";
 import {ClothBorder} from "@/components/icons";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {Separator} from "@/components/ui/separator";
 
 const STAGE_TONE: Record<StageTone, string> = {
     green: "bg-primary/15 text-primary",
@@ -117,12 +119,12 @@ export default function VettedEntrepreneursPage() {
                             credibility, capability, and impact.
                         </p>
                         <div className="mt-7 flex flex-wrap gap-3">
-                            <Button asChild size="lg" className="rounded-full">
+                            <Button asChild size="lg">
                                 <Link href="#featured">
                                     Explore Entrepreneurs <ArrowRight className="h-4 w-4" />
                                 </Link>
                             </Button>
-                            <Button asChild size="lg" variant="outline" className="rounded-full">
+                            <Button asChild size="lg" variant="outline">
                                 <Link href="#investor">
                                     <Users className="h-4 w-4" /> For Investors
                                 </Link>
@@ -280,7 +282,7 @@ export default function VettedEntrepreneursPage() {
                                 and invest with confidence.
                             </p>
                             <Button asChild className="mt-4 rounded-full">
-                                <Link href="/register">
+                                <Link href="/web/next-big-idea">
                                     Join as an Investor <ArrowRight className="h-4 w-4" />
                                 </Link>
                             </Button>
@@ -326,12 +328,7 @@ export default function VettedEntrepreneursPage() {
     );
 }
 
-function FilterSelect({
-                          label,
-                          value,
-                          onChange,
-                          options,
-                      }: {
+function FilterSelect({label, value, onChange, options}: {
     label: string;
     value: string;
     onChange: (v: string) => void;
@@ -342,17 +339,21 @@ function FilterSelect({
             <span className="mb-1 ml-0.5 font-display text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
                 {label}
             </span>
-            <select
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-                className="h-11 w-full cursor-pointer rounded-[10px] border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            >
-                {options.map((o) => (
-                    <option key={o} value={o}>
-                        {o}
-                    </option>
-                ))}
-            </select>
+            <div className={'bg-background'}>
+                <Select
+                    value={value}
+                    onValueChange={(value) => onChange(value)}
+                >
+                    <SelectTrigger>
+                        <SelectValue placeholder={label}/>
+                    </SelectTrigger>
+                    <SelectContent>
+                        {options.map((item, index) => (
+                            <SelectItem key={index} value={item}>{item}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
         </label>
     );
 }
@@ -424,19 +425,20 @@ function EntrepreneurCard({ e }: { e: VettedEntrepreneur }) {
                     {e.short}
                 </p>
                 <div className="mt-3.5 flex flex-wrap gap-2">
-                    <span className="inline-flex items-center rounded-full bg-primary/15 px-2.5 py-1 font-display text-[12.5px] font-semibold text-primary">
+                    <span className="inline-flex items-center rounded bg-primary/15 px-2.5 py-1 font-display text-[12.5px] font-semibold text-primary">
                         {e.sector}
                     </span>
                     <span
                         className={cn(
-                            "inline-flex items-center rounded-full px-2.5 py-1 font-display text-[12.5px] font-semibold",
+                            "inline-flex items-center rounded px-2.5 py-1 font-display text-[12.5px] font-semibold",
                             STAGE_TONE[e.stageTone]
                         )}
                     >
                         {e.stage}
                     </span>
                 </div>
-                <div className="mt-auto flex items-center justify-between border-t pt-3.5">
+                <Separator className="my-3.5" />
+                <div className="mt-auto flex items-center justify-between">
                     <span className="inline-flex items-center gap-1.5 text-[12.5px] text-muted-foreground">
                         <MapPin className="h-3.5 w-3.5" /> {e.location}
                     </span>

@@ -28,7 +28,7 @@ export default function ScrollPartners({ fadeFrom = "muted" }: { fadeFrom?: keyo
                             loading="lazy"
                             width={120}
                             height={64}
-                            className="h-16 w-auto object-contain grayscale opacity-60 transition-all duration-300 hover:grayscale-0 hover:opacity-100"
+                            className="h-16 w-auto object-contain transition-all duration-300 hover:grayscale-0 hover:opacity-100"
                             src={partner.url}
                         />
                     </li>

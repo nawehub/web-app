@@ -263,7 +263,7 @@ export default function WebHome() {
                                 toward gaining recognition, protection, and growth opportunities.
                             </p>
 
-                            <Link href="/business-registration">
+                            <Link href="/web/register-business">
                                 <button className="inline-flex items-center gap-3 rounded-2xl bg-accent px-8 py-4 font-semibold text-accent-foreground shadow-[var(--shadow-xl)] transition-colors hover:bg-[hsl(var(--color-secondary-400))]">
                                     Register Your Business
                                     <ArrowRight className="h-5 w-5" />
