@@ -153,27 +153,21 @@ export function Sidebar({ isSidebarOpen, toggleSidebarAction, pathname, isCollap
                         )}
                         {collapsed && <div className="mb-2 h-px bg-border" />}
                         <div className="space-y-1">
-                            {documentMenuItems.map((item, i) => (
-                                <React.Fragment key={i}>
-                                    {item.name === "Partners Request" && isAdmin(user) ? (
-                                        <SidebarItem
-                                            href={item.href}
-                                            icon={<item.icon className="h-5 w-5" />}
-                                            title={item.name}
-                                            isActive={item.href === bestMatch}
-                                            collapsed={collapsed}
-                                        />
-                                    ) : item.name !== "Partners Request" && (
-                                        <SidebarItem
-                                            href={item.href}
-                                            icon={<item.icon className="h-5 w-5" />}
-                                            title={item.name}
-                                            isActive={item.href === bestMatch}
-                                            collapsed={collapsed}
-                                        />
-                                    )}
-                                </React.Fragment>
-                            ))}
+                            {documentMenuItems.map((item, i) => {
+                                const adminOnly =
+                                    item.name === "Partners Request" || item.name === "Vetting Queue";
+                                if (adminOnly && !isAdmin(user)) return null;
+                                return (
+                                    <SidebarItem
+                                        key={i}
+                                        href={item.href}
+                                        icon={<item.icon className="h-5 w-5" />}
+                                        title={item.name}
+                                        isActive={item.href === bestMatch}
+                                        collapsed={collapsed}
+                                    />
+                                );
+                            })}
                         </div>
                     </div>
                 </IfAllowed>

@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
+import { getAuthSecret } from "@/lib/dev-auth";
 
 // Update as needed to match your routes
 const DASHBOARD_PREFIX = "/dashboard";
@@ -25,6 +26,7 @@ const PUBLIC_PATHS = [
 
 function isPublicPath(pathname: string) {
     if (PUBLIC_PATHS.includes(pathname)) return true;
+    if (pathname.startsWith("/web/next-big-idea")) return true;
     // Allow Next internals and static assets
     return pathname.startsWith("/_next") ||
         pathname.startsWith("/static") ||
@@ -43,7 +45,7 @@ export async function middleware(req: NextRequest) {
     }
 
     // Read JWT (requires NEXTAUTH_SECRET set)
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    const token = await getToken({ req, secret: getAuthSecret() });
 
     // If not signed in, let other auth middleware/pages handle it, or redirect to login
     if (!token) {

@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 const bottomNavItems: BottomNavItem[] = [
     { label: "Home", href: "/dashboard", icon: Home },
     { label: "Business", href: "/dashboard/my-businesses", icon: Briefcase, matchPartial: true },
-    { label: "Next Big Idea", href: "/web/next-bug-idea", icon: Heart },
+    { label: "Next Big Idea", href: "/web/next-big-idea", icon: Heart },
     { label: "Resources", href: "/dashboard/resources", icon: BookOpen, matchPartial: true },
     { label: "Profile", href: "/dashboard/user-settings", icon: User },
 ];
@@ -133,7 +133,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                                     size="sm"
                                     variant="outline"
                                     className="border-[hsl(var(--color-neutral-700))] bg-transparent text-[hsl(var(--color-neutral-50))] hover:border-[hsl(25_95%_53%)] hover:bg-transparent hover:text-[hsl(25_95%_53%)]"
-                                    onClick={() => router.push("/lyd")}
+                                    onClick={() => router.push("/web/next-big-idea")}
                                 >
                                     Visit Next Big Idea
                                 </Button>

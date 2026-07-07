@@ -2,8 +2,11 @@ import NextAuth, {NextAuthOptions} from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import {refreshAccessToken} from "@/lib/auth";
 import {UserRole} from "@/types/user";
+import { AUTH_DISABLED } from "@/lib/feature-flags";
+import { createDevAuthUser, getAuthSecret } from "@/lib/dev-auth";
 
 export const authOptions: NextAuthOptions = {
+    secret: getAuthSecret(),
     providers: [
         CredentialsProvider({
             name: "Credentials",
@@ -12,6 +15,18 @@ export const authOptions: NextAuthOptions = {
                 password: { label: "Password", type: "password" },
             },
             async authorize(credentials) {
+                // Local UI work without production API_BASE_URL / NEXTAUTH_* env vars.
+                if (AUTH_DISABLED) {
+                    return createDevAuthUser(credentials?.email);
+                }
+
+                if (!process.env.API_BASE_URL) {
+                    console.error(
+                        "[auth] API_BASE_URL is not set. Set NEXT_PUBLIC_DISABLE_AUTH=true for local mock login, or add API_BASE_URL to .env.local.",
+                    );
+                    return null;
+                }
+
                 try {
                     const res = await fetch(`${process.env.API_BASE_URL}/auth/login`, {
                         method: 'POST',

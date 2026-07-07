@@ -33,7 +33,7 @@ const quickActions = [
     {
         title: "Next Big Idea",
         description: "Contribute to community projects",
-        href: "/lyd",
+        href: "/web/next-big-idea",
         icon: Heart,
         tone: "bg-[hsl(var(--color-info))] text-white",
     },

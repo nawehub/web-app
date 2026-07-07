@@ -17,6 +17,8 @@ export interface VettedEntrepreneur {
     stage: string;
     stageTone: StageTone;
     location: string;
+    featured?: boolean;
+    featuredOrder?: number;
 }
 
 /** Filters for the public entrepreneurs directory. Passed to the API as query params when live. */

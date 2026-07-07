@@ -1,4 +1,8 @@
 import { EntrepreneurProfile, MOCK_PROFILE, Venture } from "@/app/dashboard/user-settings/_data/profile";
+import {
+    applyFeaturedFlags,
+    sortFeaturedFirst,
+} from "@/lib/featured-entrepreneurs";
 // import { api4app } from "@/lib/api4app";
 import {
     DISTRICT_OPTIONS,
@@ -255,7 +259,9 @@ export const entrepreneursService = () => ({
             // });
             // return response as VettedEntrepreneur[];
 
-            return simulateRequest(filterEntrepreneurs(MOCK_ENTREPRENEURS, filters));
+            return simulateRequest(
+                sortFeaturedFirst(applyFeaturedFlags(filterEntrepreneurs(MOCK_ENTREPRENEURS, filters)))
+            );
         },
 
         /**

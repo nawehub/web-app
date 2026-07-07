@@ -8,6 +8,7 @@ import {
     Logs, MessageSquare, Network,
     PartyPopper, Rocket, Search,
     Settings,
+    ShieldCheck,
     Users, Workflow
 } from "lucide-react";
 
@@ -23,6 +24,7 @@ export const exploreMenuItems = [
 ];
 
 export const documentMenuItems = [
+    { name: "Vetting Queue", href: "/dashboard/vetting", icon: ShieldCheck, adminOnly: true },
     { name: "Development Partners", href: "/dashboard/funding-providers", icon: Briefcase },
     { name: "File Manager", href: "/dashboard/lyd", icon: Folder },
     { name: "Partners Request", href: "/dashboard/users", icon: Users },

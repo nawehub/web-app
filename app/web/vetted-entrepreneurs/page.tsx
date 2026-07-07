@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useDeferredValue, useState } from "react";
+import React, { useDeferredValue, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
     ArrowRight,
     BadgeCheck,
     Briefcase,
+    ChevronDown,
+    ChevronUp,
     CircleDollarSign,
     FileText,
     Heart,
@@ -16,12 +18,21 @@ import {
     Search,
     ShieldCheck,
     SlidersHorizontal,
+    Star,
     TrendingUp,
     Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from "@/components/ui/pagination";
 import { useVettedEntrepreneursQuery } from "@/hooks/repository/use-entrepreneurs";
 import {
     DISTRICT_OPTIONS,
@@ -31,10 +42,10 @@ import {
     VettedEntrepreneur,
     VettedEntrepreneursFilters,
 } from "@/types/entrepreneurs";
-import {Input} from "@/components/ui/input";
-import {ClothBorder} from "@/components/icons";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Separator} from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
+import { ClothBorder } from "@/components/icons";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 
 const STAGE_TONE: Record<StageTone, string> = {
     green: "bg-primary/15 text-primary",
@@ -80,11 +91,15 @@ const INVESTOR_FEATS = [
     { icon: Lock, label: "Secure Engagement" },
 ];
 
+const PAGE_SIZE = 4;
+
 export default function VettedEntrepreneursPage() {
     const [query, setQuery] = useState("");
     const [industry, setIndustry] = useState<string>(INDUSTRY_OPTIONS[0]);
     const [stage, setStage] = useState<string>(STAGE_OPTIONS[0]);
     const [district, setDistrict] = useState<string>(DISTRICT_OPTIONS[0]);
+    const [showAllEntrepreneurs, setShowAllEntrepreneurs] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
 
     const filters = useDeferredValue<VettedEntrepreneursFilters>({
         query,
@@ -95,11 +110,61 @@ export default function VettedEntrepreneursPage() {
 
     const { data: entrepreneurs = [], isLoading, isError } = useVettedEntrepreneursQuery(filters);
 
+    const featuredEntrepreneurs = useMemo(
+        () =>
+            entrepreneurs
+                .filter((e) => e.featured)
+                .sort((a, b) => (a.featuredOrder ?? 0) - (b.featuredOrder ?? 0)),
+        [entrepreneurs],
+    );
+
+    const otherEntrepreneurs = useMemo(
+        () => entrepreneurs.filter((e) => !e.featured),
+        [entrepreneurs],
+    );
+
+    const allEntrepreneursSorted = useMemo(
+        () => [...featuredEntrepreneurs, ...otherEntrepreneurs],
+        [featuredEntrepreneurs, otherEntrepreneurs],
+    );
+
+    const totalPages = Math.max(1, Math.ceil(allEntrepreneursSorted.length / PAGE_SIZE));
+    const paginatedEntrepreneurs = useMemo(() => {
+        const start = (currentPage - 1) * PAGE_SIZE;
+        return allEntrepreneursSorted.slice(start, start + PAGE_SIZE);
+    }, [allEntrepreneursSorted, currentPage]);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [query, industry, stage, district, showAllEntrepreneurs]);
+
+    useEffect(() => {
+        if (currentPage > totalPages) {
+            setCurrentPage(totalPages);
+        }
+    }, [currentPage, totalPages]);
+
     const clearAll = () => {
         setQuery("");
         setIndustry(INDUSTRY_OPTIONS[0]);
         setStage(STAGE_OPTIONS[0]);
         setDistrict(DISTRICT_OPTIONS[0]);
+        setShowAllEntrepreneurs(false);
+        setCurrentPage(1);
+    };
+
+    const hasActiveFilters =
+        query.trim() !== "" ||
+        industry !== INDUSTRY_OPTIONS[0] ||
+        stage !== STAGE_OPTIONS[0] ||
+        district !== DISTRICT_OPTIONS[0];
+
+    const openAllEntrepreneurs = () => {
+        setShowAllEntrepreneurs(true);
+        setCurrentPage(1);
+        requestAnimationFrame(() => {
+            document.getElementById("all")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
     };
 
     return (
@@ -114,14 +179,13 @@ export default function VettedEntrepreneursPage() {
                             <span className="text-primary">Vetted Entrepreneurs</span>
                         </h1>
                         <p className="mt-5 max-w-[480px] text-lg text-foreground/80">
-                            Discover innovative and trusted entrepreneurs building solutions that
-                            drive progress in Sierra Leone. Every profile on NaWeHub is vetted for
-                            credibility, capability, and impact.
+                            Discover trusted, high-impact entrepreneurs vetted by NaWeHub. Start with
+                            our featured spotlight profiles, then explore the full vetted directory.
                         </p>
                         <div className="mt-7 flex flex-wrap gap-3">
                             <Button asChild size="lg">
                                 <Link href="#featured">
-                                    Explore Entrepreneurs <ArrowRight className="h-4 w-4" />
+                                    Explore Featured <ArrowRight className="h-4 w-4" />
                                 </Link>
                             </Button>
                             <Button asChild size="lg" variant="outline">
@@ -168,7 +232,8 @@ export default function VettedEntrepreneursPage() {
                                     href="#vetting"
                                     className="mt-2.5 inline-flex items-center gap-1.5 font-display text-[12.5px] font-bold text-primary"
                                 >
-                                    Learn more about our vetting process <ArrowRight className="h-3.5 w-3.5" />
+                                    Learn more about our vetting process{" "}
+                                    <ArrowRight className="h-3.5 w-3.5" />
                                 </Link>
                             </div>
                         </div>
@@ -177,7 +242,7 @@ export default function VettedEntrepreneursPage() {
             </section>
 
             {/* Search */}
-            <div className="container relative z-20 mx-auto -mt-9 px-4 mb-5">
+            <div className="container relative z-20 mx-auto -mt-9 mb-5 px-4">
                 <div className="rounded-2xl border bg-card p-5 shadow-md sm:p-6">
                     <div className="mb-3.5 flex items-center justify-between gap-3">
                         <h3 className="font-display text-base font-bold text-foreground">
@@ -192,7 +257,7 @@ export default function VettedEntrepreneursPage() {
                         </button>
                     </div>
                     <div className="grid gap-3 lg:grid-cols-[2fr_1fr_1fr_1fr_auto]">
-                        <div className={'mt-5'}>
+                        <div className="mt-5">
                             <Input
                                 leftIcon={<Search className="h-4 w-4 text-muted-foreground" />}
                                 type="text"
@@ -202,9 +267,24 @@ export default function VettedEntrepreneursPage() {
                                 className="h-11 w-full rounded-[10px] border border-input bg-background pl-10 pr-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                             />
                         </div>
-                        <FilterSelect label="Industry" value={industry} onChange={setIndustry} options={[...INDUSTRY_OPTIONS]} />
-                        <FilterSelect label="Stage" value={stage} onChange={setStage} options={[...STAGE_OPTIONS]} />
-                        <FilterSelect label="Location" value={district} onChange={setDistrict} options={[...DISTRICT_OPTIONS]} />
+                        <FilterSelect
+                            label="Industry"
+                            value={industry}
+                            onChange={setIndustry}
+                            options={[...INDUSTRY_OPTIONS]}
+                        />
+                        <FilterSelect
+                            label="Stage"
+                            value={stage}
+                            onChange={setStage}
+                            options={[...STAGE_OPTIONS]}
+                        />
+                        <FilterSelect
+                            label="Location"
+                            value={district}
+                            onChange={setDistrict}
+                            options={[...DISTRICT_OPTIONS]}
+                        />
                         <Button
                             type="button"
                             className="h-11 self-end rounded-[10px] bg-[hsl(var(--color-neutral-900))] text-[hsl(var(--color-neutral-50))] hover:bg-[hsl(var(--color-neutral-800))]"
@@ -219,19 +299,46 @@ export default function VettedEntrepreneursPage() {
 
             {/* Featured */}
             <section id="featured" className="container mx-auto px-4 py-14">
-                <div className="mb-6 flex items-end justify-between gap-4">
-                    <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
-                        Featured Vetted Entrepreneurs
-                    </h2>
-                    <span className="inline-flex items-center gap-1.5 font-display text-sm font-bold text-primary">
-                        {isLoading ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                            <>
-                                {entrepreneurs.length} result{entrepreneurs.length === 1 ? "" : "s"}
-                            </>
-                        )}
-                    </span>
+                <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                        <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 font-display text-[11px] font-bold uppercase tracking-wide text-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
+                            <Star className="h-3.5 w-3.5 fill-current" /> Featured &amp; vetted
+                        </div>
+                        <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
+                            Featured Vetted Entrepreneurs
+                        </h2>
+                        <p className="mt-1 max-w-xl text-sm text-muted-foreground">
+                            Hand-picked profiles with the strongest vetting scores, traction, and
+                            investor readiness — our premium spotlight cohort.
+                        </p>
+                    </div>
+                    {!isLoading && !isError && entrepreneurs.length > 0 && (
+                        <Button
+                            type="button"
+                            variant={showAllEntrepreneurs ? "secondary" : "outline"}
+                            className="shrink-0 rounded-full"
+                            onClick={() =>
+                                showAllEntrepreneurs
+                                    ? (setShowAllEntrepreneurs(false),
+                                      document
+                                          .getElementById("featured")
+                                          ?.scrollIntoView({ behavior: "smooth", block: "start" }))
+                                    : openAllEntrepreneurs()
+                            }
+                        >
+                            {showAllEntrepreneurs ? (
+                                <>
+                                    <ChevronUp className="h-4 w-4" />
+                                    Show featured only
+                                </>
+                            ) : (
+                                <>
+                                    View All Entrepreneurs
+                                    <ArrowRight className="h-4 w-4" />
+                                </>
+                            )}
+                        </Button>
+                    )}
                 </div>
 
                 {isError ? (
@@ -245,7 +352,112 @@ export default function VettedEntrepreneursPage() {
                     </div>
                 ) : isLoading ? (
                     <EntrepreneurCardSkeletonGrid />
-                ) : entrepreneurs.length === 0 ? (
+                ) : featuredEntrepreneurs.length === 0 ? (
+                    <div className="rounded-2xl border bg-card p-12 text-center">
+                        <p className="font-display text-lg font-bold text-foreground">
+                            {hasActiveFilters
+                                ? "No featured entrepreneurs match your filters"
+                                : "No featured entrepreneurs yet"}
+                        </p>
+                        <p className="mt-1.5 text-sm text-muted-foreground">
+                            {otherEntrepreneurs.length > 0
+                                ? "Browse all vetted entrepreneurs — every profile is verified by NaWeHub."
+                                : "Try clearing some filters to see more results."}
+                        </p>
+                        <div className="mt-4 flex flex-wrap justify-center gap-3">
+                            {otherEntrepreneurs.length > 0 && (
+                                <Button onClick={openAllEntrepreneurs} className="rounded-full">
+                                    View All Entrepreneurs
+                                    <ArrowRight className="h-4 w-4" />
+                                </Button>
+                            )}
+                            {hasActiveFilters && (
+                                <Button onClick={clearAll} variant="outline" className="rounded-full">
+                                    <RotateCcw className="h-4 w-4" /> Clear filters
+                                </Button>
+                            )}
+                        </div>
+                    </div>
+                ) : (
+                    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                        {featuredEntrepreneurs.map((e) => (
+                            <EntrepreneurCard key={e.id} e={e} showFeaturedBadge />
+                        ))}
+                    </div>
+                )}
+
+                {!isLoading && !isError && entrepreneurs.length > 0 && !showAllEntrepreneurs && (
+                    <div className="mt-10 flex flex-col items-center gap-4">
+                        {otherEntrepreneurs.length > 0 && (
+                            <div className="w-full max-w-2xl rounded-2xl border bg-gradient-to-b from-muted/50 to-card p-6 text-center shadow-sm">
+                                <p className="font-display text-base font-bold text-foreground">
+                                    Looking for more vetted entrepreneurs?
+                                </p>
+                                <p className="mt-1.5 text-sm text-muted-foreground">
+                                    Every NaWeHub profile is vetted. Featured entrepreneurs are our
+                                    spotlight cohort — explore{" "}
+                                    <strong className="font-semibold text-foreground">
+                                        {otherEntrepreneurs.length} more
+                                    </strong>{" "}
+                                    verified founder{otherEntrepreneurs.length === 1 ? "" : "s"} in
+                                    the full directory.
+                                </p>
+                                <Button
+                                    type="button"
+                                    size="lg"
+                                    variant="outline"
+                                    className="mt-4 rounded-full border-primary-200 bg-card hover:bg-primary-50"
+                                    onClick={openAllEntrepreneurs}
+                                >
+                                    View All Entrepreneurs
+                                    <ChevronDown className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        )}
+                    </div>
+                )}
+            </section>
+
+            {/* All vetted — featured first, then others, with pagination */}
+            {showAllEntrepreneurs && !isLoading && !isError && allEntrepreneursSorted.length > 0 && (
+                <section id="all" className="container mx-auto px-4 pb-14">
+                    <div className="mb-6 flex flex-col gap-3 border-t pt-10 sm:flex-row sm:items-end sm:justify-between">
+                        <div>
+                            <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-primary-100 px-3 py-1 font-display text-[11px] font-bold uppercase tracking-wide text-primary-700 dark:bg-primary-900/30 dark:text-primary-300">
+                                <BadgeCheck className="h-3.5 w-3.5" /> Vetted
+                            </div>
+                            <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
+                                All Vetted Entrepreneurs
+                            </h2>
+                            <p className="mt-1 max-w-xl text-sm text-muted-foreground">
+                                Featured entrepreneurs appear first, followed by the complete NaWeHub
+                                directory — every profile below has passed our verification process.
+                            </p>
+                        </div>
+                        <span className="font-display text-sm font-bold text-primary">
+                            {allEntrepreneursSorted.length} profile
+                            {allEntrepreneursSorted.length === 1 ? "" : "s"}
+                        </span>
+                    </div>
+
+                    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                        {paginatedEntrepreneurs.map((e) => (
+                            <EntrepreneurCard key={e.id} e={e} showFeaturedBadge={e.featured} />
+                        ))}
+                    </div>
+
+                    {totalPages > 1 && (
+                        <EntrepreneursPagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={setCurrentPage}
+                        />
+                    )}
+                </section>
+            )}
+
+            {!isLoading && !isError && entrepreneurs.length === 0 && (
+                <section className="container mx-auto px-4 pb-14">
                     <div className="rounded-2xl border bg-card p-12 text-center">
                         <p className="font-display text-lg font-bold text-foreground">
                             No entrepreneurs match your filters
@@ -257,14 +469,8 @@ export default function VettedEntrepreneursPage() {
                             <RotateCcw className="h-4 w-4" /> Clear filters
                         </Button>
                     </div>
-                ) : (
-                    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                        {entrepreneurs.map((e) => (
-                            <EntrepreneurCard key={e.id} e={e} />
-                        ))}
-                    </div>
-                )}
-            </section>
+                </section>
+            )}
 
             {/* Investor band */}
             <section id="investor" className="container mx-auto px-4 pb-14">
@@ -328,7 +534,89 @@ export default function VettedEntrepreneursPage() {
     );
 }
 
-function FilterSelect({label, value, onChange, options}: {
+function EntrepreneursPagination({
+    currentPage,
+    totalPages,
+    onPageChange,
+}: {
+    currentPage: number;
+    totalPages: number;
+    onPageChange: (page: number) => void;
+}) {
+    const pages = useMemo(() => {
+        if (totalPages <= 5) {
+            return Array.from({ length: totalPages }, (_, i) => i + 1);
+        }
+        const result: number[] = [1];
+        if (currentPage > 3) result.push(-1);
+        for (
+            let p = Math.max(2, currentPage - 1);
+            p <= Math.min(totalPages - 1, currentPage + 1);
+            p++
+        ) {
+            if (!result.includes(p)) result.push(p);
+        }
+        if (currentPage < totalPages - 2) result.push(-1);
+        if (!result.includes(totalPages)) result.push(totalPages);
+        return result;
+    }, [currentPage, totalPages]);
+
+    return (
+        <Pagination className="mt-10">
+            <PaginationContent>
+                <PaginationItem>
+                    <PaginationPrevious
+                        href="#all"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (currentPage > 1) onPageChange(currentPage - 1);
+                        }}
+                        className={cn(currentPage <= 1 && "pointer-events-none opacity-50")}
+                    />
+                </PaginationItem>
+                {pages.map((page, i) =>
+                    page === -1 ? (
+                        <PaginationItem key={`ellipsis-${i}`}>
+                            <span className="px-2 text-muted-foreground">…</span>
+                        </PaginationItem>
+                    ) : (
+                        <PaginationItem key={page}>
+                            <PaginationLink
+                                href="#all"
+                                isActive={page === currentPage}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    onPageChange(page);
+                                }}
+                            >
+                                {page}
+                            </PaginationLink>
+                        </PaginationItem>
+                    ),
+                )}
+                <PaginationItem>
+                    <PaginationNext
+                        href="#all"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (currentPage < totalPages) onPageChange(currentPage + 1);
+                        }}
+                        className={cn(
+                            currentPage >= totalPages && "pointer-events-none opacity-50",
+                        )}
+                    />
+                </PaginationItem>
+            </PaginationContent>
+        </Pagination>
+    );
+}
+
+function FilterSelect({
+    label,
+    value,
+    onChange,
+    options,
+}: {
     label: string;
     value: string;
     onChange: (v: string) => void;
@@ -339,17 +627,16 @@ function FilterSelect({label, value, onChange, options}: {
             <span className="mb-1 ml-0.5 font-display text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
                 {label}
             </span>
-            <div className={'bg-background'}>
-                <Select
-                    value={value}
-                    onValueChange={(value) => onChange(value)}
-                >
+            <div className="bg-background">
+                <Select value={value} onValueChange={(v) => onChange(v)}>
                     <SelectTrigger>
-                        <SelectValue placeholder={label}/>
+                        <SelectValue placeholder={label} />
                     </SelectTrigger>
                     <SelectContent>
                         {options.map((item, index) => (
-                            <SelectItem key={index} value={item}>{item}</SelectItem>
+                            <SelectItem key={index} value={item}>
+                                {item}
+                            </SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
@@ -379,7 +666,13 @@ function EntrepreneurCardSkeletonGrid() {
     );
 }
 
-function EntrepreneurCard({ e }: { e: VettedEntrepreneur }) {
+function EntrepreneurCard({
+    e,
+    showFeaturedBadge = false,
+}: {
+    e: VettedEntrepreneur;
+    showFeaturedBadge?: boolean;
+}) {
     return (
         <Link
             href={`/web/vetted-entrepreneurs/${e.id}`}
@@ -406,6 +699,12 @@ function EntrepreneurCard({ e }: { e: VettedEntrepreneur }) {
                 <span className="absolute left-3 top-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-neutral-900/55 px-2.5 py-1 font-display text-[12px] font-bold text-white backdrop-blur-sm">
                     <BadgeCheck className="h-3.5 w-3.5" /> Verified
                 </span>
+                {showFeaturedBadge && (
+                    <span className="absolute right-3 top-3 z-10 inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-gradient-to-r from-amber-200 via-amber-300 to-amber-400 px-2.5 py-1 font-display text-[11px] font-bold text-amber-950 shadow-sm">
+                        <Star className="h-3 w-3 fill-current" />
+                        Featured
+                    </span>
+                )}
             </div>
             <div className="flex flex-1 flex-col px-4 pb-4 pt-2">
                 <span className="relative z-10 -mt-5 mb-2 inline-flex h-[34px] max-w-[calc(100%-0.5rem)] items-center gap-1.5 rounded-full border bg-card pl-2 pr-3 font-display text-[12.5px] font-bold text-foreground shadow-sm">
@@ -425,13 +724,13 @@ function EntrepreneurCard({ e }: { e: VettedEntrepreneur }) {
                     {e.short}
                 </p>
                 <div className="mt-3.5 flex flex-wrap gap-2">
-                    <span className="inline-flex items-center rounded bg-primary/15 px-2.5 py-1 font-display text-[12.5px] font-semibold text-primary">
+                    <span className="inline-flex items-center rounded-full bg-primary/15 px-2.5 py-1 font-display text-[12.5px] font-semibold text-primary">
                         {e.sector}
                     </span>
                     <span
                         className={cn(
-                            "inline-flex items-center rounded px-2.5 py-1 font-display text-[12.5px] font-semibold",
-                            STAGE_TONE[e.stageTone]
+                            "inline-flex items-center rounded-full px-2.5 py-1 font-display text-[12.5px] font-semibold",
+                            STAGE_TONE[e.stageTone],
                         )}
                     >
                         {e.stage}
