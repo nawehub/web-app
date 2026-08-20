@@ -6,7 +6,7 @@ export const FEATURED_SLOT_COUNT = 4;
 /** @deprecated use FEATURED_SLOT_COUNT */
 export const MAX_FEATURED_ENTREPRENEURS = FEATURED_SLOT_COUNT;
 
-/** Default spotlight order on first visit (matches vetting dashboard mock). */
+/** Default spotlight order on first visit */
 export const DEFAULT_FEATURED_IDS = [
     "ama-kargbo",
     "isata-turay",
@@ -39,7 +39,7 @@ export function writeFeaturedIds(ids: string[]): void {
     }
 }
 
-/** Sync landing-page featured list from vetting scores (no manual slot cap). */
+/** Sync landing-page featured list from vetting scores */
 export function syncAutoFeaturedIds(ids: string[]): string[] {
     writeFeaturedIds(ids);
     return ids;
