@@ -5,7 +5,9 @@ export type Opportunity = {
     description: string; funding?: string; deadline: string
     urgencyBadge?: string; urgencyColor?: string; image: string
     isNew?: boolean; isFeatured?: boolean
-    applyLabel: string; typeIcon: React.ElementType
+    applyLabel: string; typeIcon: React.ElementType; officialUrl: string
+    provider: string; postedDate: string; eligibility: string[]
+    benefits: string[]; applicationSteps: string[]
 }
 
 export type EventItem = {

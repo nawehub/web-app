@@ -65,12 +65,12 @@ export function OpportunityCard({opp}: { opp: Opportunity }) {
                 </div>
 
                 <div className="flex gap-2">
-                    <Link href={`/opportunities/${opp.id}`} className="flex-1">
+                    <Link href={`/web/opportunities/${opp.id}`} className="flex-1">
                         <Button variant="outline" size="sm" className="w-full text-xs">View Details</Button>
                     </Link>
-                    <Link href={`/opportunities/${opp.id}/apply`} className="flex-1">
+                    <a href={opp.officialUrl} target="_blank" rel="noopener noreferrer" className="flex-1">
                         <Button size="sm" className="w-full text-xs">{opp.applyLabel}</Button>
-                    </Link>
+                    </a>
                 </div>
 
                 <div className="flex items-end gap-3 border-t border-border pt-2 justify-end">
