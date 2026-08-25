@@ -3,8 +3,6 @@ import './globals.css'
 import {Fraunces, Inter, JetBrains_Mono} from "next/font/google";
 import React from "react";
 import {Providers} from "@/lib/providers/providers";
-import {AuthProvider} from "@/hooks/context/AuthContext";
-import {AuthErrorBoundary} from "@/components/AuthErrorBoundary";
 import {ThemeProvider} from "@/components/theme-provider";
 import {Toaster} from "@/components/ui/sonner";
 import {TooltipProvider} from "@/components/ui/tooltip";
@@ -48,13 +46,9 @@ export default function RootLayout({
             <body className={`bg-background text-foreground [font-family:var(--font-body)] antialiased`}>
             <ThemeProvider attribute="class" enableSystem>
                 <TooltipProvider>
-                    <AuthProvider>
-                        <Providers>
-                            <AuthErrorBoundary>
-                                {children}
-                            </AuthErrorBoundary>
-                        </Providers>
-                    </AuthProvider>
+                    <Providers>
+                        {children}
+                    </Providers>
                     <Toaster />
                 </TooltipProvider>
             </ThemeProvider>
