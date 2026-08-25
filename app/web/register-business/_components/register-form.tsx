@@ -722,7 +722,7 @@ export default function RegisterForm() {
                                 Track This Registration
                             </Button>
                             {form.getValues("createNawehubAccount") && (
-                                <Button onClick={() => router.push("/login")}>Sign In</Button>
+                                <Button asChild><a href="https://app.nawehub.com">Sign In</a></Button>
                             )}
                         </div>
                     </CardContent>

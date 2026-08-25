@@ -11,7 +11,7 @@ export const platformLinks = [
 ]
 
 export const getStartedLinks = [
-    { label: 'Register as Entrepreneur', href: '/web/register', icon: Lightbulb },
+    { label: 'Visit Entrepreneur Portal', href: 'https://app.nawehub.com', icon: Lightbulb },
     { label: 'Register Your Business', href: '/web/register-business', icon: Building2 },
 ]
 

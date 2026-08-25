@@ -1,7 +1,7 @@
 import type { PagedResponse } from "@/lib/gateway";
 import { fromEnumParam, SKILL_OPTIONS } from "@/lib/gateway-enums";
-import { initials as toInitials } from "@/app/dashboard/user-settings/_data/profile";
-import type { EntrepreneurProfile, Venture, JourneyItem } from "@/app/dashboard/user-settings/_data/profile";
+import { initials as toInitials } from "@/types/entrepreneur-profile";
+import type { EntrepreneurProfile, Venture, JourneyItem } from "@/types/entrepreneur-profile";
 import type { VettedEntrepreneur } from "@/types/entrepreneurs";
 
 /** Mirrors EntrepreneurModel.EntrepreneurProfile on web-api-gateway. */

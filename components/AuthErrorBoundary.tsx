@@ -11,10 +11,10 @@ export function AuthErrorBoundary({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         if (session?.error === 'RefreshAccessTokenError') {
             toast({
-                title: 'Email verified successfully',
-                description: 'Please create your password to complete registration.',
+                title: 'Session expired',
+                description: 'Please sign in again.',
             });
-            signOut({callbackUrl: '/login'}).then();
+            signOut({callbackUrl: '/'}).then();
         }
     }, [session]);
 

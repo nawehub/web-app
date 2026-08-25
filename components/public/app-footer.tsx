@@ -88,17 +88,17 @@ export default function Footer() {
                     {/* Account column */}
                     <div>
                         <h3 className="[font-family:var(--font-mono)] text-[11px] font-medium uppercase tracking-[0.18em] text-[hsl(var(--color-neutral-400))]">
-                            Account
+                            Business
                         </h3>
                         <Link
-                            href="/web/login"
+                            href="/web/register-business/track"
                             className="mt-5 inline-flex items-center gap-2 rounded-sm border border-[hsl(var(--color-neutral-700))] px-4 py-2 text-sm font-semibold text-[hsl(var(--color-neutral-50))] transition-colors hover:border-[hsl(25_95%_53%)] hover:text-[hsl(25_95%_53%)]"
                         >
-                            Login / Sign in
+                            Track Business
                             <ArrowUpRight className="h-3.5 w-3.5" />
                         </Link>
                         <p className="mt-4 max-w-[16rem] text-xs leading-relaxed text-[hsl(var(--color-neutral-500))]">
-                            New here? Creating an account takes less than two minutes.
+                            Check the status of a business registration you&rsquo;ve already submitted.
                         </p>
                     </div>
                 </div>

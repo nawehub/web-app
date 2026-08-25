@@ -9,7 +9,7 @@ import {
     Venture,
     compactNumber,
     initials,
-} from "../_data/profile";
+} from "@/types/entrepreneur-profile";
 import { AddPrompt, SectionCard } from "./section-card";
 
 interface VenturesSectionProps {

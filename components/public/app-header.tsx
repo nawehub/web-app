@@ -4,7 +4,6 @@ import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import React, {useEffect, useState} from "react";
 import {usePathname} from "next/navigation";
-import {useSession} from "next-auth/react";
 import {ThemeToggle} from "@/components/theme-toggle";
 import {Menu, X, ChevronRight} from "lucide-react";
 import {createPortal} from "react-dom";
@@ -25,7 +24,6 @@ interface AppHeaderProps {
 }
 
 export default function AppHeader({isVisible}: AppHeaderProps) {
-    const {data: session} = useSession();
     const pathname = usePathname();
 
     // Mobile menu state
@@ -149,9 +147,9 @@ export default function AppHeader({isVisible}: AppHeaderProps) {
                             Register Your Business
                         </Button>
                     </Link>
-                    <Link href={session?.user ? "/dashboard" : "/login"}>
+                    <Link href="https://app.nawehub.com">
                         <Button variant="accent" size="sm" glow>
-                            {session?.user ? "Go To Dashboard" : "Sign In"}
+                            Entrepreneur Portal
                         </Button>
                     </Link>
                     <ThemeToggle/>
@@ -278,12 +276,12 @@ export default function AppHeader({isVisible}: AppHeaderProps) {
                                     </Button>
                                 </Link>
                                 <Link
-                                    href={session?.user ? "/dashboard" : "/login"}
+                                    href="https://app.nawehub.com"
                                     onClick={() => setMobileOpen(false)}
                                     className="block"
                                 >
                                     <Button variant="accent" fullWidth glow>
-                                        {session?.user ? "Go To Dashboard" : "Sign In"}
+                                        Entrepreneur Portal
                                     </Button>
                                 </Link>
                             </div>

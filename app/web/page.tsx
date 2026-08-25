@@ -94,7 +94,7 @@ export default function WebHome() {
                         </p>
 
                         <div className="flex flex-col items-center justify-center gap-4 pt-2 sm:flex-row">
-                            <Link href="/web/register" className="w-full sm:w-auto">
+                            <Link href="https://app.nawehub.com" className="w-full sm:w-auto">
                                 <button className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-8 py-4 text-lg font-semibold text-primary-foreground shadow-[var(--shadow-lg)] transition-colors hover:bg-primary/90 sm:w-auto">
                                     <Rocket className="h-5 w-5" />
                                     Start Your Journey
@@ -190,7 +190,7 @@ export default function WebHome() {
                                 ))}
                             </div>
 
-                            <Link href="/web/register" className="mt-auto block pt-8">
+                            <Link href="https://app.nawehub.com" className="mt-auto block pt-8">
                                 <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-4 font-semibold text-primary-foreground transition-colors hover:bg-primary/90">
                                     Get Started Free
                                     <ArrowRight className="h-5 w-5" />
@@ -307,7 +307,7 @@ export default function WebHome() {
                         Sierra Leone together.
                     </p>
                     <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-                        <Link href="/web/register">
+                        <Link href="https://app.nawehub.com">
                             <button className="inline-flex items-center gap-2 rounded-2xl bg-primary px-8 py-4 font-semibold text-primary-foreground shadow-[var(--shadow-lg)] transition-colors hover:bg-primary/90">
                                 Register Now
                                 <ArrowRight className="h-5 w-5" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { EntrepreneurProfile, SectionKey } from "../_data/profile";
+import { EntrepreneurProfile, SectionKey } from "@/types/entrepreneur-profile";
 import { ProfileHeader } from "./profile-header";
 import {
     AboutSection,

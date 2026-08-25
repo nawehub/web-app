@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
-import { EntrepreneurProfile, compactNumber } from "../_data/profile";
+import { EntrepreneurProfile, compactNumber } from "@/types/entrepreneur-profile";
 import { AddPrompt, PrivateFlag, SectionCard, SubHead } from "./section-card";
 
 interface SectionProps {

@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowLeft, Loader2, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PublicProfileView } from "@/app/dashboard/user-settings/_components/public-profile-view";
-import { ProfileSkeleton } from "@/app/dashboard/user-settings/_components/profile-skeleton";
+import { PublicProfileView } from "@/components/entrepreneur-profile/public-profile-view";
+import { ProfileSkeleton } from "@/components/entrepreneur-profile/profile-skeleton";
 import { usePublicProfileQuery } from "@/hooks/repository/use-entrepreneurs";
 
 export default function VettedEntrepreneurProfilePage() {

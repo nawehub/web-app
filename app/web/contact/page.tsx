@@ -34,8 +34,8 @@ const responseTimes = [
 
 const quickLinks = [
     { href: "/web/faq", label: "Frequently Asked Questions" },
-    { href: "/web/register", label: "Create Account" },
-    { href: "/dashboard", label: "Go To Dashboard" },
+    { href: "https://app.nawehub.com", label: "Visit Entrepreneur Portal" },
+    { href: "/web/register-business/track", label: "Track Your Business Registration" },
 ]
 
 function ClothBorder({ tone }: { tone: string }) {

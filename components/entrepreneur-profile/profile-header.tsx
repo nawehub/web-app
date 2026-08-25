@@ -7,7 +7,7 @@ import {
     EntrepreneurProfile,
     VerificationKey,
     initials,
-} from "../_data/profile";
+} from "@/types/entrepreneur-profile";
 
 interface ProfileHeaderProps {
     profile: EntrepreneurProfile;

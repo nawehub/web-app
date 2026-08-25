@@ -66,11 +66,6 @@ export const authOptions: NextAuthOptions = {
             },
         }),
     ],
-    pages: {
-        signIn: "/web/login",
-        newUser: "/web/register",
-        error: '/auth/error'
-    },
     callbacks: {
         async signIn({ user, account, profile }) {
             return account?.provider === "credentials";
