@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { User, Lightbulb, TrendingUp, Rocket, Send } from "lucide-react";
+import { User, Lightbulb, TrendingUp, Rocket, Image as ImagePlus, Send } from "lucide-react";
 
 /**
  * Public "Next Big Idea" submission wizard. Mirrors web-api-gateway's
@@ -84,6 +84,7 @@ export const IDEA_WIZARD_STEPS = [
     { id: "idea", title: "The Idea", description: "What is the idea and problem it solves", icon: Lightbulb },
     { id: "market", title: "Market & Business", description: "Customers, competition and revenue", icon: TrendingUp },
     { id: "readiness", title: "Readiness & Impact", description: "How far along it is and its impact", icon: Rocket },
+    { id: "materials", title: "Supporting Materials", description: "Optionally attach a photo, video or document", icon: ImagePlus },
     { id: "review", title: "Review & Submit", description: "Check everything before you submit", icon: Send },
 ] as const;
 

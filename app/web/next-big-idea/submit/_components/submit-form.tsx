@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
-import { ArrowLeft, CheckCircle2, Sparkles } from "lucide-react"
+import { AlertCircle, ArrowLeft, CheckCircle2, FileCheck2, Sparkles, Upload, X } from "lucide-react"
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -17,8 +17,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { MultiStepForm, useMultiStepForm, type FormStep } from "@/components/ui/multi-step-form"
 import { formatResponse } from "@/utils/format-response"
-import { useIdeaSubmissionMutation } from "@/hooks/repository/use-idea-submission"
-import { IDEA_GENDER_OPTIONS, IDEA_STAGES, IDEA_SUBMISSION_TYPES, ideaStageToParam } from "@/lib/gateway-enums"
+import { useAttachSupportingMaterialMutation, useIdeaSubmissionMutation } from "@/hooks/repository/use-idea-submission"
+import { IDEA_GENDER_OPTIONS, IDEA_MATERIAL_TYPES, IDEA_STAGES, IDEA_SUBMISSION_TYPES, ideaStageToParam } from "@/lib/gateway-enums"
 import {
     IDEA_WIZARD_STEPS,
     ideaSubmissionDefaults,
@@ -26,6 +26,23 @@ import {
     type IdeaSubmissionForm,
     type IdeaSubmissionResponse,
 } from "@/types/idea-submission"
+
+const MAX_FILE_BYTES = 20 * 1024 * 1024 // 20 MB
+
+/** Object URL for a File preview, revoked on change/unmount so blob URLs don't leak. */
+function useObjectUrl(file: File | null): string | null {
+    const [url, setUrl] = useState<string | null>(null)
+    useEffect(() => {
+        if (!file) {
+            setUrl(null)
+            return
+        }
+        const objectUrl = URL.createObjectURL(file)
+        setUrl(objectUrl)
+        return () => URL.revokeObjectURL(objectUrl)
+    }, [file])
+    return url
+}
 
 function ReviewRow({ label, value }: { label: string; value: React.ReactNode }) {
     if (!value) return null
@@ -42,6 +59,75 @@ function ReviewSection({ title, children }: { title: string; children: React.Rea
         <div className="rounded-2xl border border-border bg-card p-5">
             <h4 className="mb-1 font-semibold text-foreground [font-family:var(--font-display)]">{title}</h4>
             <div className="divide-y divide-border">{children}</div>
+        </div>
+    )
+}
+
+function MaterialUpload({
+    file, previewUrl, error, onChange,
+}: {
+    file: File | null
+    previewUrl: string | null
+    error: string | null
+    onChange: (f: File | null) => void
+}) {
+    function handleFiles(files: FileList | null) {
+        const picked = files?.[0]
+        if (!picked) return
+        onChange(picked)
+    }
+
+    return (
+        <div className="space-y-3">
+            {!file ? (
+                <label
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => { e.preventDefault(); handleFiles(e.dataTransfer.files) }}
+                    className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border bg-muted/30 px-6 py-10 text-center transition-colors hover:border-primary/50 hover:bg-primary/5"
+                >
+                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/15 text-primary">
+                        <Upload className="h-5 w-5" />
+                    </span>
+                    <span className="text-sm font-medium text-foreground">Click to upload or drag and drop</span>
+                    <span className="text-xs text-muted-foreground">Photo, video, business plan or pitch deck — up to 20MB</span>
+                    <input
+                        type="file"
+                        accept="image/*,video/*,.pdf,.doc,.docx,.ppt,.pptx"
+                        className="hidden"
+                        onChange={(e) => handleFiles(e.target.files)}
+                    />
+                </label>
+            ) : (
+                <div className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-card p-4">
+                    <div className="flex min-w-0 items-center gap-3">
+                        {previewUrl && file.type.startsWith("image/") ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={previewUrl} alt="Supporting material preview" className="h-14 w-14 shrink-0 rounded-lg border border-border object-cover" />
+                        ) : (
+                            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
+                                <FileCheck2 className="h-5 w-5" />
+                            </span>
+                        )}
+                        <div className="min-w-0">
+                            <p className="truncate text-sm font-medium text-foreground">{file.name}</p>
+                            <p className="text-xs text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => onChange(null)}
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                        aria-label="Remove file"
+                    >
+                        <X className="h-4 w-4" />
+                    </button>
+                </div>
+            )}
+            {error && (
+                <p className="flex items-center gap-1.5 text-xs text-[hsl(var(--color-error))]">
+                    <AlertCircle className="h-3.5 w-3.5 shrink-0" /> {error}
+                </p>
+            )}
         </div>
     )
 }
@@ -68,7 +154,12 @@ const READINESS_FIELDS = [
 export default function SubmitIdeaForm() {
     const wizard = useMultiStepForm(IDEA_WIZARD_STEPS.length)
     const submitMutation = useIdeaSubmissionMutation()
+    const attachMutation = useAttachSupportingMaterialMutation()
 
+    const [materialFile, setMaterialFile] = useState<File | null>(null)
+    const [materialType, setMaterialType] = useState<string>(IDEA_MATERIAL_TYPES[0].value)
+    const [materialError, setMaterialError] = useState<string | null>(null)
+    const materialPreviewUrl = useObjectUrl(materialFile)
     const [result, setResult] = useState<IdeaSubmissionResponse | null>(null)
 
     const form = useForm<IdeaSubmissionForm>({
@@ -77,10 +168,28 @@ export default function SubmitIdeaForm() {
         mode: "onBlur",
     })
 
+    function handleMaterialChange(file: File | null) {
+        if (file && file.size > MAX_FILE_BYTES) {
+            setMaterialError("That file is over 20MB — please upload a smaller copy.")
+            return
+        }
+        setMaterialError(null)
+        setMaterialFile(file)
+    }
+
     async function onSubmit() {
         const data = form.getValues()
         try {
             const response = await submitMutation.mutateAsync(data)
+            if (materialFile) {
+                try {
+                    await attachMutation.mutateAsync({ ideaId: response.id, materialType, file: materialFile })
+                } catch {
+                    toast("Idea submitted, but the attachment failed", {
+                        description: "Your idea was submitted successfully — you can try attaching the file again later.",
+                    })
+                }
+            }
             setResult(response)
             wizard.nextStep()
         } catch (error) {
@@ -635,6 +744,36 @@ export default function SubmitIdeaForm() {
             id: IDEA_WIZARD_STEPS[4].id,
             title: IDEA_WIZARD_STEPS[4].title,
             description: IDEA_WIZARD_STEPS[4].description,
+            content: (
+                <div className="space-y-4">
+                    <p className="text-sm text-muted-foreground">
+                        Optionally attach a photo, video, business plan or pitch deck to strengthen your submission.
+                        This step can be skipped.
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                        {IDEA_MATERIAL_TYPES.map((opt) => (
+                            <button
+                                key={opt.value}
+                                type="button"
+                                onClick={() => setMaterialType(opt.value)}
+                                className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                                    materialType === opt.value
+                                        ? "border-primary bg-primary/10 text-primary"
+                                        : "border-border text-muted-foreground hover:border-primary/40"
+                                }`}
+                            >
+                                {opt.label}
+                            </button>
+                        ))}
+                    </div>
+                    <MaterialUpload file={materialFile} previewUrl={materialPreviewUrl} error={materialError} onChange={handleMaterialChange} />
+                </div>
+            ),
+        },
+        {
+            id: IDEA_WIZARD_STEPS[5].id,
+            title: IDEA_WIZARD_STEPS[5].title,
+            description: IDEA_WIZARD_STEPS[5].description,
             // A plain snapshot (not a subscription) - the review step only needs to be
             // correct at the moment it's shown, which is whenever this array is rebuilt
             // (every render), not live on every keystroke elsewhere.
@@ -674,6 +813,21 @@ export default function SubmitIdeaForm() {
                             <ReviewRow label="Tested With Customers" value={v.testedWithCustomers ? "Yes" : "No"} />
                             <ReviewRow label="Estimated Jobs Created" value={v.estimatedJobsCreated} />
                         </ReviewSection>
+
+                        {materialPreviewUrl && (
+                            <ReviewSection title="Supporting Material">
+                                <div className="pt-1">
+                                    {materialFile?.type.startsWith("image/") ? (
+                                        <div className="overflow-hidden rounded-xl border border-border bg-muted">
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                                            <img src={materialPreviewUrl} alt="Supporting material" className="max-h-56 w-full object-cover" />
+                                        </div>
+                                    ) : (
+                                        <p className="text-sm text-muted-foreground">{materialFile?.name}</p>
+                                    )}
+                                </div>
+                            </ReviewSection>
+                        )}
                     </div>
                 )
             })(),
@@ -707,6 +861,7 @@ export default function SubmitIdeaForm() {
                                 variant="outline"
                                 onClick={() => {
                                     form.reset(ideaSubmissionDefaults)
+                                    setMaterialFile(null)
                                     setResult(null)
                                     wizard.reset()
                                 }}
@@ -730,7 +885,7 @@ export default function SubmitIdeaForm() {
                         onStepChange={wizard.setCurrentStep}
                         onComplete={onSubmit}
                         allowStepNavigation
-                        isSubmitting={submitMutation.isPending}
+                        isSubmitting={submitMutation.isPending || attachMutation.isPending}
                         labels={{ submit: "Submit Idea", submitting: "Submitting..." }}
                     />
                 </Card>
