@@ -1,20 +1,25 @@
 import Link from 'next/link'
 import {notFound} from 'next/navigation'
-import {ArrowLeft, ArrowUpRight, BadgeCheck, Banknote, CalendarDays, CheckCircle2, Clock3, MapPin, Sparkles} from 'lucide-react'
-import {OPPORTUNITIES} from '@/lib/database/opportunities'
+import {ArrowLeft, ArrowUpRight, BadgeCheck, CalendarDays, CheckCircle2, Clock3, Mail, MapPin, Phone} from 'lucide-react'
+import {gatewayFetch} from '@/lib/gateway'
+import type {GatewayOpportunity} from '@/lib/services/opportunities'
+import {toOpportunity} from '@/lib/services/opportunities'
 import {Badge} from '@/components/ui/badge'
 import {Button} from '@/components/ui/button'
 
 type Props = {params: Promise<{id: string}>}
 
-export function generateStaticParams() {
-    return OPPORTUNITIES.map(({id}) => ({id}))
+async function getOpportunity(id: string): Promise<GatewayOpportunity | null> {
+    const res = await gatewayFetch(`/opportunities/${id}`)
+    if (!res.ok) return null
+    return res.json()
 }
 
 export default async function OpportunityDetailsPage({params}: Props) {
     const {id} = await params
-    const opportunity = OPPORTUNITIES.find((item) => item.id === id)
-    if (!opportunity) notFound()
+    const gwOpportunity = await getOpportunity(id)
+    if (!gwOpportunity) notFound()
+    const opportunity = toOpportunity(gwOpportunity)
     const TypeIcon = opportunity.typeIcon
 
     return <main className="min-h-screen bg-muted/30">
@@ -28,7 +33,6 @@ export default async function OpportunityDetailsPage({params}: Props) {
                 <div className="max-w-4xl space-y-5">
                     <div className="flex flex-wrap items-center gap-2">
                         <Badge className="bg-primary text-primary-foreground"><TypeIcon className="mr-1 h-3.5 w-3.5"/>{opportunity.type}</Badge>
-                        {opportunity.isFeatured && <Badge variant="secondary"><Sparkles className="mr-1 h-3.5 w-3.5"/>Featured</Badge>}
                         <span className="inline-flex items-center gap-1 text-sm text-white/70"><BadgeCheck className="h-4 w-4 text-primary"/>Verified opportunity</span>
                     </div>
                     <h1 className="text-3xl font-semibold leading-tight [font-family:var(--font-display)] sm:text-4xl lg:text-5xl">{opportunity.title}</h1>
@@ -44,17 +48,47 @@ export default async function OpportunityDetailsPage({params}: Props) {
 
         <div className="container mx-auto grid gap-8 px-4 py-10 lg:grid-cols-[minmax(0,1fr)_340px]">
             <div className="space-y-7">
-                <InfoSection title="About this opportunity"><p className="leading-7 text-muted-foreground">{opportunity.description} This opportunity helps promising applicants strengthen their work, expand their reach, and connect with a wider network of partners and experts.</p></InfoSection>
-                <InfoSection title="Who can apply"><ul className="space-y-3">{opportunity.eligibility.map((item) => <li key={item} className="flex gap-3 text-muted-foreground"><CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary"/>{item}</li>)}</ul></InfoSection>
-                <InfoSection title="What you receive"><div className="grid gap-3 sm:grid-cols-2">{opportunity.benefits.map((item) => <div key={item} className="rounded-xl bg-primary/5 p-4 text-sm font-medium"><Sparkles className="mb-2 h-5 w-5 text-primary"/>{item}</div>)}</div></InfoSection>
-                <InfoSection title="How to apply"><ol className="space-y-4">{opportunity.applicationSteps.map((step, index) => <li key={step} className="flex gap-4"><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary font-semibold text-primary-foreground">{index + 1}</span><span className="pt-1 text-muted-foreground">{step}</span></li>)}</ol></InfoSection>
+                <InfoSection title="About this opportunity"><p className="leading-7 text-muted-foreground">{opportunity.description}</p></InfoSection>
+                {opportunity.eligibility.length > 0 && (
+                    <InfoSection title="Who can apply"><ul className="space-y-3">{opportunity.eligibility.map((item) => <li key={item} className="flex gap-3 text-muted-foreground"><CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary"/>{item}</li>)}</ul></InfoSection>
+                )}
+                <InfoSection title="Organization details">
+                    <div className="grid gap-3 sm:grid-cols-2">
+                        <div className="rounded-xl bg-primary/5 p-4 text-sm">
+                            <p className="text-xs font-medium text-muted-foreground">Organization</p>
+                            <p className="mt-1 font-medium">{gwOpportunity.organizationName}</p>
+                        </div>
+                        {gwOpportunity.organizationTypes.length > 0 && (
+                            <div className="rounded-xl bg-primary/5 p-4 text-sm">
+                                <p className="text-xs font-medium text-muted-foreground">Organization type</p>
+                                <p className="mt-1 font-medium">{gwOpportunity.organizationTypes.map((t) => t.replace(/_/g, ' ')).join(', ')}</p>
+                            </div>
+                        )}
+                        <div className="rounded-xl bg-primary/5 p-4 text-sm">
+                            <p className="text-xs font-medium text-muted-foreground">Geographic scope</p>
+                            <p className="mt-1 font-medium">{opportunity.location}</p>
+                        </div>
+                    </div>
+                </InfoSection>
+                <InfoSection title="How to apply">
+                    <div className="space-y-4">
+                        <p className="text-muted-foreground">Reach out using the contact details below, or apply directly via the official link.</p>
+                        <div className="flex flex-col gap-2 text-sm">
+                            {gwOpportunity.contactInfo?.email && (
+                                <span className="flex items-center gap-2 text-muted-foreground"><Mail className="h-4 w-4 text-primary"/>{gwOpportunity.contactInfo.email}</span>
+                            )}
+                            {gwOpportunity.contactInfo?.phone && (
+                                <span className="flex items-center gap-2 text-muted-foreground"><Phone className="h-4 w-4 text-primary"/>{gwOpportunity.contactInfo.phone}</span>
+                            )}
+                        </div>
+                    </div>
+                </InfoSection>
             </div>
 
             <aside className="lg:sticky lg:top-24 lg:self-start">
                 <div className="rounded-2xl border bg-card p-6 shadow-sm">
                     <p className="text-sm text-muted-foreground">Offered by</p><p className="mt-1 font-semibold">{opportunity.provider}</p>
                     <div className="my-5 space-y-4 border-y py-5 text-sm">
-                        {opportunity.funding && <Detail icon={<Banknote/>} label="Funding" value={opportunity.funding}/>} 
                         <Detail icon={<CalendarDays/>} label="Deadline" value={opportunity.deadline}/>
                         <Detail icon={<MapPin/>} label="Location" value={opportunity.location}/>
                     </div>

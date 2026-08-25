@@ -2,7 +2,7 @@ import React from "react";
 
 export type Opportunity = {
     id: string; title: string; type: string; location: string
-    description: string; funding?: string; deadline: string
+    description: string; funding?: string; deadline: string; deadlineISO?: string
     urgencyBadge?: string; urgencyColor?: string; image: string
     isNew?: boolean; isFeatured?: boolean
     applyLabel: string; typeIcon: React.ElementType; officialUrl: string

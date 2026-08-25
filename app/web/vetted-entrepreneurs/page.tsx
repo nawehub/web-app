@@ -1,19 +1,15 @@
 "use client";
 
-import React, { useDeferredValue, useEffect, useMemo, useState } from "react";
+import React, { useDeferredValue, useState } from "react";
 import Link from "next/link";
 import {
     ArrowRight,
     BadgeCheck,
     Briefcase,
-    ChevronDown,
-    ChevronUp,
     CircleDollarSign,
     FileText,
     Heart,
     Lock,
-    Loader2,
-    MapPin,
     RotateCcw,
     Search,
     ShieldCheck,
@@ -22,37 +18,15 @@ import {
     TrendingUp,
     Users,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-    Pagination,
-    PaginationContent,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from "@/components/ui/pagination";
-import { useVettedEntrepreneursQuery } from "@/hooks/repository/use-entrepreneurs";
-import {
-    DISTRICT_OPTIONS,
-    INDUSTRY_OPTIONS,
-    STAGE_OPTIONS,
-    StageTone,
-    VettedEntrepreneur,
-    VettedEntrepreneursFilters,
-} from "@/types/entrepreneurs";
+import { useFeaturedEntrepreneursQuery, useVettedEntrepreneursPreviewQuery } from "@/hooks/repository/use-entrepreneurs";
+import { DISTRICT_OPTIONS, VettedEntrepreneursFilters } from "@/types/entrepreneurs";
+import { SKILL_OPTIONS } from "@/lib/gateway-enums";
 import { Input } from "@/components/ui/input";
 import { ClothBorder } from "@/components/icons";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-
-const STAGE_TONE: Record<StageTone, string> = {
-    green: "bg-primary/15 text-primary",
-    amber: "bg-[hsl(var(--warning)/0.15)] text-[hsl(var(--warning))]",
-    blue: "bg-[hsl(var(--info)/0.15)] text-[hsl(var(--info))]",
-    gray: "bg-muted text-muted-foreground",
-};
+import { EntrepreneurCard } from "@/app/web/vetted-entrepreneurs/_components/entrepreneur-card";
 
 const HERO_STATS = [
     { icon: Users, num: "350+", label: "Vetted Entrepreneurs" },
@@ -91,81 +65,36 @@ const INVESTOR_FEATS = [
     { icon: Lock, label: "Secure Engagement" },
 ];
 
-const PAGE_SIZE = 4;
+const ALL_SKILLS = "All Skills";
+const ALL_DISTRICTS = DISTRICT_OPTIONS[0];
 
 export default function VettedEntrepreneursPage() {
     const [query, setQuery] = useState("");
-    const [industry, setIndustry] = useState<string>(INDUSTRY_OPTIONS[0]);
-    const [stage, setStage] = useState<string>(STAGE_OPTIONS[0]);
-    const [district, setDistrict] = useState<string>(DISTRICT_OPTIONS[0]);
-    const [showAllEntrepreneurs, setShowAllEntrepreneurs] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [skill, setSkill] = useState<string>(ALL_SKILLS);
+    const [district, setDistrict] = useState<string>(ALL_DISTRICTS);
 
     const filters = useDeferredValue<VettedEntrepreneursFilters>({
         query,
-        industry,
-        stage,
-        district,
+        skill: skill === ALL_SKILLS ? undefined : SKILL_OPTIONS.find((s) => s.label === skill)?.value,
+        district: district === ALL_DISTRICTS ? undefined : district,
     });
 
-    const { data: entrepreneurs = [], isLoading, isError } = useVettedEntrepreneursQuery(filters);
+    const { data: featuredEntrepreneurs = [], isLoading: isLoadingFeatured, isError: isErrorFeatured } =
+        useFeaturedEntrepreneursQuery(filters);
+    const { data: otherEntrepreneurs = [], isLoading: isLoadingOthers, isError: isErrorOthers } =
+        useVettedEntrepreneursPreviewQuery(filters);
 
-    const featuredEntrepreneurs = useMemo(
-        () =>
-            entrepreneurs
-                .filter((e) => e.featured)
-                .sort((a, b) => (a.featuredOrder ?? 0) - (b.featuredOrder ?? 0)),
-        [entrepreneurs],
-    );
-
-    const otherEntrepreneurs = useMemo(
-        () => entrepreneurs.filter((e) => !e.featured),
-        [entrepreneurs],
-    );
-
-    const allEntrepreneursSorted = useMemo(
-        () => [...featuredEntrepreneurs, ...otherEntrepreneurs],
-        [featuredEntrepreneurs, otherEntrepreneurs],
-    );
-
-    const totalPages = Math.max(1, Math.ceil(allEntrepreneursSorted.length / PAGE_SIZE));
-    const paginatedEntrepreneurs = useMemo(() => {
-        const start = (currentPage - 1) * PAGE_SIZE;
-        return allEntrepreneursSorted.slice(start, start + PAGE_SIZE);
-    }, [allEntrepreneursSorted, currentPage]);
-
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [query, industry, stage, district, showAllEntrepreneurs]);
-
-    useEffect(() => {
-        if (currentPage > totalPages) {
-            setCurrentPage(totalPages);
-        }
-    }, [currentPage, totalPages]);
+    const isLoading = isLoadingFeatured || isLoadingOthers;
+    const isError = isErrorFeatured || isErrorOthers;
+    const hasResults = featuredEntrepreneurs.length > 0 || otherEntrepreneurs.length > 0;
 
     const clearAll = () => {
         setQuery("");
-        setIndustry(INDUSTRY_OPTIONS[0]);
-        setStage(STAGE_OPTIONS[0]);
-        setDistrict(DISTRICT_OPTIONS[0]);
-        setShowAllEntrepreneurs(false);
-        setCurrentPage(1);
+        setSkill(ALL_SKILLS);
+        setDistrict(ALL_DISTRICTS);
     };
 
-    const hasActiveFilters =
-        query.trim() !== "" ||
-        industry !== INDUSTRY_OPTIONS[0] ||
-        stage !== STAGE_OPTIONS[0] ||
-        district !== DISTRICT_OPTIONS[0];
-
-    const openAllEntrepreneurs = () => {
-        setShowAllEntrepreneurs(true);
-        setCurrentPage(1);
-        requestAnimationFrame(() => {
-            document.getElementById("all")?.scrollIntoView({ behavior: "smooth", block: "start" });
-        });
-    };
+    const hasActiveFilters = query.trim() !== "" || skill !== ALL_SKILLS || district !== ALL_DISTRICTS;
 
     return (
         <div>
@@ -256,7 +185,7 @@ export default function VettedEntrepreneursPage() {
                             <RotateCcw className="h-3.5 w-3.5" /> Clear all
                         </button>
                     </div>
-                    <div className="grid gap-3 lg:grid-cols-[2fr_1fr_1fr_1fr_auto]">
+                    <div className="grid gap-3 lg:grid-cols-[2fr_1fr_1fr_auto]">
                         <div className="mt-5">
                             <Input
                                 leftIcon={<Search className="h-4 w-4 text-muted-foreground" />}
@@ -268,16 +197,10 @@ export default function VettedEntrepreneursPage() {
                             />
                         </div>
                         <FilterSelect
-                            label="Industry"
-                            value={industry}
-                            onChange={setIndustry}
-                            options={[...INDUSTRY_OPTIONS]}
-                        />
-                        <FilterSelect
-                            label="Stage"
-                            value={stage}
-                            onChange={setStage}
-                            options={[...STAGE_OPTIONS]}
+                            label="Skills"
+                            value={skill}
+                            onChange={setSkill}
+                            options={[ALL_SKILLS, ...SKILL_OPTIONS.map((s) => s.label)]}
                         />
                         <FilterSelect
                             label="Location"
@@ -312,31 +235,12 @@ export default function VettedEntrepreneursPage() {
                             investor readiness — our premium spotlight cohort.
                         </p>
                     </div>
-                    {!isLoading && !isError && entrepreneurs.length > 0 && (
-                        <Button
-                            type="button"
-                            variant={showAllEntrepreneurs ? "secondary" : "outline"}
-                            className="shrink-0 rounded-full"
-                            onClick={() =>
-                                showAllEntrepreneurs
-                                    ? (setShowAllEntrepreneurs(false),
-                                      document
-                                          .getElementById("featured")
-                                          ?.scrollIntoView({ behavior: "smooth", block: "start" }))
-                                    : openAllEntrepreneurs()
-                            }
-                        >
-                            {showAllEntrepreneurs ? (
-                                <>
-                                    <ChevronUp className="h-4 w-4" />
-                                    Show featured only
-                                </>
-                            ) : (
-                                <>
-                                    View All Entrepreneurs
-                                    <ArrowRight className="h-4 w-4" />
-                                </>
-                            )}
+                    {!isLoading && !isError && hasResults && (
+                        <Button asChild variant="outline" className="shrink-0 rounded-full">
+                            <Link href="/web/vetted-entrepreneurs/all">
+                                View All Entrepreneurs
+                                <ArrowRight className="h-4 w-4" />
+                            </Link>
                         </Button>
                     )}
                 </div>
@@ -366,9 +270,11 @@ export default function VettedEntrepreneursPage() {
                         </p>
                         <div className="mt-4 flex flex-wrap justify-center gap-3">
                             {otherEntrepreneurs.length > 0 && (
-                                <Button onClick={openAllEntrepreneurs} className="rounded-full">
-                                    View All Entrepreneurs
-                                    <ArrowRight className="h-4 w-4" />
+                                <Button asChild className="rounded-full">
+                                    <Link href="/web/vetted-entrepreneurs/all">
+                                        View All Entrepreneurs
+                                        <ArrowRight className="h-4 w-4" />
+                                    </Link>
                                 </Button>
                             )}
                             {hasActiveFilters && (
@@ -385,41 +291,10 @@ export default function VettedEntrepreneursPage() {
                         ))}
                     </div>
                 )}
-
-                {!isLoading && !isError && entrepreneurs.length > 0 && !showAllEntrepreneurs && (
-                    <div className="mt-10 flex flex-col items-center gap-4">
-                        {otherEntrepreneurs.length > 0 && (
-                            <div className="w-full max-w-2xl rounded-2xl border bg-gradient-to-b from-muted/50 to-card p-6 text-center shadow-sm">
-                                <p className="font-display text-base font-bold text-foreground">
-                                    Looking for more vetted entrepreneurs?
-                                </p>
-                                <p className="mt-1.5 text-sm text-muted-foreground">
-                                    Every NaWeHub profile is vetted. Featured entrepreneurs are our
-                                    spotlight cohort — explore{" "}
-                                    <strong className="font-semibold text-foreground">
-                                        {otherEntrepreneurs.length} more
-                                    </strong>{" "}
-                                    verified founder{otherEntrepreneurs.length === 1 ? "" : "s"} in
-                                    the full directory.
-                                </p>
-                                <Button
-                                    type="button"
-                                    size="lg"
-                                    variant="outline"
-                                    className="mt-4 rounded-full border-primary-200 bg-card hover:bg-primary-50"
-                                    onClick={openAllEntrepreneurs}
-                                >
-                                    View All Entrepreneurs
-                                    <ChevronDown className="h-4 w-4" />
-                                </Button>
-                            </div>
-                        )}
-                    </div>
-                )}
             </section>
 
-            {/* All vetted — featured first, then others, with pagination */}
-            {showAllEntrepreneurs && !isLoading && !isError && allEntrepreneursSorted.length > 0 && (
+            {/* Vetted preview — featured entrepreneurs excluded, capped, links out to the full directory */}
+            {!isLoading && !isError && otherEntrepreneurs.length > 0 && (
                 <section id="all" className="container mx-auto px-4 pb-14">
                     <div className="mb-6 flex flex-col gap-3 border-t pt-10 sm:flex-row sm:items-end sm:justify-between">
                         <div>
@@ -427,36 +302,30 @@ export default function VettedEntrepreneursPage() {
                                 <BadgeCheck className="h-3.5 w-3.5" /> Vetted
                             </div>
                             <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
-                                All Vetted Entrepreneurs
+                                More Vetted Entrepreneurs
                             </h2>
                             <p className="mt-1 max-w-xl text-sm text-muted-foreground">
-                                Featured entrepreneurs appear first, followed by the complete NaWeHub
-                                directory — every profile below has passed our verification process.
+                                Every profile below has passed our verification process — explore
+                                the full directory for the complete, filterable list.
                             </p>
                         </div>
-                        <span className="font-display text-sm font-bold text-primary">
-                            {allEntrepreneursSorted.length} profile
-                            {allEntrepreneursSorted.length === 1 ? "" : "s"}
-                        </span>
+                        <Button asChild variant="outline" className="shrink-0 rounded-full">
+                            <Link href="/web/vetted-entrepreneurs/all">
+                                View All Entrepreneurs
+                                <ArrowRight className="h-4 w-4" />
+                            </Link>
+                        </Button>
                     </div>
 
                     <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                        {paginatedEntrepreneurs.map((e) => (
-                            <EntrepreneurCard key={e.id} e={e} showFeaturedBadge={e.featured} />
+                        {otherEntrepreneurs.map((e) => (
+                            <EntrepreneurCard key={e.id} e={e} />
                         ))}
                     </div>
-
-                    {totalPages > 1 && (
-                        <EntrepreneursPagination
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            onPageChange={setCurrentPage}
-                        />
-                    )}
                 </section>
             )}
 
-            {!isLoading && !isError && entrepreneurs.length === 0 && (
+            {!isLoading && !isError && !hasResults && (
                 <section className="container mx-auto px-4 pb-14">
                     <div className="rounded-2xl border bg-card p-12 text-center">
                         <p className="font-display text-lg font-bold text-foreground">
@@ -534,83 +403,6 @@ export default function VettedEntrepreneursPage() {
     );
 }
 
-function EntrepreneursPagination({
-    currentPage,
-    totalPages,
-    onPageChange,
-}: {
-    currentPage: number;
-    totalPages: number;
-    onPageChange: (page: number) => void;
-}) {
-    const pages = useMemo(() => {
-        if (totalPages <= 5) {
-            return Array.from({ length: totalPages }, (_, i) => i + 1);
-        }
-        const result: number[] = [1];
-        if (currentPage > 3) result.push(-1);
-        for (
-            let p = Math.max(2, currentPage - 1);
-            p <= Math.min(totalPages - 1, currentPage + 1);
-            p++
-        ) {
-            if (!result.includes(p)) result.push(p);
-        }
-        if (currentPage < totalPages - 2) result.push(-1);
-        if (!result.includes(totalPages)) result.push(totalPages);
-        return result;
-    }, [currentPage, totalPages]);
-
-    return (
-        <Pagination className="mt-10">
-            <PaginationContent>
-                <PaginationItem>
-                    <PaginationPrevious
-                        href="#all"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            if (currentPage > 1) onPageChange(currentPage - 1);
-                        }}
-                        className={cn(currentPage <= 1 && "pointer-events-none opacity-50")}
-                    />
-                </PaginationItem>
-                {pages.map((page, i) =>
-                    page === -1 ? (
-                        <PaginationItem key={`ellipsis-${i}`}>
-                            <span className="px-2 text-muted-foreground">…</span>
-                        </PaginationItem>
-                    ) : (
-                        <PaginationItem key={page}>
-                            <PaginationLink
-                                href="#all"
-                                isActive={page === currentPage}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    onPageChange(page);
-                                }}
-                            >
-                                {page}
-                            </PaginationLink>
-                        </PaginationItem>
-                    ),
-                )}
-                <PaginationItem>
-                    <PaginationNext
-                        href="#all"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            if (currentPage < totalPages) onPageChange(currentPage + 1);
-                        }}
-                        className={cn(
-                            currentPage >= totalPages && "pointer-events-none opacity-50",
-                        )}
-                    />
-                </PaginationItem>
-            </PaginationContent>
-        </Pagination>
-    );
-}
-
 function FilterSelect({
     label,
     value,
@@ -663,89 +455,5 @@ function EntrepreneurCardSkeletonGrid() {
                 </div>
             ))}
         </div>
-    );
-}
-
-function EntrepreneurCard({
-    e,
-    showFeaturedBadge = false,
-}: {
-    e: VettedEntrepreneur;
-    showFeaturedBadge?: boolean;
-}) {
-    return (
-        <Link
-            href={`/web/vetted-entrepreneurs/${e.id}`}
-            className="group flex flex-col overflow-hidden rounded-2xl border bg-card transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-md"
-        >
-            <div className="relative h-[165px] bg-muted">
-                <div className="h-full overflow-hidden">
-                    {e.photo ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                            src={e.photo}
-                            alt={e.name}
-                            className="h-full w-full object-cover object-[center_22%] scale-[1.08]"
-                        />
-                    ) : (
-                        <div
-                            className="grid h-full w-full place-items-center font-display text-[40px] font-bold text-white"
-                            style={{ background: `linear-gradient(135deg, ${e.c1}, ${e.c2})` }}
-                        >
-                            {e.initials}
-                        </div>
-                    )}
-                </div>
-                <span className="absolute left-3 top-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-neutral-900/55 px-2.5 py-1 font-display text-[12px] font-bold text-white backdrop-blur-sm">
-                    <BadgeCheck className="h-3.5 w-3.5" /> Verified
-                </span>
-                {showFeaturedBadge && (
-                    <span className="absolute right-3 top-3 z-10 inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-gradient-to-r from-amber-200 via-amber-300 to-amber-400 px-2.5 py-1 font-display text-[11px] font-bold text-amber-950 shadow-sm">
-                        <Star className="h-3 w-3 fill-current" />
-                        Featured
-                    </span>
-                )}
-            </div>
-            <div className="flex flex-1 flex-col px-4 pb-4 pt-2">
-                <span className="relative z-10 -mt-5 mb-2 inline-flex h-[34px] max-w-[calc(100%-0.5rem)] items-center gap-1.5 rounded-full border bg-card pl-2 pr-3 font-display text-[12.5px] font-bold text-foreground shadow-sm">
-                    <span
-                        className="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md text-[11px] text-white"
-                        style={{ background: e.c1 }}
-                    >
-                        {e.logoInitial}
-                    </span>
-                    <span className="truncate">{e.company}</span>
-                </span>
-                <h3 className="font-display text-[17px] font-bold text-foreground">{e.name}</h3>
-                <div className="mt-0.5 font-display text-[13px] font-semibold text-primary">
-                    {e.role}
-                </div>
-                <p className="mt-2.5 text-[13.5px] leading-relaxed text-muted-foreground">
-                    {e.short}
-                </p>
-                <div className="mt-3.5 flex flex-wrap gap-2">
-                    <span className="inline-flex items-center rounded-full bg-primary/15 px-2.5 py-1 font-display text-[12.5px] font-semibold text-primary">
-                        {e.sector}
-                    </span>
-                    <span
-                        className={cn(
-                            "inline-flex items-center rounded-full px-2.5 py-1 font-display text-[12.5px] font-semibold",
-                            STAGE_TONE[e.stageTone],
-                        )}
-                    >
-                        {e.stage}
-                    </span>
-                </div>
-                <Separator className="my-3.5" />
-                <div className="mt-auto flex items-center justify-between">
-                    <span className="inline-flex items-center gap-1.5 text-[12.5px] text-muted-foreground">
-                        <MapPin className="h-3.5 w-3.5" /> {e.location}
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 font-display text-[13.5px] font-bold text-primary transition-all group-hover:gap-2.5">
-                        View Profile <ArrowRight className="h-3.5 w-3.5" />
-                    </span>
-                </div>
-            </div>
-        </Link>
     );
 }

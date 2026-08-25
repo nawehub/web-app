@@ -114,19 +114,29 @@ function MultiStepForm({
   return (
     <div className={cn("w-full", className)} {...props}>
       {/* Progress Indicator */}
+      {/* The full step-circle layout doesn't fit narrow screens (title/description
+          text wraps into cramped columns), so small screens always get the compact
+          "Step X of Y" bar regardless of showProgressBar - it only decides the
+          indicator at md and above. Matches the same md breakpoint the "Step Title
+          (Mobile)" block below already uses for its own mobile cutoff. */}
       <div className="mb-6 md:mb-8">
-        {showProgressBar ? (
-          <StepProgress
-            currentStep={currentStep + 1}
-            totalSteps={steps.length}
-          />
-        ) : (
-          <ProgressSteps
-            steps={progressSteps}
-            currentStep={currentStep}
-            onStepClick={allowStepNavigation ? handleStepClick : undefined}
-          />
-        )}
+        <div className="md:hidden">
+          <StepProgress currentStep={currentStep + 1} totalSteps={steps.length} />
+        </div>
+        <div className="hidden md:block">
+          {showProgressBar ? (
+            <StepProgress
+              currentStep={currentStep + 1}
+              totalSteps={steps.length}
+            />
+          ) : (
+            <ProgressSteps
+              steps={progressSteps}
+              currentStep={currentStep}
+              onStepClick={allowStepNavigation ? handleStepClick : undefined}
+            />
+          )}
+        </div>
       </div>
 
       {/* Step Title (Mobile) */}
@@ -142,7 +152,11 @@ function MultiStepForm({
       </div>
 
       {/* Form Content */}
-      <div className="mb-6">
+      {/* Keyed by step id so React remounts fresh content on step change instead of
+          reconciling by tree position - without this, a field at the same position
+          in two different steps' content can end up sharing state (e.g. a Controller
+          registered for one field silently keeping another field's value/handlers). */}
+      <div key={currentStepData.id} className="mb-6">
         {currentStepData.content || children}
       </div>
 

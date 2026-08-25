@@ -1,17 +1,18 @@
 'use client'
 
-import React, {useState} from 'react'
+import React, {useEffect, useMemo, useState} from 'react'
 import Link from 'next/link'
 import {
     Search, SlidersHorizontal, Calendar,
     LayoutGrid, List, Bookmark, Share2, Bell, ArrowUpRight, BadgeCheck,
-    Mail, MessageCircle, Send, Trophy, DollarSign, Zap,
+    Mail, MessageCircle, Send, Trophy, DollarSign, Zap, Loader2,
 } from 'lucide-react'
 import {Badge} from '@/components/ui/badge'
 import {Button} from '@/components/ui/button'
 import {Input} from '@/components/ui/input'
+import {Skeleton} from '@/components/ui/skeleton'
 import {cn} from '@/lib/utils'
-import {CATEGORIES, EVENTS, OPPORTUNITIES, STATS} from "@/lib/database/opportunities";
+import {CATEGORIES, STATS} from "@/lib/database/opportunities";
 import {ClothBorder} from "@/components/icons";
 import {OpportunityCard} from "@/app/web/opportunities/_components/opportunity-card";
 import {EventCard} from "@/app/web/opportunities/_components/event-card";
@@ -21,6 +22,8 @@ import {DeadlineFilter, DeadlineRange} from "@/app/web/opportunities/_components
 import SelectFilter from "@/app/web/opportunities/_components/select-filter";
 import {ValuePositionBanner} from "@/app/web/opportunities/_components/value-position-banner";
 import {NewsletterWhatsapp} from "@/app/web/opportunities/_components/newsletter-whatsapp";
+import {useOpportunitiesQuery, useOpportunityCategoriesQuery, useUpcomingEventsQuery} from "@/hooks/repository/use-opportunities";
+import {GEOGRAPHIC_SCOPE_PARAM, toEnumParam} from "@/lib/gateway-enums";
 
 const HERO_CARDS = [
     {label: 'Funding Opportunities', value: '120+', color: 'bg-primary text-primary-foreground', icon: DollarSign},
@@ -64,10 +67,39 @@ export default function OpportunitiesPage() {
     const [activeLocation, setActiveLocation] = useState<string>("")
     const [activeBeneficiary, setActiveBeneficiary] = useState<string>("")
     const [searchQuery, setSearchQuery] = useState('')
+    const [searchInput, setSearchInput] = useState('')
     const [view, setView] = useState<'grid' | 'list'>('grid')
     const [email, setEmail] = useState('')
     const [deadline, setDeadline] = useState<DeadlineRange>({ preset: 'anytime', from: '', to: '' })
     const [sort, setSort] = useState<string>("Newest First")
+
+    useEffect(() => {
+        const t = setTimeout(() => setSearchQuery(searchInput), 350)
+        return () => clearTimeout(t)
+    }, [searchInput])
+
+    const {items, isLoading, isLoadingMore, isError, hasNextPage, loadMore} = useOpportunitiesQuery({
+        searchQuery,
+        category: activeCategory ? toEnumParam(activeCategory) : null,
+        targetBeneficiary: activeBeneficiary && activeBeneficiary !== 'All beneficiaries' ? toEnumParam(activeBeneficiary) : null,
+        geographicScope: activeLocation && activeLocation !== 'All locations' ? GEOGRAPHIC_SCOPE_PARAM[activeLocation] : null,
+    }, sort === 'Oldest First')
+
+    const {data: categoryTiles = [], isLoading: isLoadingCategories, isError: isErrorCategories} = useOpportunityCategoriesQuery()
+    const {data: events = [], isLoading: isLoadingEvents, isError: isErrorEvents} = useUpcomingEventsQuery(10)
+
+    const visibleOpportunities = useMemo(() => {
+        if (deadline.preset === 'anytime') return items
+        const from = deadline.from ? new Date(deadline.from) : null
+        const to = deadline.to ? new Date(deadline.to) : null
+        return items.filter((opp) => {
+            if (!opp.deadlineISO) return true
+            const d = new Date(opp.deadlineISO)
+            if (from && d < from) return false
+            if (to && d > to) return false
+            return true
+        })
+    }, [items, deadline])
 
     return (
         <div>
@@ -195,33 +227,45 @@ export default function OpportunitiesPage() {
                             View All Categories <ArrowUpRight className="h-4 w-4"/>
                         </Link>
                     </div>
-                    <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-11">
-                        {CATEGORIES.map((cat) => (
-                            <button
-                                key={cat.id}
-                                onClick={() => setActiveCategory(activeCategory === cat.id ? null : cat.id)}
-                                className={cn(
-                                    'flex flex-col items-center gap-2 rounded-2xl border p-3 text-center justify-between transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-md)]',
-                                    activeCategory === cat.id
-                                        ? 'border-primary bg-primary/10 shadow-[var(--shadow-sm)]'
-                                        : 'border-border bg-card hover:border-primary/50'
-                                )}
-                            >
-                                <span className={cn(
-                                    'flex h-9 w-9 items-center justify-center rounded-xl',
-                                    activeCategory === cat.id ? 'bg-primary/20 text-primary' : cn(cat.iconBg, cat.iconText)
-                                )}>
-                                    <cat.icon size={22}/>
-                                </span>
-                                <span
-                                    className="text-[11px] font-medium leading-tight text-foreground">{cat.label}</span>
-                                <span className={cn(
-                                    'text-[10px] font-semibold [font-family:var(--font-mono)]',
-                                    activeCategory === cat.id ? 'text-primary' : cat.countColor
-                                )}>{cat.count}+</span>
-                            </button>
-                        ))}
-                    </div>
+                    {isErrorCategories ? (
+                        <p className="text-sm text-muted-foreground">Couldn&apos;t load categories.</p>
+                    ) : isLoadingCategories ? (
+                        <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-11">
+                            {Array.from({length: 11}).map((_, i) => (
+                                <Skeleton key={i} className="h-[92px] rounded-2xl"/>
+                            ))}
+                        </div>
+                    ) : categoryTiles.length === 0 ? (
+                        <p className="text-sm text-muted-foreground">No categories yet.</p>
+                    ) : (
+                        <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-11">
+                            {categoryTiles.map((cat) => (
+                                <button
+                                    key={cat.id}
+                                    onClick={() => setActiveCategory(activeCategory === cat.id ? null : cat.id)}
+                                    className={cn(
+                                        'flex flex-col items-center gap-2 rounded-2xl border p-3 text-center justify-between transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-md)]',
+                                        activeCategory === cat.id
+                                            ? 'border-primary bg-primary/10 shadow-[var(--shadow-sm)]'
+                                            : 'border-border bg-card hover:border-primary/50'
+                                    )}
+                                >
+                                    <span className={cn(
+                                        'flex h-9 w-9 items-center justify-center rounded-xl',
+                                        activeCategory === cat.id ? 'bg-primary/20 text-primary' : cn(cat.iconBg, cat.iconText)
+                                    )}>
+                                        <cat.icon size={22}/>
+                                    </span>
+                                    <span
+                                        className="text-[11px] font-medium leading-tight text-foreground">{cat.label}</span>
+                                    <span className={cn(
+                                        'text-[10px] font-semibold [font-family:var(--font-mono)]',
+                                        activeCategory === cat.id ? 'text-primary' : cat.countColor
+                                    )}>{cat.count}</span>
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </section>
 
@@ -234,8 +278,8 @@ export default function OpportunitiesPage() {
                             <div className="relative flex-1 min-w-[200px]">
                                 <Input
                                     leftIcon={<Search className="h-4 w-4 text-muted-foreground"/>}
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    value={searchInput}
+                                    onChange={(e) => setSearchInput(e.target.value)}
                                     placeholder="Search opportunities, events, grants..."
                                     className="h-10 bg-background"
                                 />
@@ -281,7 +325,7 @@ export default function OpportunitiesPage() {
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                 <span>Sort by:</span>
-                                <SelectFilter items={['Newest First', 'Deadline Soon', 'Highest Funding']} label={'Sort by'} defaultValue={'No Sort'}
+                                <SelectFilter items={['Newest First', 'Oldest First']} label={'Sort by'} defaultValue={'Newest First'}
                                               value={sort}
                                               setValue={setSort} />
 
@@ -323,16 +367,48 @@ export default function OpportunitiesPage() {
                         </Link>
                     </div>
 
-                    <div className="relative">
-                        <div
-                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                            {OPPORTUNITIES.map((opp) => (
-                                <OpportunityCard key={opp.id} opp={opp}/>
+                    {isError ? (
+                        <div className="rounded-2xl border bg-card p-12 text-center">
+                            <p className="font-display text-lg font-bold text-foreground">Couldn&apos;t load opportunities</p>
+                            <p className="mt-1.5 text-sm text-muted-foreground">Something went wrong. Please try again in a moment.</p>
+                        </div>
+                    ) : isLoading ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            {Array.from({length: 4}).map((_, i) => (
+                                <div key={i} className="overflow-hidden rounded-2xl border bg-card">
+                                    <Skeleton className="h-44 w-full rounded-none"/>
+                                    <div className="space-y-3 p-4">
+                                        <Skeleton className="h-4 w-1/3"/>
+                                        <Skeleton className="h-5 w-2/3"/>
+                                        <Skeleton className="h-10 w-full"/>
+                                    </div>
+                                </div>
                             ))}
                         </div>
-                        <div
-                            className="pointer-events-none absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-background to-transparent"/>
-                    </div>
+                    ) : visibleOpportunities.length === 0 ? (
+                        <div className="rounded-2xl border bg-card p-12 text-center">
+                            <p className="font-display text-lg font-bold text-foreground">No opportunities match your filters</p>
+                            <p className="mt-1.5 text-sm text-muted-foreground">Try clearing some filters to see more results.</p>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="relative">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                    {visibleOpportunities.map((opp) => (
+                                        <OpportunityCard key={opp.id} opp={opp}/>
+                                    ))}
+                                </div>
+                            </div>
+                            {hasNextPage && (
+                                <div className="mt-8 flex justify-center">
+                                    <Button onClick={loadMore} disabled={isLoadingMore} variant="outline" className="rounded-xl">
+                                        {isLoadingMore && <Loader2 className="h-4 w-4 animate-spin"/>}
+                                        Load More
+                                    </Button>
+                                </div>
+                            )}
+                        </>
+                    )}
                 </div>
             </section>
 
@@ -349,11 +425,27 @@ export default function OpportunitiesPage() {
                         </Link>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                        {EVENTS.map((ev) => (
-                            <EventCard key={ev.id} ev={ev}/>
-                        ))}
-                    </div>
+                    {isErrorEvents ? (
+                        <div className="rounded-2xl border bg-card p-8 text-center">
+                            <p className="text-sm text-muted-foreground">Couldn&apos;t load upcoming events.</p>
+                        </div>
+                    ) : isLoadingEvents ? (
+                        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                            {Array.from({length: 5}).map((_, i) => (
+                                <Skeleton key={i} className="h-[132px] rounded-xl"/>
+                            ))}
+                        </div>
+                    ) : events.length === 0 ? (
+                        <div className="rounded-2xl border bg-card p-8 text-center">
+                            <p className="text-sm text-muted-foreground">No upcoming events right now — check back soon.</p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                            {events.map((ev) => (
+                                <EventCard key={ev.id} ev={ev}/>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </section>
 

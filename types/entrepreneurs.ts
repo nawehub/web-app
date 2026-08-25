@@ -1,57 +1,49 @@
-export type StageTone = "green" | "amber" | "blue" | "gray";
-
 /** Summary card shown on the vetted entrepreneurs listing. */
 export interface VettedEntrepreneur {
     id: string;
     name: string;
     initials: string;
     role: string;
-    company: string;
+    /** District chip shown above the name (top card overlay). */
+    district: string;
     logoInitial: string;
     /** Avatar gradient stops */
     c1: string;
     c2: string;
     photo?: string;
     short: string;
-    sector: string;
-    stage: string;
-    stageTone: StageTone;
+    /** Up to a handful of the entrepreneur's real skills — shown as pill chips. */
+    skills: string[];
     location: string;
     featured?: boolean;
     featuredOrder?: number;
 }
 
-/** Filters for the public entrepreneurs directory. Passed to the API as query params when live. */
+/** Filters for the public entrepreneurs directory. Passed to the API as query params. */
 export interface VettedEntrepreneursFilters {
     query?: string;
-    industry?: string;
-    stage?: string;
+    skill?: string;
     district?: string;
+    gender?: string;
+    nationality?: string;
 }
-
-export const INDUSTRY_OPTIONS = [
-    "All Industries",
-    "Agriculture",
-    "FinTech",
-    "EdTech",
-    "Clean Energy",
-    "HealthTech",
-    "Logistics",
-] as const;
-
-export const STAGE_OPTIONS = [
-    "All Stages",
-    "Idea Stage",
-    "Seed Stage",
-    "Early Stage",
-    "Growth Stage",
-] as const;
 
 export const DISTRICT_OPTIONS = [
     "All Districts",
-    "Freetown",
+    "Western Area Urban",
+    "Western Area Rural",
     "Bo",
+    "Bombali",
+    "Bonthe",
+    "Falaba",
+    "Kailahun",
+    "Kambia",
+    "Karene",
     "Kenema",
-    "Makeni",
+    "Koinadugu",
+    "Kono",
+    "Moyamba",
     "Port Loko",
+    "Pujehun",
+    "Tonkolili",
 ] as const;

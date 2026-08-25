@@ -1,44 +1,54 @@
-import { motion } from "framer-motion";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Upload, FileCheck2, X, AlertCircle, IdCard, CheckCircle2, Pencil, Eye } from "lucide-react";
-import { Icons } from "@/components/ui/icon";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import React, { useEffect, useRef, useState, useTransition } from "react";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { CustomCombobox } from "@/components/ui/combobox";
-import { CustomDatePicker } from "@/components/ui/date-picker";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { countries } from "@/utils/countries";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { registerBizForm } from "@/lib/services/business";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { BusinessFormData, steps, initData, getDate15YearsAgo, categories, businessTypes } from "@/types/business";
-import { useRouter } from "next/navigation";
-import { RegisterResponse } from "@/store/auth";
-import { useRegisterPublicBusinessMutation } from "@/hooks/repository/use-business";
-import { toast } from "sonner";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import { formatResponse } from "@/utils/format-response";
+'use client'
 
-type IdentityDocType = 'national_id' | 'passport'
+import { useEffect, useRef, useState } from "react"
+import { useRouter } from "next/navigation"
+import { useForm, useWatch } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { toast } from "sonner"
+import {
+    AlertCircle,
+    Building2,
+    Calendar as CalendarIcon,
+    CheckCircle2,
+    Copy,
+    FileCheck2,
+    IdCard,
+    Sparkles,
+    Upload,
+    X,
+} from "lucide-react"
 
-// See file header note #1 — I need to delete this once BusinessFormData itself has
-// these two fields.
-type FormDataWithIdentity = BusinessFormData & {
-    identityDocumentType: IdentityDocType
-    identityDocument: File | null
-}
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Checkbox } from "@/components/ui/checkbox"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { CustomCombobox } from "@/components/ui/combobox"
+import { CustomDatePicker } from "@/components/ui/date-picker"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { MultiStepForm, useMultiStepForm, type FormStep } from "@/components/ui/multi-step-form"
+import { countries } from "@/utils/countries"
+import { formatResponse } from "@/utils/format-response"
+import { usePublicBusinessRegistrationMutation } from "@/hooks/repository/use-business-registration"
+import {
+    BUSINESS_CATEGORIES,
+    BUSINESS_ENTITY_TYPES,
+    IDENTITY_DOC_TYPES,
+    REGISTRATION_WIZARD_STEPS,
+    businessRegistrationDefaults,
+    businessRegistrationSchema,
+    getDate15YearsAgo,
+    type BusinessRegistrationForm,
+    type BusinessRegistrationResponse,
+} from "@/types/business-registration"
 
 const MAX_FILE_BYTES = 5 * 1024 * 1024 // 5MB
 
-/** Generates a preview URL for a File via URL.createObjectURL, revoking the previous one on change/unmount so blob URLs don't leak. */
+/** Object URL for a File preview, revoked on change/unmount so blob URLs don't leak. */
 function useObjectUrl(file: File | null): string | null {
     const [url, setUrl] = useState<string | null>(null)
-
     useEffect(() => {
         if (!file) {
             setUrl(null)
@@ -48,19 +58,9 @@ function useObjectUrl(file: File | null): string | null {
         setUrl(objectUrl)
         return () => URL.revokeObjectURL(objectUrl)
     }, [file])
-
     return url
 }
 
-function StepBadge({ n }: { n: string }) {
-    return (
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/15 [font-family:var(--font-mono)] text-sm font-semibold text-primary">
-            {n}
-        </span>
-    )
-}
-
-/** Read-only label/value row for the review dialog. Renders nothing if the value is empty, so optional fields don't leave a blank row. */
 function ReviewRow({ label, value }: { label: string; value: React.ReactNode }) {
     if (!value) return null
     return (
@@ -81,22 +81,20 @@ function ReviewSection({ title, children }: { title: string; children: React.Rea
 }
 
 function IdentityDocumentUpload({
-                                    documentType,
-                                    onDocumentTypeChange,
-                                    file,
-                                    previewUrl,
-                                    onFileChange,
-                                    error,
-                                }: {
-    documentType: IdentityDocType
-    onDocumentTypeChange: (type: IdentityDocType) => void
+    docType,
+    onDocTypeChange,
+    file,
+    previewUrl,
+    onFileChange,
+    error,
+}: {
+    docType: "NATIONAL_ID" | "PASSPORT"
+    onDocTypeChange: (type: "NATIONAL_ID" | "PASSPORT") => void
     file: File | null
     previewUrl: string | null
     onFileChange: (file: File | null) => void
     error: string | null
 }) {
-    const inputRef = useRef<HTMLInputElement>(null)
-
     function handleFiles(files: FileList | null) {
         const picked = files?.[0]
         if (!picked) return
@@ -108,18 +106,18 @@ function IdentityDocumentUpload({
             <Label>Identity Document *</Label>
 
             <div className="inline-flex rounded-lg border border-border bg-muted p-1">
-                {(['national_id', 'passport'] as const).map((type) => (
+                {IDENTITY_DOC_TYPES.map(({ label, value }) => (
                     <button
-                        key={type}
+                        key={value}
                         type="button"
-                        onClick={() => onDocumentTypeChange(type)}
+                        onClick={() => onDocTypeChange(value)}
                         className={`rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
-                            documentType === type
-                                ? 'bg-card text-foreground shadow-[var(--shadow-sm)]'
-                                : 'text-muted-foreground hover:text-foreground'
+                            docType === value
+                                ? "bg-card text-foreground shadow-[var(--shadow-sm)]"
+                                : "text-muted-foreground hover:text-foreground"
                         }`}
                     >
-                        {type === 'national_id' ? 'National ID' : 'Passport'}
+                        {label}
                     </button>
                 ))}
             </div>
@@ -136,14 +134,11 @@ function IdentityDocumentUpload({
                     <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/15 text-primary">
                         <Upload className="h-5 w-5" />
                     </span>
-                    <span className="text-sm font-medium text-foreground">
-                        Click to upload or drag and drop
-                    </span>
+                    <span className="text-sm font-medium text-foreground">Click to upload or drag and drop</span>
                     <span className="text-xs text-muted-foreground">
-                        A photo of your {documentType === 'national_id' ? 'National ID' : 'Passport'} &mdash; JPG, PNG or WEBP, up to 5MB
+                        A photo of your {docType === "NATIONAL_ID" ? "National ID" : "Passport"} &mdash; JPG, PNG or WEBP, up to 5MB
                     </span>
                     <input
-                        ref={inputRef}
                         type="file"
                         accept="image/png,image/jpeg,image/webp"
                         className="hidden"
@@ -155,11 +150,7 @@ function IdentityDocumentUpload({
                     <div className="flex min-w-0 items-center gap-3">
                         {previewUrl ? (
                             // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                                src={previewUrl}
-                                alt="Identity document preview"
-                                className="h-14 w-14 shrink-0 rounded-lg border border-border object-cover"
-                            />
+                            <img src={previewUrl} alt="Identity document preview" className="h-14 w-14 shrink-0 rounded-lg border border-border object-cover" />
                         ) : (
                             <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
                                 <FileCheck2 className="h-5 w-5" />
@@ -196,33 +187,37 @@ function IdentityDocumentUpload({
     )
 }
 
+const BUSINESS_FIELDS = ["businessName", "businessCategory", "businessEntityType", "businessAddress", "businessActivities"] as const
+const OWNER_FIELDS = [
+    "ownerName", "placeOfBirth", "dateOfBirth", "gender", "ownerAddress",
+    "contactNumber", "email", "mothersName", "nationality",
+] as const
+const IDENTITY_FIELDS = ["ninPassport", "occupation", "docType", "isAlreadyRegistered", "registrationNumber", "registerDate"] as const
+
 export default function RegisterForm() {
-    const [isPending, startTransition] = useTransition()
-    const [formData, setFormData] = useState<FormDataWithIdentity>({
-        ...initData,
-        identityDocumentType: 'national_id',
-        identityDocument: null,
-    })
-    const [fileError, setFileError] = useState<string | null>(null)
-    const [isReviewOpen, setIsReviewOpen] = useState(false)
-    const identityPreviewUrl = useObjectUrl(formData.identityDocument)
     const router = useRouter()
-    const register = useRegisterPublicBusinessMutation();
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [message, setMessage] = useState("");
-    const [title, setTitle] = useState("Registering your business");
-    const [typeDescription, setTypeDescription] = useState<string[]>([]);
+    const wizard = useMultiStepForm(REGISTRATION_WIZARD_STEPS.length)
+    const register = usePublicBusinessRegistrationMutation()
 
-    const form = useForm<z.infer<typeof registerBizForm>>({
-        resolver: zodResolver(registerBizForm)
-    });
+    const [entityDescriptions, setEntityDescriptions] = useState<string[]>([])
+    const [idScan, setIdScan] = useState<File | null>(null)
+    const [fileError, setFileError] = useState<string | null>(null)
+    const idScanPreviewUrl = useObjectUrl(idScan)
+    const [result, setResult] = useState<BusinessRegistrationResponse | null>(null)
 
-    const updateFormData = (field: keyof FormDataWithIdentity, value: any) => {
-        setFormData((prev) => ({ ...prev, [field]: value }))
-    }
+    const form = useForm<BusinessRegistrationForm>({
+        resolver: zodResolver(businessRegistrationSchema),
+        defaultValues: businessRegistrationDefaults,
+        mode: "onBlur",
+    })
+    // Narrowly scoped: only this field needs to re-render the wizard live as the user
+    // types elsewhere (it gates the registration-number/date reveal on step 3). Watching
+    // the whole form here would re-render (and rebuild all 4 steps' content, including
+    // every other step's live Controllers) on every keystroke in any field.
+    const isAlreadyRegistered = useWatch({ control: form.control, name: "isAlreadyRegistered" })
 
-    const handleFileChange = (file: File | null) => {
-        if (file && !file.type.startsWith('image/')) {
+    function handleFileChange(file: File | null) {
+        if (file && !file.type.startsWith("image/")) {
             setFileError("Please upload an image file (JPG, PNG, or WEBP) — other file types aren't supported.")
             return
         }
@@ -231,634 +226,533 @@ export default function RegisterForm() {
             return
         }
         setFileError(null)
-        updateFormData('identityDocument', file)
+        setIdScan(file)
     }
 
-    const openReview = (event: React.MouseEvent) => {
-        event.preventDefault();
-        setIsReviewOpen(true);
+    async function validateIdentityStep() {
+        const ok = await form.trigger(IDENTITY_FIELDS as unknown as (keyof BusinessRegistrationForm)[])
+        if (!idScan) {
+            setFileError("Please upload a photo of your identity document.")
+            return false
+        }
+        return ok
     }
 
-    const confirmAndSubmit = () => {
-        setIsReviewOpen(false);
-        setIsDialogOpen(true);
-        startTransition(async () => {
-            // NOTE: this still sends `data` as a plain object the same way the
-            // form did before — but `identityDocument` is now a File, which a
-            // JSON request body can't carry. See file header note #3:
-            // useRegisterPublicBusinessMutation likely needs a multipart/
-            // form-data path for this to actually upload.
-            const data: z.infer<typeof registerBizForm> = {
-                ...formData,
-                dateOfBirth: new Date(formData.dateOfBirth),
-                gender: formData.gender as z.infer<typeof registerBizForm>["gender"],
-                isPublicRegister: true
-            }
-            try {
-                const response: RegisterResponse = await register.mutateAsync(data);
-                toast('Registration Successful', {
-                    description: response.message,
-                    className: "bg-[hsl(var(--color-success))] text-white",
-                    duration: 10000,
-                });
-                form.reset();
-                setMessage(response.message);
-                setTitle("Registration Successful");
-            } catch (error) {
-                toast('Registration failed', {
-                    description: `${error instanceof Error ? formatResponse(error.message) : 'An unknown error occurred'}`,
-                    className: "bg-[hsl(var(--color-error))] text-white",
-                });
-            }
-        });
-    };
+    async function onSubmit() {
+        const data = form.getValues()
+        try {
+            const response = await register.mutateAsync({ data, idScan })
+            setResult(response)
+            wizard.nextStep()
+        } catch (error) {
+            toast("Registration failed", {
+                description: error instanceof Error ? formatResponse(error.message) || error.message : "An unknown error occurred",
+                className: "bg-[hsl(var(--color-error))] text-white",
+            })
+        }
+    }
 
-    const isStepValid = () => {
-        return formData.businessName && formData.businessAddress && formData.businessActivities && formData.businessEntityType && formData.category && formData.ownerName && formData.ownerAddress && formData.placeOfBirth && formData.dateOfBirth
-            && formData.nationality && formData.mothersName && formData.email && formData.contactNumber && formData.gender && formData.ninOrPassport && formData.identityDocument;
+    const steps: FormStep[] = [
+        {
+            id: REGISTRATION_WIZARD_STEPS[0].id,
+            title: REGISTRATION_WIZARD_STEPS[0].title,
+            description: REGISTRATION_WIZARD_STEPS[0].description,
+            validate: () => form.trigger(BUSINESS_FIELDS as unknown as (keyof BusinessRegistrationForm)[]),
+            content: (
+                <div className="space-y-5">
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                        <FormField
+                            name="businessName"
+                            control={form.control}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Business Name *</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} placeholder="e.g. AgriSalone Ltd." />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            name="businessCategory"
+                            control={form.control}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Business Category *</FormLabel>
+                                    <FormControl>
+                                        <CustomCombobox
+                                            data={BUSINESS_CATEGORIES}
+                                            searchField="label"
+                                            displayField="label"
+                                            valueField="label"
+                                            value={field.value ?? ""}
+                                            placeholder="Select your business category"
+                                            searchPlaceholder="Search category..."
+                                            onSelectAction={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+
+                    <FormField
+                        name="businessEntityType"
+                        control={form.control}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Business Entity Type *</FormLabel>
+                                <FormControl>
+                                    <CustomCombobox
+                                        data={BUSINESS_ENTITY_TYPES}
+                                        searchField="name"
+                                        displayField="name"
+                                        valueField="name"
+                                        value={field.value ?? ""}
+                                        placeholder="Select your business entity type"
+                                        searchPlaceholder="Search entity type..."
+                                        onSelectAction={(value) => {
+                                            field.onChange(value)
+                                            setEntityDescriptions(BUSINESS_ENTITY_TYPES.find((t) => t.name === value)?.descriptions ?? [])
+                                        }}
+                                    />
+                                </FormControl>
+                                {entityDescriptions.length > 0 && (
+                                    <div className="space-y-1 rounded-xl bg-muted/50 p-3">
+                                        {entityDescriptions.map((d, i) => (
+                                            <p key={i} className="text-xs leading-relaxed text-muted-foreground">{d}</p>
+                                        ))}
+                                    </div>
+                                )}
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        name="businessAddress"
+                        control={form.control}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Business Address *</FormLabel>
+                                <FormControl>
+                                    <Textarea {...field} rows={2} placeholder="Street, town, district" />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        name="businessActivities"
+                        control={form.control}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Business Activities *</FormLabel>
+                                <FormControl>
+                                    <Textarea {...field} rows={5} placeholder="Briefly describe what the business does" />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
+            ),
+        },
+        {
+            id: REGISTRATION_WIZARD_STEPS[1].id,
+            title: REGISTRATION_WIZARD_STEPS[1].title,
+            description: REGISTRATION_WIZARD_STEPS[1].description,
+            validate: () => form.trigger(OWNER_FIELDS as unknown as (keyof BusinessRegistrationForm)[]),
+            content: (
+                <div className="space-y-5">
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                        <FormField
+                            name="ownerName"
+                            control={form.control}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Owner Name *</FormLabel>
+                                    <FormControl><Input {...field} placeholder="Full legal name" /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            name="placeOfBirth"
+                            control={form.control}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Place of Birth *</FormLabel>
+                                    <FormControl><Input {...field} placeholder="Town / city" /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                        <FormField
+                            name="dateOfBirth"
+                            control={form.control}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Date of Birth *</FormLabel>
+                                    <FormControl>
+                                        <CustomDatePicker
+                                            date={field.value}
+                                            setDateAction={field.onChange}
+                                            isRequired
+                                            isDisable={(date) => date > getDate15YearsAgo() || date < new Date("1900-01-01")}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            name="gender"
+                            control={form.control}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Gender *</FormLabel>
+                                    <FormControl>
+                                        <RadioGroup onValueChange={field.onChange} value={field.value} className="flex h-11 items-center gap-6">
+                                            {(["Male", "Female"] as const).map((gender) => (
+                                                <div className="flex items-center space-x-2" key={gender}>
+                                                    <RadioGroupItem value={gender} id={`gender-${gender}`} />
+                                                    <Label htmlFor={`gender-${gender}`} className="font-normal">{gender}</Label>
+                                                </div>
+                                            ))}
+                                        </RadioGroup>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+
+                    <FormField
+                        name="ownerAddress"
+                        control={form.control}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Owner Address *</FormLabel>
+                                <FormControl><Input {...field} placeholder="Current residential address" /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                        <FormField
+                            name="contactNumber"
+                            control={form.control}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Owner&rsquo;s Contact Number *</FormLabel>
+                                    <FormControl><Input {...field} placeholder="+232 ..." /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            name="email"
+                            control={form.control}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Owner or Business Email *</FormLabel>
+                                    <FormControl><Input {...field} type="email" placeholder="name@example.com" /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                        <FormField
+                            name="mothersName"
+                            control={form.control}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Mother&rsquo;s Name *</FormLabel>
+                                    <FormControl><Input {...field} placeholder="Mother's full name" /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            name="nationality"
+                            control={form.control}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Owner&rsquo;s Nationality *</FormLabel>
+                                    <FormControl>
+                                        <CustomCombobox
+                                            data={countries}
+                                            searchField="name"
+                                            displayField="name"
+                                            valueField="name"
+                                            value={field.value ?? ""}
+                                            placeholder="Select your nationality"
+                                            searchPlaceholder="Search country..."
+                                            onSelectAction={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+                </div>
+            ),
+        },
+        {
+            id: REGISTRATION_WIZARD_STEPS[2].id,
+            title: REGISTRATION_WIZARD_STEPS[2].title,
+            description: REGISTRATION_WIZARD_STEPS[2].description,
+            validate: validateIdentityStep,
+            content: (
+                <div className="space-y-6">
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                        <FormField
+                            name="ninPassport"
+                            control={form.control}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>
+                                        <span className="inline-flex items-center gap-1.5">
+                                            <IdCard className="h-3.5 w-3.5" /> NIN / Passport Number *
+                                        </span>
+                                    </FormLabel>
+                                    <FormControl><Input {...field} placeholder="Enter your NIN or passport number" /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            name="occupation"
+                            control={form.control}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Occupation</FormLabel>
+                                    <FormControl><Input {...field} placeholder="What is your occupation?" /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+
+                    <FormField
+                        name="isAlreadyRegistered"
+                        control={form.control}
+                        render={({ field }) => (
+                            <div className="flex items-start gap-3 rounded-2xl border border-border bg-muted/30 p-4">
+                                <Checkbox id="isAlreadyRegistered" checked={field.value} onCheckedChange={field.onChange} className="mt-0.5" />
+                                <Label htmlFor="isAlreadyRegistered" className="cursor-pointer font-normal leading-snug">
+                                    This business is already formally registered — I have a registration number and date.
+                                </Label>
+                            </div>
+                        )}
+                    />
+
+                    {isAlreadyRegistered && (
+                        <div className="grid animate-fade-in-up grid-cols-1 gap-5 rounded-2xl border border-border bg-card p-4 md:grid-cols-2">
+                            <FormField
+                                name="registrationNumber"
+                                control={form.control}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Registration Number *</FormLabel>
+                                        <FormControl><Input {...field} placeholder="e.g. BN-2024-00123" /></FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                name="registerDate"
+                                control={form.control}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            <span className="inline-flex items-center gap-1.5"><CalendarIcon className="h-3.5 w-3.5" /> Registration Date *</span>
+                                        </FormLabel>
+                                        <FormControl>
+                                            <CustomDatePicker date={field.value} setDateAction={field.onChange} isRequired isDisable={(date) => date > new Date()} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                    )}
+
+                    <FormField
+                        name="docType"
+                        control={form.control}
+                        render={({ field }) => (
+                            <IdentityDocumentUpload
+                                docType={field.value}
+                                onDocTypeChange={field.onChange}
+                                file={idScan}
+                                previewUrl={idScanPreviewUrl}
+                                onFileChange={handleFileChange}
+                                error={fileError}
+                            />
+                        )}
+                    />
+                </div>
+            ),
+        },
+        {
+            id: REGISTRATION_WIZARD_STEPS[3].id,
+            title: REGISTRATION_WIZARD_STEPS[3].title,
+            description: REGISTRATION_WIZARD_STEPS[3].description,
+            // A plain snapshot (not a subscription) - the review step only needs to be
+            // correct at the moment it's shown, which is whenever this array is rebuilt
+            // (every render), not live on every keystroke elsewhere.
+            content: (() => {
+                const reviewValues = form.getValues()
+                return (
+                <div className="space-y-4">
+                    <ReviewSection title="Business Information">
+                        <ReviewRow label="Business Name" value={reviewValues.businessName} />
+                        <ReviewRow label="Category" value={reviewValues.businessCategory} />
+                        <ReviewRow label="Entity Type" value={reviewValues.businessEntityType} />
+                        <ReviewRow label="Address" value={reviewValues.businessAddress} />
+                        <ReviewRow label="Activities" value={reviewValues.businessActivities} />
+                    </ReviewSection>
+
+                    <ReviewSection title="Owner Information">
+                        <ReviewRow label="Owner Name" value={reviewValues.ownerName} />
+                        <ReviewRow label="Place of Birth" value={reviewValues.placeOfBirth} />
+                        <ReviewRow label="Date of Birth" value={reviewValues.dateOfBirth?.toLocaleDateString()} />
+                        <ReviewRow label="Gender" value={reviewValues.gender} />
+                        <ReviewRow label="Owner Address" value={reviewValues.ownerAddress} />
+                        <ReviewRow label="Contact Number" value={reviewValues.contactNumber} />
+                        <ReviewRow label="Email" value={reviewValues.email} />
+                        <ReviewRow label="Mother's Name" value={reviewValues.mothersName} />
+                        <ReviewRow label="Nationality" value={reviewValues.nationality} />
+                    </ReviewSection>
+
+                    <ReviewSection title="Identity & Registration Status">
+                        <ReviewRow label="NIN/Passport Number" value={reviewValues.ninPassport} />
+                        <ReviewRow label="Occupation" value={reviewValues.occupation} />
+                        <ReviewRow label="Document Type" value={IDENTITY_DOC_TYPES.find((d) => d.value === reviewValues.docType)?.label} />
+                        <ReviewRow label="Already Registered" value={reviewValues.isAlreadyRegistered ? "Yes" : "No"} />
+                        {reviewValues.isAlreadyRegistered && (
+                            <>
+                                <ReviewRow label="Registration Number" value={reviewValues.registrationNumber} />
+                                <ReviewRow label="Registration Date" value={reviewValues.registerDate?.toLocaleDateString()} />
+                            </>
+                        )}
+                        {idScanPreviewUrl && (
+                            <div className="pt-3">
+                                <span className="text-sm text-muted-foreground">Uploaded Document</span>
+                                <div className="mt-2 overflow-hidden rounded-xl border border-border bg-muted">
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img src={idScanPreviewUrl} alt="Uploaded identity document" className="max-h-72 w-full object-contain" />
+                                </div>
+                            </div>
+                        )}
+                    </ReviewSection>
+
+                    <FormField
+                        name="createNawehubAccount"
+                        control={form.control}
+                        render={({ field }) => (
+                            <div className="flex items-start gap-3 rounded-2xl border border-primary/30 bg-primary/5 p-4">
+                                <Checkbox id="createNawehubAccount" checked={field.value} onCheckedChange={field.onChange} className="mt-0.5" />
+                                <Label htmlFor="createNawehubAccount" className="cursor-pointer font-normal leading-snug">
+                                    <span className="flex items-center gap-1.5 font-medium text-foreground">
+                                        <Sparkles className="h-3.5 w-3.5 text-primary" /> Create a NaweHub account for me
+                                    </span>
+                                    <span className="mt-0.5 block text-sm text-muted-foreground">
+                                        We&rsquo;ll email login credentials so you can track your registration status and access the dashboard.
+                                    </span>
+                                </Label>
+                            </div>
+                        )}
+                    />
+                </div>
+                )
+            })(),
+        },
+    ]
+
+    if (result) {
+        return (
+            <div className="mx-auto max-w-2xl">
+                <Card className="border-primary/20">
+                    <CardContent className="flex flex-col items-center gap-5 py-12 text-center">
+                        <span className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/15 text-primary">
+                            <CheckCircle2 className="h-8 w-8" />
+                        </span>
+                        <div>
+                            <h2 className="text-2xl font-semibold text-foreground [font-family:var(--font-display)]">
+                                Registration Submitted
+                            </h2>
+                            <p className="mt-2 max-w-md text-muted-foreground">
+                                {result.businessName} has been submitted for review.
+                                {form.getValues("createNawehubAccount")
+                                    ? " Credentials to access your dashboard have been sent to your email."
+                                    : " You can follow up using the tracking ID below."}
+                            </p>
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={() => {
+                                navigator.clipboard?.writeText(result.trackingId)
+                                toast("Tracking ID copied")
+                            }}
+                            className="flex items-center gap-2 rounded-xl border border-border bg-muted/40 px-4 py-3 font-mono text-sm text-foreground transition-colors hover:border-primary/40"
+                        >
+                            <Building2 className="h-4 w-4 text-primary" />
+                            {result.trackingId}
+                            <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+                        </button>
+                        <p className="text-xs text-muted-foreground">Save this tracking ID — you&rsquo;ll need it to check your registration status.</p>
+
+                        <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
+                            <Button variant="outline" onClick={() => router.push("/")}>Back to Home</Button>
+                            <Button variant="outline" onClick={() => router.push(`/web/register-business/track?trackingId=${encodeURIComponent(result.trackingId)}`)}>
+                                Track This Registration
+                            </Button>
+                            {form.getValues("createNawehubAccount") && (
+                                <Button onClick={() => router.push("/login")}>Sign In</Button>
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+        )
     }
 
     return (
-        <div className="mx-auto max-w-6xl">
-            {/* Header */}
-            <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+        <div className="mx-auto max-w-4xl">
+            <div className="mb-8 text-center">
                 <h1 className="text-3xl font-semibold text-foreground [font-family:var(--font-display)]">
                     Business Registration
                 </h1>
                 <p className="mt-2 text-muted-foreground">Fill in the details below to register your new business</p>
+            </div>
 
-                {/* Step map */}
-                <div className="mt-6 flex flex-wrap items-center gap-3">
-                    {steps.map((step, idx) => (
-                        <div
-                            key={step.title}
-                            className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm"
-                        >
-                            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/15 [font-family:var(--font-mono)] text-xs font-semibold text-primary">
-                                {idx + 1}
-                            </span>
-                            <span className="font-medium text-foreground">{step.title}</span>
-                        </div>
-                    ))}
-                </div>
-
-                <Form {...form}>
-                    <motion.form
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="mt-6 space-y-4"
-                    >
-                        <Card>
-                            <CardHeader>
-                                <div className="flex items-center gap-3">
-                                    <StepBadge n="01" />
-                                    <div>
-                                        <CardTitle className="[font-family:var(--font-display)]">{steps[0].title}</CardTitle>
-                                        <CardDescription>{steps[0].description}</CardDescription>
-                                    </div>
-                                </div>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="mt-3 space-y-4">
-                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                        <FormField
-                                            name={'businessName'}
-                                            control={form.control}
-                                            render={({ field }) => (
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="businessName">Business Name *</Label>
-                                                    <Input
-                                                        id="businessName"
-                                                        {...field}
-                                                        value={formData.businessName}
-                                                        onChange={(e) => updateFormData('businessName', e.target.value)}
-                                                        type={'text'}
-                                                        required
-                                                        placeholder="Enter business name"
-                                                    />
-                                                </div>
-                                            )}
-                                        />
-
-                                        <FormField
-                                            name={'category'}
-                                            control={form.control}
-                                            render={({ field }) => (
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="category">Business Category</Label>
-                                                    <CustomCombobox
-                                                        {...field}
-                                                        placeholder="Select your business category"
-                                                        searchPlaceholder={'Search category...'}
-                                                        data={categories}
-                                                        searchField={'name'}
-                                                        displayField={'name'}
-                                                        valueField={'name'}
-                                                        onSelectAction={(value) => {
-                                                            updateFormData('category', value)
-                                                            field.onChange(value)
-                                                        }} />
-                                                </div>
-                                            )}
-                                        />
-                                    </div>
-                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                        <FormField
-                                            name={'businessEntityType'}
-                                            control={form.control}
-                                            render={({ field }) => (
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="category">Business Entity Type</Label>
-                                                    <CustomCombobox
-                                                        {...field}
-                                                        placeholder="Select your business category"
-                                                        searchPlaceholder={'Search business entity type...'}
-                                                        data={businessTypes}
-                                                        searchField={'name'}
-                                                        displayField={'name'}
-                                                        valueField={'name'}
-                                                        onSelectAction={(value) => {
-                                                            updateFormData('businessEntityType', value)
-                                                            field.onChange(value)
-                                                            setTypeDescription(businessTypes.filter(type => {
-                                                                return type.name == value
-                                                            })[0].descriptions)
-                                                        }} />
-                                                    {typeDescription.length > 0 && (
-                                                        typeDescription.map((description, index) => (
-                                                            <p key={index} className="text-xs text-muted-foreground">
-                                                                {description}
-                                                            </p>
-                                                        ))
-                                                    )}
-                                                </div>
-                                            )}
-                                        />
-                                        <FormField
-                                            name={'businessAddress'}
-                                            control={form.control}
-                                            render={({ field }) => (
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="businessAddress">Business Address</Label>
-                                                    <Textarea
-                                                        id="businessAddress"
-                                                        {...field}
-                                                        value={formData.businessAddress}
-                                                        onChange={(e) => updateFormData('businessAddress', e.target.value)}
-                                                        required
-                                                        rows={2}
-                                                        placeholder="Enter business address"
-                                                    />
-                                                </div>
-                                            )}
-                                        />
-                                    </div>
-                                    <FormField
-                                        name={'businessActivities'}
-                                        control={form.control}
-                                        render={({ field }) => (
-                                            <div className="space-y-2">
-                                                <Label htmlFor="businessActivities">Business Activities</Label>
-                                                <Textarea
-                                                    id="businessActivities"
-                                                    {...field}
-                                                    value={formData.businessActivities}
-                                                    onChange={(e) => updateFormData('businessActivities', e.target.value)}
-                                                    required
-                                                    placeholder="Enter business activities here..."
-                                                    rows={6}
-                                                />
-                                                <p className="text-xs text-muted-foreground">
-                                                    Please provide a brief description of your business activities.
-                                                </p>
-                                            </div>
-                                        )}
-                                    />
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        <Card>
-                            <CardHeader>
-                                <div className="flex items-center gap-3">
-                                    <StepBadge n="02" />
-                                    <div>
-                                        <CardTitle className="[font-family:var(--font-display)]">{steps[1].title}</CardTitle>
-                                        <CardDescription>{steps[1].description}</CardDescription>
-                                    </div>
-                                </div>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="mt-3 space-y-4">
-                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                        <FormField
-                                            name={'ownerName'}
-                                            control={form.control}
-                                            render={({ field }) => (
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="ownerName">Owner Name *</Label>
-                                                    <Input
-                                                        id="ownerName"
-                                                        {...field}
-                                                        value={formData.ownerName}
-                                                        onChange={(e) => updateFormData('ownerName', e.target.value)}
-                                                        required
-                                                        type={'text'}
-                                                        placeholder="Enter business owner name"
-                                                    />
-                                                </div>
-                                            )}
-                                        />
-
-                                        <FormField
-                                            name={'placeOfBirth'}
-                                            control={form.control}
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormControl>
-                                                        <div className="space-y-2">
-                                                            <Label htmlFor="placeOfBirth">Place of Birth *</Label>
-                                                            <Input
-                                                                id="placeOfBirth"
-                                                                {...field}
-                                                                value={formData.placeOfBirth}
-                                                                onChange={(e) => updateFormData('placeOfBirth', e.target.value)}
-                                                                required
-                                                                type={'text'}
-                                                                placeholder="Enter business owner address"
-                                                            />
-                                                        </div>
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </div>
-
-                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                        <FormField
-                                            name={'dateOfBirth'}
-                                            control={form.control}
-                                            render={({ field }) => (
-                                                <FormItem className={'space-y-2'}>
-                                                    <FormLabel>Date of Birth *</FormLabel>
-                                                    <FormControl>
-                                                        <div>
-                                                            <CustomDatePicker
-                                                                date={field.value}
-                                                                setDateAction={(e) => {
-                                                                    field.onChange(e)
-                                                                    updateFormData('dateOfBirth', e)
-                                                                }}
-                                                                isRequired={false}
-                                                                isDisable={(date) =>
-                                                                    date > getDate15YearsAgo() || date < new Date("1900-01-01")
-                                                                }
-                                                            />
-                                                        </div>
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-
-                                        <FormField
-                                            control={form.control}
-                                            name="gender"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <Label>Gender <br /> <span className={"pb-4 text-xs"}>Select owner gender</span></Label>
-                                                    <FormControl>
-                                                        <RadioGroup
-                                                            onValueChange={(e) => {
-                                                                field.onChange(e)
-                                                                updateFormData('gender', e)
-                                                            }}
-                                                            defaultValue={field.value}
-                                                        >
-                                                            {['Male', 'Female'].map((gender, index) => (
-                                                                <div className='flex flex-row items-center space-x-3' key={index}>
-                                                                    <RadioGroupItem value={gender} />
-                                                                    <Label htmlFor={gender} className='font-normal'>
-                                                                        {gender}
-                                                                    </Label>
-                                                                </div>
-                                                            ))}
-                                                        </RadioGroup>
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <FormField
-                                            name={'ownerAddress'}
-                                            control={form.control}
-                                            render={({ field }) => (
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="ownerAddress">Owner Address *</Label>
-                                                    <Input
-                                                        id="ownerAddress"
-                                                        {...field}
-                                                        value={formData.ownerAddress}
-                                                        onChange={(e) => updateFormData('ownerAddress', e.target.value)}
-                                                        required
-                                                        type={'text'}
-                                                        placeholder="Enter business owner address"
-                                                    />
-                                                </div>
-                                            )}
-                                        />
-                                    </div>
-
-                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                        <FormField
-                                            name={'contactNumber'}
-                                            control={form.control}
-                                            render={({ field }) => (
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="contactNumber">Owner's Contact Number *</Label>
-                                                    <Input
-                                                        id="contactNumber"
-                                                        {...field}
-                                                        value={formData.contactNumber}
-                                                        onChange={(e) => updateFormData('contactNumber', e.target.value)}
-                                                        required
-                                                        type={'text'}
-                                                        placeholder="Enter contact number"
-                                                    />
-                                                </div>
-                                            )}
-                                        />
-
-                                        <FormField
-                                            name={'email'}
-                                            control={form.control}
-                                            render={({ field }) => (
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="email">Owner Or Business Email *</Label>
-                                                    <Input
-                                                        id="email"
-                                                        {...field}
-                                                        value={formData.email}
-                                                        onChange={(e) => updateFormData('email', e.target.value)}
-                                                        required
-                                                        type={'text'}
-                                                        placeholder="Enter email"
-                                                    />
-                                                </div>
-                                            )}
-                                        />
-                                    </div>
-
-                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                        <FormField
-                                            name={'mothersName'}
-                                            control={form.control}
-                                            render={({ field }) => (
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="mothersName">Mother's Name *</Label>
-                                                    <Input
-                                                        id="mothersName"
-                                                        {...field}
-                                                        value={formData.mothersName}
-                                                        onChange={(e) => updateFormData('mothersName', e.target.value)}
-                                                        required
-                                                        type={'text'}
-                                                        placeholder="Enter mother's name"
-                                                    />
-                                                </div>
-                                            )}
-                                        />
-
-                                        <FormField
-                                            name={'nationality'}
-                                            control={form.control}
-                                            render={({ field }) => (
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="nationality">Owner's Nationality</Label>
-                                                    <CustomCombobox
-                                                        {...field}
-                                                        placeholder="Select your nationality"
-                                                        searchPlaceholder={'Search country...'}
-                                                        data={countries}
-                                                        searchField={'name'}
-                                                        displayField={'name'}
-                                                        valueField={'name'}
-                                                        value={formData.nationality}
-                                                        onSelectAction={(value) => {
-                                                            field.onChange(value)
-                                                            updateFormData('nationality', value)
-                                                        }} />
-                                                </div>
-                                            )}
-                                        />
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        <Card>
-                            <CardHeader>
-                                <div className="flex items-center gap-3">
-                                    <StepBadge n="03" />
-                                    <div>
-                                        <CardTitle className="[font-family:var(--font-display)]">{steps[2].title}</CardTitle>
-                                        <CardDescription>{steps[2].description}</CardDescription>
-                                    </div>
-                                </div>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="mt-3 space-y-6">
-                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                        <FormField
-                                            name={'ninOrPassport'}
-                                            control={form.control}
-                                            render={({ field }) => (
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="ninOrPassport">
-                                                        <span className="inline-flex items-center gap-1.5">
-                                                            <IdCard className="h-3.5 w-3.5" />
-                                                            Nin/Passport Number *
-                                                        </span>
-                                                    </Label>
-                                                    <Input
-                                                        id="ninOrPassport"
-                                                        {...field}
-                                                        value={formData.ninOrPassport}
-                                                        onChange={(e) => updateFormData('ninOrPassport', e.target.value)}
-                                                        type={'text'}
-                                                        required
-                                                        placeholder="Enter your NIN or PASSPORT number"
-                                                    />
-                                                </div>
-                                            )}
-                                        />
-
-                                        <FormField
-                                            name={'occupation'}
-                                            control={form.control}
-                                            render={({ field }) => (
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="occupation">Occupation</Label>
-                                                    <Input
-                                                        id="occupation"
-                                                        {...field}
-                                                        value={formData.occupation}
-                                                        onChange={(e) => updateFormData('occupation', e.target.value)}
-                                                        type={'text'}
-                                                        required
-                                                        placeholder="What is your occupation?"
-                                                    />
-                                                </div>
-                                            )}
-                                        />
-                                    </div>
-
-                                    <IdentityDocumentUpload
-                                        documentType={formData.identityDocumentType}
-                                        onDocumentTypeChange={(type) => updateFormData('identityDocumentType', type)}
-                                        file={formData.identityDocument}
-                                        previewUrl={identityPreviewUrl}
-                                        onFileChange={handleFileChange}
-                                        error={fileError}
-                                    />
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        <div className="mt-6 flex items-end justify-end space-x-2">
-                            <Button variant="outline" onClick={() => router.push("/")}>
-                                Cancel
-                            </Button>
-
-                            <Button
-                                onClick={(event) => openReview(event)}
-                                disabled={!isStepValid() || isPending}
-                                className="bg-primary text-primary-foreground hover:bg-primary/90"
-                            >
-                                <Eye className={'mr-2 h-4 w-4'} />
-                                Review & Submit
-                            </Button>
-                        </div>
-                    </motion.form>
-                </Form>
-            </motion.div>
-
-            <Dialog open={isReviewOpen} onOpenChange={setIsReviewOpen}>
-                <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
-                    <DialogHeader>
-                        <DialogTitle className="text-2xl font-medium [font-family:var(--font-display)]">
-                            Review Your Information
-                        </DialogTitle>
-                        <DialogDescription>
-                            Double check everything below before submitting — you can go back and edit
-                            anything that isn&rsquo;t right.
-                        </DialogDescription>
-                    </DialogHeader>
-
-                    <div className="space-y-4">
-                        <ReviewSection title="Business Information">
-                            <ReviewRow label="Business Name" value={formData.businessName} />
-                            <ReviewRow label="Category" value={formData.category} />
-                            <ReviewRow label="Entity Type" value={formData.businessEntityType} />
-                            <ReviewRow label="Address" value={formData.businessAddress} />
-                            <ReviewRow label="Activities" value={formData.businessActivities} />
-                        </ReviewSection>
-
-                        <ReviewSection title="Owner Information">
-                            <ReviewRow label="Owner Name" value={formData.ownerName} />
-                            <ReviewRow label="Place of Birth" value={formData.placeOfBirth} />
-                            <ReviewRow
-                                label="Date of Birth"
-                                value={formData.dateOfBirth ? new Date(formData.dateOfBirth).toLocaleDateString() : ''}
-                            />
-                            <ReviewRow label="Gender" value={formData.gender} />
-                            <ReviewRow label="Owner Address" value={formData.ownerAddress} />
-                            <ReviewRow label="Contact Number" value={formData.contactNumber} />
-                            <ReviewRow label="Email" value={formData.email} />
-                            <ReviewRow label="Mother's Name" value={formData.mothersName} />
-                            <ReviewRow label="Nationality" value={formData.nationality} />
-                        </ReviewSection>
-
-                        <ReviewSection title="Identity & Occupation">
-                            <ReviewRow label="NIN/Passport Number" value={formData.ninOrPassport} />
-                            <ReviewRow label="Occupation" value={formData.occupation} />
-                            <ReviewRow
-                                label="Document Type"
-                                value={formData.identityDocumentType === 'national_id' ? 'National ID' : 'Passport'}
-                            />
-
-                            {identityPreviewUrl && (
-                                <div className="pt-3">
-                                    <span className="text-sm text-muted-foreground">Uploaded Document</span>
-                                    <div className="mt-2 overflow-hidden rounded-xl border border-border bg-muted">
-                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                        <img
-                                            src={identityPreviewUrl}
-                                            alt="Uploaded identity document"
-                                            className="max-h-80 w-full object-contain"
-                                        />
-                                    </div>
-                                </div>
-                            )}
-                        </ReviewSection>
-                    </div>
-
-                    <div className="mt-2 flex flex-col-reverse justify-end gap-2 sm:flex-row">
-                        <Button variant="outline" onClick={() => setIsReviewOpen(false)}>
-                            <Pencil className="mr-2 h-4 w-4" />
-                            Back to Edit
-                        </Button>
-                        <Button
-                            onClick={confirmAndSubmit}
-                            disabled={isPending}
-                            className="bg-primary text-primary-foreground hover:bg-primary/90"
-                        >
-                            <CheckCircle2 className="mr-2 h-4 w-4" />
-                            Confirm & Submit
-                        </Button>
-                    </div>
-                </DialogContent>
-            </Dialog>
-
-            <Dialog open={isDialogOpen} modal={false}>
-                <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
-                    <DialogHeader className={"text-center"}>
-                        <DialogTitle className="text-center text-2xl font-medium [font-family:var(--font-display)]">{title}</DialogTitle>
-                        <DialogDescription className={"text-center"}>
-                            {isPending ? "Sit back and relax while we register your business. This may take a few seconds." : "Boom!! Your business is one step closer to completion"}
-                        </DialogDescription>
-                    </DialogHeader>
-                    <div className={"flex-1 items-center text-center"}>
-                        {isPending ? (
-                            <div className={"mt-5 flex flex-col items-center justify-center space-y-4 text-center"}>
-                                <Icons.spinner className={'mr-2 h-7 w-7 animate-spin'} />
-                            </div>
-                        ) : (
-                            <div className={"mt-5 flex flex-col items-center justify-center space-y-4"}>
-                                <div>
-                                    <p className={"text-muted-foreground"}>{message}</p>
-                                    <p className={"mb-5 text-muted-foreground"}>Credentials to access the dashboard and track the status of your dashboard has been sent to your email</p>
-                                </div>
-                                <div className={"flex items-center justify-center space-x-4"}>
-                                    <Button variant={"outline"} onClick={() => {
-                                        setIsDialogOpen(false)
-                                        router.push("/")
-                                    }}>Go To Previous Page</Button>
-                                    <Button onClick={() => {
-                                        setIsDialogOpen(false)
-                                        router.push('/login')
-                                    }}>Sign In</Button>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </DialogContent>
-            </Dialog>
+            <Form {...form}>
+                <Card className="overflow-visible p-6 sm:p-8">
+                    <MultiStepForm
+                        steps={steps}
+                        currentStep={wizard.currentStep}
+                        onStepChange={wizard.setCurrentStep}
+                        onComplete={onSubmit}
+                        allowStepNavigation
+                        isSubmitting={register.isPending}
+                        labels={{ submit: "Submit Registration", submitting: "Submitting..." }}
+                    />
+                </Card>
+            </Form>
         </div>
     )
 }

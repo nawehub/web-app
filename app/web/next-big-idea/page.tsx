@@ -11,6 +11,7 @@ import {
     Eye,
     Landmark,
     Lightbulb,
+    Loader2,
     Lock,
     ShieldCheck,
     Sparkles,
@@ -19,15 +20,16 @@ import {
 import { PaymentMethod, paymentMethods } from '@/types/payment'
 import { IdeaCard } from '@/components/next-big-idea/idea-card'
 import { ClothBorder } from '@/components/icons'
+import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
-    IDEA_CATEGORIES,
-    NEXT_BIG_IDEAS,
     PLATFORM_STATS,
     SUPPORT_AREAS,
     TRUST_INDICATORS,
     formatSLE,
 } from '@/lib/data/next-big-idea'
-import type { IdeaCategory } from '@/lib/data/next-big-idea'
+import { IDEA_STAGES } from '@/lib/gateway-enums'
+import { useBigIdeasQuery } from '@/hooks/repository/use-big-ideas'
 
 const amountPresets = ['50', '100', '250', '500']
 
@@ -275,12 +277,11 @@ function FundingProgressBar() {
 }
 
 export default function NextBigIdeaPage() {
-    const [activeCategory, setActiveCategory] = useState<'All' | IdeaCategory>('All')
+    const [activeStage, setActiveStage] = useState<string>('All')
 
-    const visibleIdeas =
-        activeCategory === 'All'
-            ? NEXT_BIG_IDEAS
-            : NEXT_BIG_IDEAS.filter((c) => c.category === activeCategory)
+    const { items, isLoading, isLoadingMore, isError, hasNextPage, loadMore } = useBigIdeasQuery({
+        stage: activeStage === 'All' ? null : activeStage,
+    })
 
     return (
         <div className="relative text-foreground transition-colors duration-300">
@@ -314,13 +315,13 @@ export default function NextBigIdeaPage() {
                                Explore ideas
                                 <ArrowUpRight className="h-4 w-4" />
                             </a>
-                            <a
-                                href="#innovators"
+                            <Link
+                                href="/web/next-big-idea/submit"
                                 className="inline-flex items-center gap-2 rounded-sm border border-border px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:border-accent hover:text-accent"
                             >
                                 <Eye className="h-4 w-4" />
                                  Submit Your Ideas
-                            </a>
+                            </Link>
                         </div>
 
                         <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3">
@@ -443,27 +444,70 @@ export default function NextBigIdeaPage() {
                             </p>
                         </div>
                         <div className="flex flex-wrap gap-2">
-                            {IDEA_CATEGORIES.map((cat) => (
+                            {(['All', ...IDEA_STAGES] as const).map((stage) => (
                                 <button
-                                    key={cat}
-                                    onClick={() => setActiveCategory(cat)}
+                                    key={stage}
+                                    onClick={() => setActiveStage(stage)}
                                     className={`rounded-full border px-4 py-1.5 text-xs font-medium transition-colors ${
-                                        activeCategory === cat
+                                        activeStage === stage
                                             ? 'border-primary bg-primary text-primary-foreground'
                                             : 'border-border text-muted-foreground hover:border-primary'
                                     }`}
                                 >
-                                    {cat}
+                                    {stage}
                                 </button>
                             ))}
                         </div>
                     </div>
 
-                    <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                        {visibleIdeas.map((idea) => (
-                            <IdeaCard key={idea.id} idea={idea} />
-                        ))}
-                    </div>
+                    {isError ? (
+                        <div className="mt-10 rounded-2xl border bg-card p-12 text-center">
+                            <p className="font-display text-lg font-bold text-foreground">
+                                Couldn&apos;t load innovators
+                            </p>
+                            <p className="mt-1.5 text-sm text-muted-foreground">
+                                Something went wrong. Please try again in a moment.
+                            </p>
+                        </div>
+                    ) : isLoading ? (
+                        <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                            {Array.from({ length: 6 }).map((_, i) => (
+                                <div key={i} className="overflow-hidden rounded-2xl border bg-card">
+                                    <Skeleton className="h-44 w-full rounded-none" />
+                                    <div className="space-y-3 p-5">
+                                        <Skeleton className="h-4 w-1/3" />
+                                        <Skeleton className="h-5 w-2/3" />
+                                        <Skeleton className="h-10 w-full" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : items.length === 0 ? (
+                        <div className="mt-10 rounded-2xl border bg-card p-12 text-center">
+                            <p className="font-display text-lg font-bold text-foreground">
+                                No innovations match this filter
+                            </p>
+                            <p className="mt-1.5 text-sm text-muted-foreground">
+                                Try a different stage, or check back soon for new ideas.
+                            </p>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                                {items.map((idea) => (
+                                    <IdeaCard key={idea.id} idea={idea} />
+                                ))}
+                            </div>
+                            {hasNextPage && (
+                                <div className="mt-10 flex justify-center">
+                                    <Button onClick={loadMore} disabled={isLoadingMore} variant="outline" className="rounded-full">
+                                        {isLoadingMore && <Loader2 className="h-4 w-4 animate-spin" />}
+                                        Load More
+                                    </Button>
+                                </div>
+                            )}
+                        </>
+                    )}
                 </div>
             </section>
 
@@ -562,7 +606,7 @@ export default function NextBigIdeaPage() {
                             <ArrowUpRight className="h-4 w-4" />
                         </a>
                         <Link
-                            href="/web/register-business"
+                            href="/web/next-big-idea/submit"
                             className="inline-flex items-center gap-2 rounded-sm border border-primary-foreground/30 px-7 py-3 text-sm font-semibold transition-colors hover:bg-primary-foreground/10"
                         >
                             Submit Your Idea

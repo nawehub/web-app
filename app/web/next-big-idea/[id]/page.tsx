@@ -6,24 +6,36 @@ import {
     ArrowLeft,
     ArrowUpRight,
     CheckCircle2,
-    Clock,
+    Layers,
     MapPin,
-    Users,
+    Target,
+    TrendingUp,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { AppealRating } from '@/components/next-big-idea/appeal-rating'
-import {
-    formatSLE,
-    getIdeaById,
-    isFullyFunded,
-} from '@/lib/data/next-big-idea'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useBigIdeaQuery } from '@/hooks/repository/use-big-ideas'
+import { toNextBigIdea } from '@/lib/services/big-ideas'
+import { STAGE_COLORS } from '@/types/next-big-idea'
+import { cn } from '@/lib/utils'
 
 export default function NextBigIdeaDetailPage() {
     const params = useParams()
     const id = Array.isArray(params.id) ? params.id[0] : params.id
-    const idea = id ? getIdeaById(id) : undefined
+    const { data: gwIdea, isLoading, isError } = useBigIdeaQuery(id)
+    const idea = gwIdea ? toNextBigIdea(gwIdea) : undefined
 
-    if (!idea) {
+    if (isLoading) {
+        return (
+            <main className="container mx-auto max-w-4xl px-4 pb-8 pt-24">
+                <Skeleton className="mb-8 h-56 w-full rounded-2xl sm:h-72" />
+                <Skeleton className="h-8 w-2/3" />
+                <Skeleton className="mt-3 h-4 w-1/3" />
+                <Skeleton className="mt-8 h-40 w-full rounded-2xl" />
+            </main>
+        )
+    }
+
+    if (isError || !idea) {
         return (
             <main className="flex min-h-[60vh] items-center justify-center px-4 pt-20">
                 <div className="mx-auto max-w-md rounded-xl border bg-card p-10 text-center shadow-sm">
@@ -41,9 +53,6 @@ export default function NextBigIdeaDetailPage() {
         )
     }
 
-    const pct = Math.min(100, Math.round((idea.raisedSLE / idea.goalSLE) * 100))
-    const funded = isFullyFunded(idea)
-
     return (
         <div>
             <div className="border-b bg-card pt-16">
@@ -55,7 +64,7 @@ export default function NextBigIdeaDetailPage() {
                         <ArrowLeft className="h-4 w-4" /> All innovators
                     </Link>
                     <span className="ml-auto rounded-full bg-primary/10 px-2.5 py-1 font-display text-xs font-semibold text-primary">
-                        {funded ? 'Fully Funded Big Idea' : 'Promising Innovation'}
+                        Promising Innovation
                     </span>
                 </div>
             </div>
@@ -72,8 +81,13 @@ export default function NextBigIdeaDetailPage() {
                         }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    <span className="absolute right-4 top-4 rounded-md bg-primary px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">
-                        {idea.category}
+                    <span
+                        className={cn(
+                            'absolute right-4 top-4 rounded-md px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white',
+                            STAGE_COLORS[idea.stageValue] ?? 'bg-primary',
+                        )}
+                    >
+                        {idea.stage}
                     </span>
                 </div>
 
@@ -88,15 +102,14 @@ export default function NextBigIdeaDetailPage() {
                                 {idea.district}
                             </span>
                             <span>by {idea.founder}</span>
-                            {idea.verified && (
+                            {idea.testedWithCustomers && (
                                 <span className="inline-flex items-center gap-1 text-primary">
                                     <CheckCircle2 className="h-4 w-4" />
-                                    Verified founder
+                                    Tested with customers
                                 </span>
                             )}
                         </div>
                     </div>
-                    <AppealRating rating={idea.appealRating} size="md" />
                 </div>
 
                 <p className="mt-6 text-base leading-relaxed text-foreground/80">
@@ -104,46 +117,30 @@ export default function NextBigIdeaDetailPage() {
                 </p>
 
                 <div className="mt-8 rounded-2xl border bg-card p-6">
-                    <h2 className="font-semibold [font-family:var(--font-display)]">
-                        {funded ? 'Funding outcome' : 'Funding progress'}
-                    </h2>
-                    <div className="mt-4">
-                        <div className="flex items-baseline justify-between [font-family:var(--font-mono)] text-sm">
-                            <span className="text-lg font-semibold">
-                                {formatSLE(idea.raisedSLE)}
-                            </span>
-                            <span className="text-muted-foreground">
-                                of {formatSLE(idea.goalSLE)} goal
-                            </span>
-                        </div>
-                        <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-muted">
-                            <div
-                                className={`h-full rounded-full ${funded ? 'bg-primary' : 'bg-accent'}`}
-                                style={{ width: `${pct}%` }}
-                            />
-                        </div>
-                        <p className="mt-2 text-sm text-muted-foreground">
-                            {funded ? 'Fully funded' : `${pct}% funded`}
-                        </p>
+                    <h2 className="font-semibold [font-family:var(--font-display)]">Idea Snapshot</h2>
+                    <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                        <Snapshot icon={<Layers />} label="Stage" value={idea.stage} />
+                        <Snapshot icon={<Target />} label="Target customers" value={idea.targetCustomers} />
+                        <Snapshot icon={<TrendingUp />} label="Market size" value={idea.marketSize} />
+                        <Snapshot icon={<CheckCircle2 />} label="What makes it new" value={idea.innovationDescription} />
                     </div>
 
-                    <div className="mt-6 flex flex-wrap gap-6 text-sm text-muted-foreground">
-                        <span className="flex items-center gap-1.5">
-                            <Users className="h-4 w-4" />
-                            {idea.contributors} contributors
-                        </span>
-                        <span className="flex items-center gap-1.5">
-                            <Clock className="h-4 w-4" />
-                            {funded ? 'Campaign complete' : `${idea.daysLeft} days remaining`}
-                        </span>
-                    </div>
-
-                    {funded && idea.outcome && (
-                        <div className="mt-6 rounded-xl bg-primary/5 p-4">
-                            <h3 className="text-sm font-semibold text-primary">Outcome</h3>
-                            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                                {idea.outcome}
-                            </p>
+                    {idea.problemStatement && (
+                        <div className="mt-6 border-t pt-6">
+                            <h3 className="text-sm font-semibold text-foreground">The problem</h3>
+                            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{idea.problemStatement}</p>
+                        </div>
+                    )}
+                    {idea.proposedSolution && (
+                        <div className="mt-4">
+                            <h3 className="text-sm font-semibold text-foreground">The proposed solution</h3>
+                            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{idea.proposedSolution}</p>
+                        </div>
+                    )}
+                    {idea.growthPlan && (
+                        <div className="mt-4">
+                            <h3 className="text-sm font-semibold text-foreground">Growth plan</h3>
+                            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{idea.growthPlan}</p>
                         </div>
                     )}
                 </div>
@@ -168,6 +165,20 @@ export default function NextBigIdeaDetailPage() {
                     </div>
                 </div>
             </main>
+        </div>
+    )
+}
+
+function Snapshot({ icon, label, value }: { icon: React.ReactElement; label: string; value: string }) {
+    return (
+        <div className="flex items-start gap-3">
+            <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary [&_svg]:h-4 [&_svg]:w-4">
+                {icon}
+            </span>
+            <div>
+                <p className="text-xs text-muted-foreground">{label}</p>
+                <p className="text-sm font-medium text-foreground">{value || '—'}</p>
+            </div>
         </div>
     )
 }

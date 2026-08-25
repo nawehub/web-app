@@ -16,6 +16,7 @@ const PUBLIC_PATHS = [
     "/web/next-big-idea",
     "/web/vetted-entrepreneurs",
     "/web/register-business",
+    "/web/register-business/track",
     "/web/contact",
     "/web/faq",
     "/web/privacy",
