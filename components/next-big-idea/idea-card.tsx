@@ -57,7 +57,7 @@ export function IdeaCard({ idea }: IdeaCardProps) {
                 </div>
 
                 <Link
-                    href={`/web/next-big-idea/${idea.id}`}
+                    href={`/next-big-idea/${idea.id}`}
                     className="mt-auto flex items-center justify-center gap-2 rounded-sm bg-[hsl(var(--color-neutral-900))] py-3 text-sm font-semibold text-[hsl(var(--color-neutral-50))] transition-colors hover:bg-[hsl(var(--color-neutral-800))]"
                 >
                     View This Idea

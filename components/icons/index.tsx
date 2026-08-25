@@ -78,7 +78,7 @@ export const BRAND_GRADIENT =
 
 export function Logo() {
     return (
-        <Link href="/web" className="flex shrink-0 items-center gap-2.5">
+        <Link href="/" className="flex shrink-0 items-center gap-2.5">
             <Image
                 src="/nawehub-mark.png"
                 alt="NaWeHub"

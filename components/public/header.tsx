@@ -126,7 +126,7 @@ export default function Header() {
                 {/* Desktop right cluster */}
                 <div className="hidden items-center gap-5 lg:flex">
                     <Link
-                        href="/web/register-business/track"
+                        href="/register-business/track"
                         className="text-sm font-medium text-[hsl(var(--color-neutral-200))] transition-colors hover:text-[hsl(25_95%_53%)]"
                     >
                         Track Business
@@ -191,7 +191,7 @@ export default function Header() {
                     </div>
 
                     <Link
-                        href="/web/register-business/track"
+                        href="/register-business/track"
                         onClick={() => setMobileOpen(false)}
                         className="mt-6 block rounded-sm border border-[hsl(var(--color-neutral-700))] py-2.5 text-center text-sm font-semibold text-[hsl(var(--color-neutral-50))]"
                     >

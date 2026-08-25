@@ -91,7 +91,7 @@ export default function Footer() {
                             Business
                         </h3>
                         <Link
-                            href="/web/register-business/track"
+                            href="/register-business/track"
                             className="mt-5 inline-flex items-center gap-2 rounded-sm border border-[hsl(var(--color-neutral-700))] px-4 py-2 text-sm font-semibold text-[hsl(var(--color-neutral-50))] transition-colors hover:border-[hsl(25_95%_53%)] hover:text-[hsl(25_95%_53%)]"
                         >
                             Track Business
@@ -107,11 +107,11 @@ export default function Footer() {
                 <div className="mt-14 flex flex-col gap-4 border-t border-[hsl(var(--color-neutral-800))] pt-6 text-xs text-[hsl(var(--color-neutral-500))] sm:flex-row sm:items-center sm:justify-between">
                     <p>&copy; {year} NaWeHub. All rights reserved.</p>
                     <div className="flex items-center gap-4">
-                        <Link href="/web/privacy" className="transition-colors hover:text-[hsl(25_95%_53%)]">
+                        <Link href="/privacy" className="transition-colors hover:text-[hsl(25_95%_53%)]">
                             Privacy Policy
                         </Link>
                         <span aria-hidden="true">&middot;</span>
-                        <Link href="/web/terms" className="transition-colors hover:text-[hsl(25_95%_53%)]">
+                        <Link href="/terms" className="transition-colors hover:text-[hsl(25_95%_53%)]">
                             Terms of Service
                         </Link>
                     </div>
