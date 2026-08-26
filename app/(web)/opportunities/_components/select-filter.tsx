@@ -19,7 +19,9 @@ export default function SelectFilter({items, label, defaultValue, value, setValu
                     <SelectValue placeholder={label}/>
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value={defaultValue}>{defaultValue}</SelectItem>
+                    {!items.includes(defaultValue) && (
+                        <SelectItem value={defaultValue}>{defaultValue}</SelectItem>
+                    )}
                     {items.map((item, index) => (
                         <SelectItem key={index} value={item}>{item}</SelectItem>
                     ))}

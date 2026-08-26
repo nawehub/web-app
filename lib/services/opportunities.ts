@@ -40,6 +40,13 @@ export interface OpportunitiesFilters {
     category?: string | null;
     targetBeneficiary?: string | null;
     geographicScope?: string | null;
+    /**
+     * Client-side-only post-filter - the gateway's ListOpportunitiesRequest only
+     * supports an inclusion list of categories, not exclusion, so this is applied
+     * after the fetch rather than sent as a query param. Used by /opportunities/all
+     * to keep event listings out of the general directory.
+     */
+    excludeCategory?: string | null;
 }
 
 const CATEGORY_ICON: Record<string, ElementType> = {
@@ -215,7 +222,11 @@ export const opportunitiesService = () => ({
         // Defensive: the gateway's status=APPROVED filter has been observed to not
         // actually filter server-side (confirmed on /big-ideas), so this is a public-
         // listing safety net against showing unreviewed submissions.
-        return { ...page, items: page.items.filter((item) => item.status === "APPROVED") };
+        let items = page.items.filter((item) => item.status === "APPROVED");
+        if (filters.excludeCategory) {
+            items = items.filter((item) => !item.categories.includes(filters.excludeCategory!));
+        }
+        return { ...page, items };
     },
     getOne: async (id: string): Promise<GatewayOpportunity> => {
         const res = await fetch(`/api/opportunities/${id}`);
