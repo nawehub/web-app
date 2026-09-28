@@ -1,54 +1,38 @@
 'use client';
 
-import { motion } from "framer-motion";
 import { Mail, MapPin, Clock, Phone } from "lucide-react";
 import { appMetadata } from "@/utils/app-metadata";
 import ContactForm from "@/components/public/contact-form";
+import { Reveal } from '@/components/motion/reveal'
 
 export default function ContactUsSection() {
     return (
         <section className="border-t border-border bg-background py-16 sm:py-20 lg:py-24">
             <div className="container mx-auto px-4">
-                <motion.h2
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    viewport={{ once: true }}
+                <Reveal as="h2"
                     className="text-3xl font-semibold text-foreground [font-family:var(--font-display)] md:text-5xl"
                 >
                     Get in Touch with Our Team
-                </motion.h2>
-                <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.1 }}
-                    viewport={{ once: true }}
+                </Reveal>
+                <Reveal as="p" delay={0.1}
                     className="mb-12 mt-3 max-w-2xl text-lg text-muted-foreground"
                 >
                     We&rsquo;re here to answer your questions, explore your business ideas, and
                     support you in formalizing and growing your business sustainably. Connect
                     with us &mdash; let&rsquo;s build successful businesses together.
-                </motion.p>
+                </Reveal>
 
                 <div className="flex flex-col items-start gap-8 lg:flex-row lg:gap-16">
                     {/* Left: Contact Form */}
-                    <motion.div
+                    <Reveal delay={0.15}
                         className="w-full min-w-0 lg:max-w-[640px] lg:flex-1"
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.15 }}
-                        viewport={{ once: true }}
                     >
                         <ContactForm />
-                    </motion.div>
+                    </Reveal>
 
                     {/* Right: Contact Info & Office Card */}
-                    <motion.div
+                    <Reveal delay={0.25}
                         className="flex w-full min-w-0 flex-col gap-6 sm:gap-8 lg:flex-1"
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.25 }}
-                        viewport={{ once: true }}
                     >
                         <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-md)] sm:p-8">
                             <h4 className="mb-4 text-lg font-semibold text-foreground [font-family:var(--font-display)]">
@@ -87,7 +71,7 @@ export default function ContactUsSection() {
                                 {appMetadata.Authors.address}
                             </div>
                         </div>
-                    </motion.div>
+                    </Reveal>
                 </div>
             </div>
         </section>

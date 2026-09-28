@@ -6,6 +6,7 @@ import type {GatewayOpportunity} from '@/lib/services/opportunities'
 import {toOpportunity} from '@/lib/services/opportunities'
 import {Badge} from '@/components/ui/badge'
 import {Button} from '@/components/ui/button'
+import {Reveal} from '@/components/motion/reveal'
 
 type Props = {params: Promise<{id: string}>}
 
@@ -25,12 +26,12 @@ export default async function OpportunityDetailsPage({params}: Props) {
     return <main className="min-h-screen bg-muted/30">
         <section className="relative overflow-hidden bg-[hsl(var(--color-neutral-900))] text-white">
             <div className="absolute inset-0 opacity-25">
-                <img src={opportunity.image} alt="" className="h-full w-full object-cover"/>
+                <img src={opportunity.image} alt="" className="animate-hero-zoom h-full w-full object-cover"/>
                 <div className="absolute inset-0 bg-gradient-to-r from-black via-black/90 to-black/60"/>
             </div>
             <div className="container relative mx-auto px-4 py-12 lg:py-16">
                 <Link href="/opportunities" className="mb-8 inline-flex items-center gap-2 text-sm text-white/70 hover:text-primary"><ArrowLeft className="h-4 w-4"/>Back to opportunities</Link>
-                <div className="max-w-4xl space-y-5">
+                <Reveal className="max-w-4xl space-y-5">
                     <div className="flex flex-wrap items-center gap-2">
                         <Badge className="bg-primary text-primary-foreground"><TypeIcon className="mr-1 h-3.5 w-3.5"/>{opportunity.type}</Badge>
                         <span className="inline-flex items-center gap-1 text-sm text-white/70"><BadgeCheck className="h-4 w-4 text-primary"/>Verified opportunity</span>
@@ -42,7 +43,7 @@ export default async function OpportunityDetailsPage({params}: Props) {
                         <span className="flex items-center gap-2"><CalendarDays className="h-4 w-4 text-primary"/>Deadline: {opportunity.deadline}</span>
                         <span className="flex items-center gap-2"><Clock3 className="h-4 w-4 text-primary"/>Posted {opportunity.postedDate}</span>
                     </div>
-                </div>
+                </Reveal>
             </div>
         </section>
 
@@ -86,22 +87,22 @@ export default async function OpportunityDetailsPage({params}: Props) {
             </div>
 
             <aside className="lg:sticky lg:top-24 lg:self-start">
-                <div className="rounded-2xl border bg-card p-6 shadow-sm">
+                <Reveal delay={0.15} className="rounded-2xl border bg-card p-6 shadow-sm">
                     <p className="text-sm text-muted-foreground">Offered by</p><p className="mt-1 font-semibold">{opportunity.provider}</p>
                     <div className="my-5 space-y-4 border-y py-5 text-sm">
                         <Detail icon={<CalendarDays/>} label="Deadline" value={opportunity.deadline}/>
                         <Detail icon={<MapPin/>} label="Location" value={opportunity.location}/>
                     </div>
-                    <a href={opportunity.officialUrl} target="_blank" rel="noopener noreferrer"><Button size="lg" className="w-full">{opportunity.applyLabel}<ArrowUpRight className="h-4 w-4"/></Button></a>
+                    <a href={opportunity.officialUrl} target="_blank" rel="noopener noreferrer"><Button size="lg" className="w-full transition-all hover:-translate-y-0.5 hover:shadow-lg">{opportunity.applyLabel}<ArrowUpRight className="h-4 w-4"/></Button></a>
                     <p className="mt-3 text-center text-xs text-muted-foreground">You’ll continue on the official opportunity website.</p>
-                </div>
+                </Reveal>
             </aside>
         </div>
     </main>
 }
 
 function InfoSection({title, children}: {title: string, children: React.ReactNode}) {
-    return <section className="rounded-2xl border bg-card p-6 shadow-sm sm:p-8"><h2 className="mb-5 text-xl font-semibold [font-family:var(--font-display)]">{title}</h2>{children}</section>
+    return <Reveal as="section" className="rounded-2xl border bg-card p-6 shadow-sm sm:p-8"><h2 className="mb-5 text-xl font-semibold [font-family:var(--font-display)]">{title}</h2>{children}</Reveal>
 }
 
 function Detail({icon, label, value}: {icon: React.ReactElement, label: string, value: string}) {

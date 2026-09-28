@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
-import { AlertCircle, ArrowLeft, CheckCircle2, FileCheck2, Sparkles, Upload, X } from "lucide-react"
+import { AlertCircle, ArrowLeft, CheckCircle2, Copy, FileCheck2, Lightbulb, SearchCheck, Sparkles, Upload, X } from "lucide-react"
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -17,7 +17,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { MultiStepForm, useMultiStepForm, type FormStep } from "@/components/ui/multi-step-form"
 import { formatResponse } from "@/utils/format-response"
-import { useAttachSupportingMaterialMutation, useIdeaSubmissionMutation } from "@/hooks/repository/use-idea-submission"
+import { useIdeaSubmissionMutation } from "@/hooks/repository/use-idea-submission"
 import { IDEA_GENDER_OPTIONS, IDEA_MATERIAL_TYPES, IDEA_STAGES, IDEA_SUBMISSION_TYPES, ideaStageToParam } from "@/lib/gateway-enums"
 import {
     IDEA_WIZARD_STEPS,
@@ -154,7 +154,6 @@ const READINESS_FIELDS = [
 export default function SubmitIdeaForm() {
     const wizard = useMultiStepForm(IDEA_WIZARD_STEPS.length)
     const submitMutation = useIdeaSubmissionMutation()
-    const attachMutation = useAttachSupportingMaterialMutation()
 
     const [materialFile, setMaterialFile] = useState<File | null>(null)
     const [materialType, setMaterialType] = useState<string>(IDEA_MATERIAL_TYPES[0].value)
@@ -180,15 +179,15 @@ export default function SubmitIdeaForm() {
     async function onSubmit() {
         const data = form.getValues()
         try {
-            const response = await submitMutation.mutateAsync(data)
-            if (materialFile) {
-                try {
-                    await attachMutation.mutateAsync({ ideaId: response.id, materialType, file: materialFile })
-                } catch {
-                    toast("Idea submitted, but the attachment failed", {
-                        description: "Your idea was submitted successfully — you can try attaching the file again later.",
-                    })
-                }
+            // One request: the idea plus its optional file. The idea goes straight to review.
+            const response = await submitMutation.mutateAsync({
+                data,
+                material: materialFile ? { file: materialFile, materialType } : null,
+            })
+            if (response.materialAttached === false) {
+                toast("Idea submitted, but the attachment failed", {
+                    description: "Your idea was submitted successfully - email us the file quoting your tracking ID.",
+                })
             }
             setResult(response)
             wizard.nextStep()
@@ -828,6 +827,25 @@ export default function SubmitIdeaForm() {
                                 </div>
                             </ReviewSection>
                         )}
+
+                        <FormField
+                            name="createNawehubAccount"
+                            control={form.control}
+                            render={({ field }) => (
+                                <div className="flex items-start gap-3 rounded-2xl border border-primary/30 bg-primary/5 p-4">
+                                    <Checkbox id="createNawehubAccount" checked={field.value} onCheckedChange={field.onChange} className="mt-0.5" />
+                                    <Label htmlFor="createNawehubAccount" className="cursor-pointer font-normal leading-snug">
+                                        <span className="flex items-center gap-1.5 font-medium text-foreground">
+                                            <Sparkles className="h-3.5 w-3.5 text-primary" /> Create a NaWeHub account for me
+                                        </span>
+                                        <span className="mt-0.5 block text-sm text-muted-foreground">
+                                            We&rsquo;ll email login details so you can follow your idea from the Entrepreneur Portal.
+                                            Either way, you&rsquo;ll get a tracking ID to check its status here.
+                                        </span>
+                                    </Label>
+                                </div>
+                            )}
+                        />
                     </div>
                 )
             })(),
@@ -835,9 +853,11 @@ export default function SubmitIdeaForm() {
     ]
 
     if (result) {
+        const trackingId = result.idea.trackingId
+        const accountRequested = form.getValues("createNawehubAccount")
         return (
-            <div className="mx-auto max-w-2xl px-4 py-24">
-                <Card className="border-primary/20">
+            <div className="mx-auto max-w-2xl px-4 py-16">
+                <Card className="animate-scale-in border-primary/20">
                     <CardContent className="flex flex-col items-center gap-5 py-12 text-center">
                         <span className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/15 text-primary">
                             <CheckCircle2 className="h-8 w-8" />
@@ -847,18 +867,44 @@ export default function SubmitIdeaForm() {
                                 Idea Submitted
                             </h2>
                             <p className="mt-2 max-w-md text-muted-foreground">
-                                Thank you for sharing &ldquo;{result.ideaName}&rdquo; with NaweHub. Our team will review it and
-                                you&rsquo;ll be notified of any updates.
+                                Thank you for sharing &ldquo;{result.idea.ideaName}&rdquo;. It&rsquo;s now waiting for review by the NaWeHub team,
+                                and we&rsquo;ve emailed your tracking ID to {form.getValues("applicant.email")}.
+                                {result.accountCreated && " Login details for your new NaWeHub account are in the same email."}
+                                {accountRequested && !result.accountCreated &&
+                                    " We didn't create a new account - if you already have one with this email, sign in to NaWeHub as usual."}
                             </p>
                         </div>
+
+                        <button
+                            type="button"
+                            onClick={() => {
+                                navigator.clipboard?.writeText(trackingId)
+                                toast("Tracking ID copied")
+                            }}
+                            className="flex items-center gap-2 rounded-xl border border-border bg-muted/40 px-4 py-3 font-mono text-lg tracking-widest text-foreground transition-colors hover:border-primary/40"
+                        >
+                            <Lightbulb className="h-4 w-4 text-primary" />
+                            {trackingId}
+                            <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+                        </button>
+                        <p className="text-xs text-muted-foreground">Save this tracking ID - you&rsquo;ll need it to check your idea&rsquo;s status.</p>
+
                         <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
-                            <Link href="/next-big-idea">
-                                <Button className="gap-2">
+                            <Button asChild className="gap-2">
+                                <Link href={`/next-big-idea/track?trackingId=${encodeURIComponent(trackingId)}`}>
+                                    <SearchCheck className="h-4 w-4" /> Track this idea
+                                </Link>
+                            </Button>
+                            <Button asChild variant="outline" className="gap-2">
+                                <Link href="/next-big-idea">
                                     <ArrowLeft className="h-4 w-4" /> Back to Next Big Idea
-                                </Button>
-                            </Link>
+                                </Link>
+                            </Button>
+                            {result.accountCreated && (
+                                <Button asChild variant="outline"><a href="https://app.nawehub.com/login">Sign in</a></Button>
+                            )}
                             <Button
-                                variant="outline"
+                                variant="ghost"
                                 onClick={() => {
                                     form.reset(ideaSubmissionDefaults)
                                     setMaterialFile(null)
@@ -885,7 +931,7 @@ export default function SubmitIdeaForm() {
                         onStepChange={wizard.setCurrentStep}
                         onComplete={onSubmit}
                         allowStepNavigation
-                        isSubmitting={submitMutation.isPending || attachMutation.isPending}
+                        isSubmitting={submitMutation.isPending}
                         labels={{ submit: "Submit Idea", submitting: "Submitting..." }}
                     />
                 </Card>

@@ -2,6 +2,7 @@ import { Mail, Phone, MapPin, Users, Heart, Briefcase, Globe, ArrowRight, Messag
 import Link from 'next/link'
 import { appMetadata } from "@/utils/app-metadata";
 import ContactForm from "@/components/public/contact-form";
+import { staggerStyle } from '@/lib/motion'
 
 const contactReasons = [
     {
@@ -86,12 +87,13 @@ export default function ContactPage() {
                     </div>
 
                     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                        {contactReasons.map((reason) => (
+                        {contactReasons.map((reason, i) => (
                             <div
                                 key={reason.title}
-                                className="rounded-2xl border border-border bg-card p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[var(--shadow-lg)]"
+                                style={staggerStyle(i)}
+                                className="animate-stagger-in group rounded-2xl border border-border bg-card p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[var(--shadow-lg)]"
                             >
-                                <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/15 text-primary">
+                                <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/15 text-primary transition-transform duration-500 group-hover:-rotate-6 group-hover:scale-110">
                                     <reason.icon className="h-7 w-7" />
                                 </span>
                                 <h3 className="font-semibold text-foreground [font-family:var(--font-display)]">
@@ -233,17 +235,13 @@ export default function ContactPage() {
                                 using NaWeHub to access funding, resources, and community support.
                             </p>
                             <div className="flex flex-col justify-center gap-4 sm:flex-row">
-                                <Link href="/register">
-                                    <button className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-8 py-3 font-semibold text-accent-foreground transition-colors hover:bg-[hsl(var(--color-secondary-400))] sm:w-auto">
+                                <Link href="https://app.nawehub.com/register" className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-8 py-3 font-semibold text-accent-foreground transition-colors hover:bg-[hsl(var(--color-secondary-400))] sm:w-auto">
                                         Get Started Today
                                         <ArrowRight className="h-5 w-5" />
-                                    </button>
-                                </Link>
-                                <Link href="/faq">
-                                    <button className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[hsl(var(--color-neutral-700))] px-8 py-3 font-semibold text-[hsl(var(--color-neutral-50))] transition-colors hover:border-accent hover:text-accent sm:w-auto">
+                                    </Link>
+                                <Link href="/faq" className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[hsl(var(--color-neutral-700))] px-8 py-3 font-semibold text-[hsl(var(--color-neutral-50))] transition-colors hover:border-accent hover:text-accent sm:w-auto">
                                         Learn More
-                                    </button>
-                                </Link>
+                                    </Link>
                             </div>
                         </div>
                         <ClothBorder tone="hsl(60 9% 98%)" />

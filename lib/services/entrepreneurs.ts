@@ -1,4 +1,5 @@
 import type { PagedResponse } from "@/lib/gateway";
+import { mediaUrl } from "@/lib/media";
 import { fromEnumParam, SKILL_OPTIONS } from "@/lib/gateway-enums";
 import { initials as toInitials } from "@/types/entrepreneur-profile";
 import type { EntrepreneurProfile, Venture, JourneyItem } from "@/types/entrepreneur-profile";
@@ -94,7 +95,7 @@ export function toVettedEntrepreneur(gw: GatewayEntrepreneurProfile): VettedEntr
         logoInitial: gw.district.charAt(0).toUpperCase() || "N",
         c1,
         c2,
-        photo: gw.profilePhotoUrl || undefined,
+        photo: mediaUrl(gw.profilePhotoUrl),
         short: gw.story?.aboutMe || gw.story?.successStory || "Vetted by NaWeHub.",
         skills: gw.skills.map(skillLabel),
         location: gw.currentLocation || gw.district,
@@ -147,7 +148,7 @@ export function toEntrepreneurProfile(
         district: gw.district,
         chiefdom: gw.chiefdom || undefined,
         location: gw.currentLocation || gw.district,
-        photo: gw.profilePhotoUrl || undefined,
+        photo: mediaUrl(gw.profilePhotoUrl),
         rating: gw.vetted ? "Vetted Entrepreneur" : "Entrepreneur",
         entrepreneurScore: gw.profileScore,
         verification: {
@@ -242,6 +243,8 @@ export const entrepreneursService = () => ({
             if (profileRes.status === 404) return null;
             if (!profileRes.ok) throw new Error("Failed to load profile");
             const gw: GatewayEntrepreneurProfile = await profileRes.json();
+            // The gateway serves any profile by id; this site only publishes vetted, active ones.
+            if (!gw.vetted || gw.status !== "ACTIVE") return null;
 
             const [ventures, journeys] = await Promise.all([
                 gw.visibility.ventures

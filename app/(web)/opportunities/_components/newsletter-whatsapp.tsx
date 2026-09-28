@@ -1,36 +1,47 @@
-import {MessageCircle} from "lucide-react";
+import { ArrowUpRight, MessageCircle } from "lucide-react";
 import React from "react";
 import Link from "next/link";
-import {Button} from "@/components/ui/button";
+import { appMetadata } from "@/utils/app-metadata";
+import { Reveal } from "@/components/motion/reveal";
 
-export function NewsletterWhatsapp () {
+// wa.me takes the number in international format without "+" or spaces.
+const WHATSAPP_URL = `https://wa.me/${appMetadata.Authors.phone.replace(/\D/g, "")}?text=${encodeURIComponent(
+    "Hi NaWeHub, I'd like to hear about new opportunities.",
+)}`;
+
+export function NewsletterWhatsapp() {
     return (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 space-y-4">
-            <div className="bg-gradient-to-r from-blue-950 to-blue-900 dark:bg-background rounded-2xl p-6 lg:p-8 text-foreground grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-                <div className="lg:col-span-4 space-y-1">
-                    <h3 className="text-lg font-bold text-muted-foreground">Stay Updated with New Opportunities</h3>
-                    <p className="text-xs text-slate-300">Subscribe to our newsletter for instant delivery ecosystem updates.</p>
-                </div>
-                <div className="lg:col-span-5 flex gap-0">
-                    <input
-                        type="email"
-                        placeholder="Enter your email address"
-                        className="flex-1 bg-white/10 border border-white/20 text-white px-4 py-2.5 rounded-l-lg text-xs focus:outline-none focus:border-emerald-400 placeholder:text-slate-400"
-                    />
-                    <button className="bg-accent hover:bg-[hsl(var(--color-secondary-400))] text-white px-5 py-2.5 rounded-r-lg text-xs font-bold transition">
-                        Subscribe
-                    </button>
-                </div>
-                <div className="lg:col-span-3 flex items-center justify-start lg:justify-end gap-3 border-t lg:border-t-0 lg:border-l border-white/10 pt-4 lg:pt-0 lg:pl-6">
-                    <div>
-                        <div className="text-xs font-bold">Join our WhatsApp Channel</div>
-                        <div className="text-[10px] text-slate-300">Get snapshot updates instantly.</div>
-                    </div>
-                    <Link href="https://wa.me/" target="_blank" rel="noopener noreferrer">
-                        <div className="text-emerald-400"><MessageCircle size={32} fill="currentColor" className="text-[hsl(142_71%_45%)] stroke-[hsl(142_71%_45%)]" /></div>
+        <section className="mx-auto max-w-7xl space-y-4 px-4 pb-16 sm:px-6 lg:px-8">
+            <Reveal className="grid grid-cols-1 items-center gap-6 rounded-2xl bg-gradient-to-r from-[hsl(var(--color-neutral-900))] to-[hsl(var(--color-neutral-800))] p-6 text-[hsl(var(--color-neutral-50))] lg:grid-cols-12 lg:p-8">
+                <div className="space-y-1 lg:col-span-7">
+                    <h3 className="text-lg font-bold [font-family:var(--font-display)]">Stay updated with new opportunities</h3>
+                    <p className="text-sm text-[hsl(var(--color-neutral-300))]">
+                        New grants, competitions and events are added as they&rsquo;re verified - check back often, or
+                        message us on WhatsApp to ask about what&rsquo;s open for you.
+                    </p>
+                    <Link
+                        href="/opportunities/all"
+                        className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
+                    >
+                        Browse all opportunities <ArrowUpRight className="h-4 w-4" />
                     </Link>
                 </div>
-            </div>
+                <div className="flex items-center justify-start gap-4 border-t border-white/10 pt-4 lg:col-span-5 lg:justify-end lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
+                    <div>
+                        <div className="text-sm font-bold">Chat with us on WhatsApp</div>
+                        <div className="text-xs text-[hsl(var(--color-neutral-300))]">{appMetadata.Authors.phone}</div>
+                    </div>
+                    <a
+                        href={WHATSAPP_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Chat with NaWeHub on WhatsApp"
+                        className="flex h-12 w-12 items-center justify-center rounded-full bg-[hsl(142_71%_45%)] text-white shadow-lg transition-transform duration-300 hover:-translate-y-0.5 hover:scale-110"
+                    >
+                        <MessageCircle className="h-6 w-6" fill="currentColor" />
+                    </a>
+                </div>
+            </Reveal>
         </section>
     )
 }

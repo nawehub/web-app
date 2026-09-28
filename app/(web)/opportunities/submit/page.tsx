@@ -1,8 +1,8 @@
 'use client'
 
 import { Globe, ShieldCheck, Handshake, Sparkles } from 'lucide-react'
-import { motion } from 'framer-motion'
 import SubmitOpportunityForm from './_components/submit-form'
+import { Reveal } from '@/components/motion/reveal'
 
 export default function SubmitOpportunityPage() {
     return (
@@ -18,10 +18,7 @@ export default function SubmitOpportunityPage() {
                 <div className="container relative mx-auto px-4 py-16 lg:py-20">
                     <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
                         {/* Left copy */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 16 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.4 }}
+                        <Reveal
                             className="space-y-6"
                         >
                             <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5">
@@ -53,13 +50,10 @@ export default function SubmitOpportunityPage() {
                                     </div>
                                 ))}
                             </div>
-                        </motion.div>
+                        </Reveal>
 
                         {/* Right — person filling form illustration */}
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.5, delay: 0.15 }}
+                        <Reveal delay={0.15}
                             className="relative hidden justify-center lg:flex"
                         >
                             <div className="relative h-[380px] w-full max-w-md">
@@ -78,7 +72,7 @@ export default function SubmitOpportunityPage() {
                                     <p className="mt-1 text-xs text-primary">↑ 34 this week</p>
                                 </div>
                             </div>
-                        </motion.div>
+                        </Reveal>
                     </div>
                 </div>
 

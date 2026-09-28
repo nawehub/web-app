@@ -1,7 +1,7 @@
 import {api4Public} from "@/lib/api";
 import {NextResponse} from "next/server";
 
-export async function GET(_: Request, { params }: { params: { email_or_phone: string } }) {
+export async function GET(_: Request, { params }: { params: Promise<{ email_or_phone: string }> }) {
     try {
         const { email_or_phone } = await params;
 

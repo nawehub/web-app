@@ -1,8 +1,43 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { Lightbulb, Rocket, ShieldCheck, Sparkles } from 'lucide-react'
+import { LogIn, Rocket, SearchCheck, ShieldCheck, Sparkles, Lightbulb } from 'lucide-react'
+import Link from 'next/link'
+import { Reveal } from '@/components/motion/reveal'
 import SubmitIdeaForm from './_components/submit-form'
+
+/** Alternatives to the public form: signed-in users can keep drafts; past submitters can track. */
+function SubmitOptions() {
+    return (
+        <Reveal className="container mx-auto max-w-4xl px-4 pt-10">
+            <div className="grid gap-3 sm:grid-cols-2">
+                <a
+                    href="https://app.nawehub.com/big-ideas/new"
+                    className="hover-lift group flex items-center gap-3 rounded-2xl border bg-card p-4 text-sm"
+                >
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                        <LogIn className="h-5 w-5" />
+                    </span>
+                    <span>
+                        <span className="block font-semibold text-foreground">Have a NaWeHub account?</span>
+                        <span className="text-muted-foreground">Sign in to save drafts and add materials before publishing.</span>
+                    </span>
+                </a>
+                <Link
+                    href="/next-big-idea/track"
+                    className="hover-lift group flex items-center gap-3 rounded-2xl border bg-card p-4 text-sm"
+                >
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/15 text-accent">
+                        <SearchCheck className="h-5 w-5" />
+                    </span>
+                    <span>
+                        <span className="block font-semibold text-foreground">Already submitted?</span>
+                        <span className="text-muted-foreground">Check your idea&rsquo;s status with your tracking ID.</span>
+                    </span>
+                </Link>
+            </div>
+        </Reveal>
+    )
+}
 
 export default function SubmitIdeaPage() {
     return (
@@ -15,10 +50,7 @@ export default function SubmitIdeaPage() {
                 </div>
 
                 <div className="container relative mx-auto px-4 py-16 text-center lg:py-20">
-                    <motion.div
-                        initial={{ opacity: 0, y: 16 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4 }}
+                    <Reveal
                         className="mx-auto max-w-2xl space-y-6"
                     >
                         <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5">
@@ -47,7 +79,7 @@ export default function SubmitIdeaPage() {
                                 </div>
                             ))}
                         </div>
-                    </motion.div>
+                    </Reveal>
                 </div>
 
                 {/* Cloth border */}
@@ -60,6 +92,8 @@ export default function SubmitIdeaPage() {
                     </svg>
                 </div>
             </section>
+
+            <SubmitOptions />
 
             {/* ── FORM (wizard) ── */}
             <SubmitIdeaForm />

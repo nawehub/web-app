@@ -88,7 +88,7 @@ export default function Footer() {
                     {/* Account column */}
                     <div>
                         <h3 className="[font-family:var(--font-mono)] text-[11px] font-medium uppercase tracking-[0.18em] text-[hsl(var(--color-neutral-400))]">
-                            Business
+                            Track a Submission
                         </h3>
                         <Link
                             href="/register-business/track"
@@ -97,8 +97,15 @@ export default function Footer() {
                             Track Business
                             <ArrowUpRight className="h-3.5 w-3.5" />
                         </Link>
+                        <Link
+                            href="/next-big-idea/track"
+                            className="ml-2 mt-5 inline-flex items-center gap-2 rounded-sm border border-[hsl(var(--color-neutral-700))] px-4 py-2 text-sm font-semibold text-[hsl(var(--color-neutral-50))] transition-colors hover:border-[hsl(25_95%_53%)] hover:text-[hsl(25_95%_53%)]"
+                        >
+                            Track Idea
+                            <ArrowUpRight className="h-3.5 w-3.5" />
+                        </Link>
                         <p className="mt-4 max-w-[16rem] text-xs leading-relaxed text-[hsl(var(--color-neutral-500))]">
-                            Check the status of a business registration you&rsquo;ve already submitted.
+                            Check the status of a business registration or Next Big Idea you&rsquo;ve submitted.
                         </p>
                     </div>
                 </div>
@@ -109,10 +116,6 @@ export default function Footer() {
                     <div className="flex items-center gap-4">
                         <Link href="/privacy" className="transition-colors hover:text-[hsl(25_95%_53%)]">
                             Privacy Policy
-                        </Link>
-                        <span aria-hidden="true">&middot;</span>
-                        <Link href="/terms" className="transition-colors hover:text-[hsl(25_95%_53%)]">
-                            Terms of Service
                         </Link>
                     </div>
                 </div>

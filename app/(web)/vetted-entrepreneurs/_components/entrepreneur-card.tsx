@@ -13,7 +13,7 @@ export function EntrepreneurCard({
     return (
         <Link
             href={`/vetted-entrepreneurs/${e.id}`}
-            className="group flex flex-col overflow-hidden rounded-2xl border bg-card transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-md"
+            className="group flex h-full flex-col overflow-hidden rounded-2xl border bg-card transition-all duration-300 ease-out hover:-translate-y-1 hover:border-primary/40 hover:shadow-[var(--shadow-lg)]"
         >
             <div className="relative h-[165px] bg-muted">
                 <div className="h-full overflow-hidden">
@@ -22,11 +22,11 @@ export function EntrepreneurCard({
                         <img
                             src={e.photo}
                             alt={e.name}
-                            className="h-full w-full object-cover object-[center_22%] scale-[1.08]"
+                            className="h-full w-full scale-[1.08] object-cover object-[center_22%] transition-transform duration-700 ease-out group-hover:scale-[1.14]"
                         />
                     ) : (
                         <div
-                            className="grid h-full w-full place-items-center font-display text-[40px] font-bold text-white"
+                            className="grid h-full w-full place-items-center font-display text-[40px] font-bold text-white transition-transform duration-700 ease-out group-hover:scale-105"
                             style={{ background: `linear-gradient(135deg, ${e.c1}, ${e.c2})` }}
                         >
                             {e.initials}

@@ -27,6 +27,7 @@ import { Input } from "@/components/ui/input";
 import { ClothBorder } from "@/components/icons";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { EntrepreneurCard } from "@/app/(web)/vetted-entrepreneurs/_components/entrepreneur-card";
+import { staggerStyle } from '@/lib/motion'
 
 const HERO_STATS = [
     { icon: Users, num: "350+", label: "Vetted Entrepreneurs" },
@@ -286,8 +287,10 @@ export default function VettedEntrepreneursPage() {
                     </div>
                 ) : (
                     <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                        {featuredEntrepreneurs.map((e) => (
-                            <EntrepreneurCard key={e.id} e={e} showFeaturedBadge />
+                        {featuredEntrepreneurs.map((e, i) => (
+                            <div key={e.id} className="animate-stagger-in" style={staggerStyle(i)}>
+                                <EntrepreneurCard e={e} showFeaturedBadge />
+                            </div>
                         ))}
                     </div>
                 )}
@@ -318,8 +321,10 @@ export default function VettedEntrepreneursPage() {
                     </div>
 
                     <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                        {otherEntrepreneurs.map((e) => (
-                            <EntrepreneurCard key={e.id} e={e} />
+                        {otherEntrepreneurs.map((e, i) => (
+                            <div key={e.id} className="animate-stagger-in" style={staggerStyle(i)}>
+                                <EntrepreneurCard e={e} />
+                            </div>
                         ))}
                     </div>
                 </section>

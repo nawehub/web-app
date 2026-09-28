@@ -3,7 +3,7 @@
 import React, {useEffect, useMemo, useState} from 'react'
 import Link from 'next/link'
 import {
-    Search, SlidersHorizontal, Calendar,
+    Search, Calendar,
     LayoutGrid, List, Bookmark, Share2, Bell, ArrowUpRight, BadgeCheck,
     Mail, MessageCircle, Send, Trophy, DollarSign, Zap, Loader2,
 } from 'lucide-react'
@@ -12,7 +12,7 @@ import {Button} from '@/components/ui/button'
 import {Input} from '@/components/ui/input'
 import {Skeleton} from '@/components/ui/skeleton'
 import {cn} from '@/lib/utils'
-import {CATEGORIES, STATS} from "@/lib/database/opportunities";
+import {CATEGORIES} from "@/lib/database/opportunities";
 import {ClothBorder} from "@/components/icons";
 import {OpportunityCard} from "@/app/(web)/opportunities/_components/opportunity-card";
 import {EventCard} from "@/app/(web)/opportunities/_components/event-card";
@@ -24,11 +24,13 @@ import {ValuePositionBanner} from "@/app/(web)/opportunities/_components/value-p
 import {NewsletterWhatsapp} from "@/app/(web)/opportunities/_components/newsletter-whatsapp";
 import {useOpportunitiesQuery, useOpportunityCategoriesQuery, useUpcomingEventsQuery} from "@/hooks/repository/use-opportunities";
 import {GEOGRAPHIC_SCOPE_PARAM, toEnumParam} from "@/lib/gateway-enums";
+import { staggerStyle } from '@/lib/motion'
 
+// Live counts of open, approved opportunities per category (from /opportunities/analysis).
 const HERO_CARDS = [
-    {label: 'Funding Opportunities', value: '120+', color: 'bg-primary text-primary-foreground', icon: DollarSign},
-    {label: 'Events & Workshops', value: '35+', color: 'bg-accent text-accent-foreground', icon: Calendar},
-    {label: 'Competitions & Challenges', value: '45+', color: 'bg-[hsl(var(--color-info))] text-white', icon: Trophy},
+    {label: 'Funding Opportunities', category: 'grants', color: 'bg-primary text-primary-foreground', icon: DollarSign},
+    {label: 'Events & Workshops', category: 'events', color: 'bg-accent text-accent-foreground', icon: Calendar},
+    {label: 'Competitions & Challenges', category: 'competitions', color: 'bg-[hsl(var(--color-info))] text-white', icon: Trophy},
 ]
 
 const FEATURES = [
@@ -69,7 +71,6 @@ export default function OpportunitiesPage() {
     const [searchQuery, setSearchQuery] = useState('')
     const [searchInput, setSearchInput] = useState('')
     const [view, setView] = useState<'grid' | 'list'>('grid')
-    const [email, setEmail] = useState('')
     const [deadline, setDeadline] = useState<DeadlineRange>({ preset: 'anytime', from: '', to: '' })
     const [sort, setSort] = useState<string>("Newest First")
 
@@ -86,6 +87,24 @@ export default function OpportunitiesPage() {
     }, sort === 'Oldest First')
 
     const {data: categoryTiles = [], isLoading: isLoadingCategories, isError: isErrorCategories} = useOpportunityCategoriesQuery()
+    const countFor = (category: string) =>
+        isLoadingCategories ? '…' : String(categoryTiles.find((c) => c.id === category)?.count ?? 0)
+    const stats = [
+        {label: 'Open Categories', value: isLoadingCategories ? '…' : String(categoryTiles.length)},
+        {label: 'Funding Programs', value: countFor('grants')},
+        {label: 'Upcoming Events', value: countFor('events')},
+        {label: 'Competitions', value: countFor('competitions')},
+    ]
+    const hasActiveFilters = Boolean(activeCategory || activeLocation || activeBeneficiary || searchInput || deadline.preset !== 'anytime')
+
+    function clearAll() {
+        setActiveCategory(null)
+        setActiveLocation("")
+        setActiveBeneficiary("")
+        setSearchInput('')
+        setSearchQuery('')
+        setDeadline({ preset: 'anytime', from: '', to: '' })
+    }
     const {data: events = [], isLoading: isLoadingEvents, isError: isErrorEvents} = useUpcomingEventsQuery(10)
 
     const visibleOpportunities = useMemo(() => {
@@ -158,7 +177,7 @@ export default function OpportunitiesPage() {
 
                             {/* Stats row */}
                             <div className="flex flex-wrap gap-6 pt-2">
-                                {STATS.map((s) => (
+                                {stats.map((s) => (
                                     <div key={s.label}>
                                         <div
                                             className="text-2xl font-bold text-[hsl(var(--color-neutral-50))] [font-family:var(--font-mono)]">{s.value}</div>
@@ -198,7 +217,7 @@ export default function OpportunitiesPage() {
                                             <div className="flex items-start justify-between gap-2">
                                                 <div>
                                                     <div
-                                                        className="text-2xl font-bold [font-family:var(--font-mono)]">{card.value}</div>
+                                                        className="text-2xl font-bold [font-family:var(--font-mono)]">{countFor(card.category)}</div>
                                                     <div
                                                         className="mt-0.5 text-xs font-medium opacity-90">{card.label}</div>
                                                 </div>
@@ -222,9 +241,9 @@ export default function OpportunitiesPage() {
                         <h2 className="text-xl font-semibold text-foreground [font-family:var(--font-display)]">
                             Explore by Category
                         </h2>
-                        <Link href="/opportunities/categories"
+                        <Link href="/opportunities/all"
                               className="flex items-center gap-1 text-sm font-medium text-primary hover:underline">
-                            View All Categories <ArrowUpRight className="h-4 w-4"/>
+                            Browse the full directory <ArrowUpRight className="h-4 w-4"/>
                         </Link>
                     </div>
                     {isErrorCategories ? (
@@ -239,12 +258,13 @@ export default function OpportunitiesPage() {
                         <p className="text-sm text-muted-foreground">No categories yet.</p>
                     ) : (
                         <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-11">
-                            {categoryTiles.map((cat) => (
+                            {categoryTiles.map((cat, i) => (
                                 <button
                                     key={cat.id}
                                     onClick={() => setActiveCategory(activeCategory === cat.id ? null : cat.id)}
+                                    style={staggerStyle(i)}
                                     className={cn(
-                                        'flex flex-col items-center gap-2 rounded-2xl border p-3 text-center justify-between transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-md)]',
+                                        'animate-stagger-in flex flex-col items-center gap-2 rounded-2xl border p-3 text-center justify-between transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-md)]',
                                         activeCategory === cat.id
                                             ? 'border-primary bg-primary/10 shadow-[var(--shadow-sm)]'
                                             : 'border-border bg-card hover:border-primary/50'
@@ -311,14 +331,12 @@ export default function OpportunitiesPage() {
                                           value={activeBeneficiary}
                                           setValue={setActiveBeneficiary} />
 
-                            <Button variant="outline" className="h-10 gap-2 rounded-xl">
-                                <SlidersHorizontal className="h-4 w-4"/> More Filters
-                            </Button>
-
-                            <Button variant="ghost"
-                                    className="h-10 rounded-xl text-sm text-muted-foreground hover:text-foreground">
-                                Clear All
-                            </Button>
+                            {hasActiveFilters && (
+                                <Button variant="ghost" onClick={clearAll}
+                                        className="h-10 rounded-xl text-sm text-muted-foreground hover:text-foreground">
+                                    Clear All
+                                </Button>
+                            )}
                         </div>
 
                         {/* Sort + view toggle */}
@@ -393,9 +411,11 @@ export default function OpportunitiesPage() {
                     ) : (
                         <>
                             <div className="relative">
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                    {visibleOpportunities.map((opp) => (
-                                        <OpportunityCard key={opp.id} opp={opp}/>
+                                <div className={cn("grid gap-4", view === 'grid' ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-4" : "grid-cols-1")}>
+                                    {visibleOpportunities.map((opp, i) => (
+                                        <div key={opp.id} className="animate-stagger-in" style={staggerStyle(i, 8)}>
+                                            <OpportunityCard opp={opp} layout={view}/>
+                                        </div>
                                     ))}
                                 </div>
                             </div>
@@ -441,8 +461,10 @@ export default function OpportunitiesPage() {
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                            {events.map((ev) => (
-                                <EventCard key={ev.id} ev={ev}/>
+                            {events.map((ev, i) => (
+                                <div key={ev.id} className="animate-stagger-in" style={staggerStyle(i)}>
+                                    <EventCard ev={ev}/>
+                                </div>
                             ))}
                         </div>
                     )}

@@ -14,6 +14,7 @@ import { useOpportunitiesQuery } from '@/hooks/repository/use-opportunities'
 import { OpportunityCard } from '@/app/(web)/opportunities/_components/opportunity-card'
 import { DeadlineFilter, DeadlineRange } from '@/app/(web)/opportunities/_components/deadline-filter'
 import SelectFilter from '@/app/(web)/opportunities/_components/select-filter'
+import { staggerStyle } from '@/lib/motion'
 
 // The main directory covers every category except Events & Conferences -
 // that gets its own dedicated /opportunities/events page instead.
@@ -226,8 +227,10 @@ export default function AllOpportunitiesPage() {
                                 Showing <span className="font-semibold text-foreground">{visibleOpportunities.length}</span> opportunit{visibleOpportunities.length === 1 ? 'y' : 'ies'}
                             </p>
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-                                {visibleOpportunities.map((opp) => (
-                                    <OpportunityCard key={opp.id} opp={opp} />
+                                {visibleOpportunities.map((opp, i) => (
+                                    <div key={opp.id} className="animate-stagger-in" style={staggerStyle(i, 8)}>
+                                        <OpportunityCard opp={opp} />
+                                    </div>
                                 ))}
                             </div>
                             {hasNextPage && (

@@ -27,22 +27,3 @@ export async function GET(request: Request) {
         return NextResponse.json({ message: "Internal server error" }, { status: 500 });
     }
 }
-
-/**
- * Public "Next Big Idea" submission - proxies straight through to
- * web-api-gateway's POST /api/v1/big-ideas (plain JSON body matching
- * IdeaDto.CreateIdeaDto).
- */
-export async function POST(request: Request) {
-    try {
-        const body = await request.text();
-        const response = await gatewayFetch("/big-ideas", {
-            method: "POST",
-            body,
-        });
-        const data = await response.json();
-        return NextResponse.json(data, { status: response.status });
-    } catch (error) {
-        return NextResponse.json({ message: "Internal server error" }, { status: 500 });
-    }
-}

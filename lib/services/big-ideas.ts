@@ -1,4 +1,5 @@
 import type { PagedResponse } from "@/lib/gateway";
+import { mediaUrl } from "@/lib/media";
 import { ideaStageFromParam, ideaStageToParam } from "@/lib/gateway-enums";
 import type { NextBigIdea } from "@/types/next-big-idea";
 
@@ -45,7 +46,8 @@ export interface GatewayIdea {
     estimatedJobsCreated: string;
     growthPlan: string;
     whySelected: string;
-    supportingMaterials: { type: string; url: string; uploadedAt: string }[];
+    // url is the gateway's download path for the material
+    supportingMaterials: { id: string; type: string; url: string; uploadedAt: string }[];
     status: string;
     declineReason: string | null;
     createTime: string;
@@ -60,7 +62,8 @@ export interface BigIdeasFilters {
 const PLACEHOLDER_COVER = "/placeholder.jpg";
 
 export function toNextBigIdea(gw: GatewayIdea): NextBigIdea {
-    const photo = gw.supportingMaterials.find((m) => m.url)?.url;
+    // Only a prototype photo makes a cover - other materials are pitch decks, plans or videos.
+    const photo = mediaUrl(gw.supportingMaterials.find((m) => m.type === "PROTOTYPE_PHOTO")?.url);
     return {
         id: gw.id,
         title: gw.ideaName,

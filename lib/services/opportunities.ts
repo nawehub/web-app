@@ -4,6 +4,7 @@ import {
 import type { ElementType } from "react";
 import type { EventItem, Opportunity } from "@/types/opportunities";
 import type { PagedResponse } from "@/lib/gateway";
+import { mediaUrl } from "@/lib/media";
 
 /** Mirrors OpportunityModel.OpportunitySummary on web-api-gateway. */
 export interface GatewayOpportunity {
@@ -152,6 +153,23 @@ function formatDeadline(deadline: string): string {
     return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 }
 
+/** "Other" categories/scopes carry their real name in a free-text field. */
+function categoryLabel(gw: GatewayOpportunity, category: string): string {
+    return category === "OTHER" && gw.categoryOther ? gw.categoryOther : titleCase(category);
+}
+
+function scopeLabel(gw: GatewayOpportunity): string {
+    if (gw.geographicScope === "OTHER" && gw.geographicScopeOther) return gw.geographicScopeOther;
+    if (gw.geographicScope === "SIERRA_LEONE_ONLY") return "Sierra Leone";
+    return titleCase(gw.geographicScope);
+}
+
+/** Whether applications are still open - the deadline is the last day to apply. */
+export function isOpen(gw: Pick<GatewayOpportunity, "deadline">): boolean {
+    const deadline = new Date(gw.deadline).getTime();
+    return Number.isNaN(deadline) || deadline >= Date.now();
+}
+
 export function toOpportunity(gw: GatewayOpportunity): Opportunity {
     const primaryCategory = gw.categories[0] ?? "OTHER";
     const isNew = (Date.now() - new Date(gw.createTime).getTime()) < 14 * 24 * 60 * 60 * 1000;
@@ -159,12 +177,12 @@ export function toOpportunity(gw: GatewayOpportunity): Opportunity {
     return {
         id: gw.id,
         title: gw.title,
-        type: titleCase(primaryCategory),
-        location: titleCase(gw.geographicScope),
+        type: categoryLabel(gw, primaryCategory),
+        location: scopeLabel(gw),
         description: gw.description,
         deadline: formatDeadline(gw.deadline),
         deadlineISO: gw.deadline,
-        image: gw.flierUrl || CATEGORY_IMAGE[primaryCategory] || CATEGORY_IMAGE.OTHER,
+        image: mediaUrl(gw.flierUrl) || CATEGORY_IMAGE[primaryCategory] || CATEGORY_IMAGE.OTHER,
         isNew,
         applyLabel: "Apply Now",
         officialUrl: gw.applicationLink,
@@ -190,9 +208,10 @@ export function toEventItem(gw: GatewayOpportunity): EventItem {
         month: hasDate ? MONTH_ABBR[d.getMonth()] : "",
         day: hasDate ? d.getDate() : 0,
         title: gw.title,
-        time: hasDate ? d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "",
+        // The date shown is the registration deadline (events carry no separate event date).
+        time: hasDate ? "Registration closes" : "",
         format: "",
-        location: titleCase(gw.geographicScope),
+        location: scopeLabel(gw),
     };
 }
 
@@ -238,11 +257,14 @@ export const opportunitiesService = () => ({
         if (!res.ok) throw new Error("Failed to load category analysis");
         return res.json();
     },
+    /** Events that haven't happened yet, soonest first. */
     getUpcomingEvents: async (pageSize = 10): Promise<GatewayOpportunity[]> => {
         const params = buildParams({ category: "EVENTS" }, pageSize);
         const res = await fetch(`/api/opportunities?${params.toString()}`);
         if (!res.ok) throw new Error("Failed to load events");
         const page: PagedResponse<GatewayOpportunity> = await res.json();
-        return page.items.filter((item) => item.status === "APPROVED");
+        return page.items
+            .filter((item) => item.status === "APPROVED" && isOpen(item))
+            .sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime());
     },
 });

@@ -11,6 +11,7 @@ import {
     Sun,
     Moon,
 } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
 import {getStartedLinks, platformLinks} from "@/lib/navigations";
 import {Logo} from "@/components/icons";
 
@@ -50,8 +51,15 @@ function RegisterMenu() {
         function onClickOutside(e: MouseEvent) {
             if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
         }
+        function onKeyDown(e: KeyboardEvent) {
+            if (e.key === 'Escape') setOpen(false)
+        }
         document.addEventListener('mousedown', onClickOutside)
-        return () => document.removeEventListener('mousedown', onClickOutside)
+        document.addEventListener('keydown', onKeyDown)
+        return () => {
+            document.removeEventListener('mousedown', onClickOutside)
+            document.removeEventListener('keydown', onKeyDown)
+        }
     }, [])
 
     return (
@@ -61,14 +69,14 @@ function RegisterMenu() {
                 onClick={() => setOpen((o) => !o)}
                 aria-haspopup="true"
                 aria-expanded={open}
-                className="inline-flex items-center gap-1.5 rounded-sm bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground transition-colors hover:bg-[hsl(var(--color-secondary-400))]"
+                className="inline-flex items-center gap-1.5 rounded-sm bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground transition-all hover:-translate-y-0.5 hover:bg-[hsl(var(--color-secondary-400))] hover:shadow-[0_6px_20px_-6px_hsl(25_95%_53%/0.6)] active:translate-y-0"
             >
                 Get started
                 <ChevronDown className={`h-3.5 w-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
             </button>
 
             {open && (
-                <div className="absolute right-0 z-10 mt-2 w-72 rounded-md border border-[hsl(var(--color-neutral-800))] bg-[hsl(var(--color-neutral-900))] p-2 shadow-[var(--shadow-lg)]">
+                <div className="animate-scale-in absolute right-0 z-10 mt-2 w-72 origin-top-right rounded-md border border-[hsl(var(--color-neutral-800))] bg-[hsl(var(--color-neutral-900))] p-2 shadow-[var(--shadow-lg)]">
                     {getStartedLinks.map(({ label, href, icon: Icon }) => (
                         <Link
                             key={label}
@@ -92,29 +100,47 @@ function RegisterMenu() {
 // Header
 // ---------------------------------------------------------------------------
 
+/** A section's nav item stays highlighted on its sub-pages (e.g. /opportunities/all). */
+function isActive(pathname: string, href: string) {
+    return href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(`${href}/`)
+}
+
 export default function Header() {
     const pathname = usePathname()
     const [mobileOpen, setMobileOpen] = useState(false)
+    const [scrolled, setScrolled] = useState(false)
+
+    // Compact, shadowed bar once the page scrolls under it.
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 8)
+        onScroll()
+        window.addEventListener('scroll', onScroll, { passive: true })
+        return () => window.removeEventListener('scroll', onScroll)
+    }, [])
+
+    // Close the mobile menu after navigating (including back/forward).
+    useEffect(() => setMobileOpen(false), [pathname])
 
     return (
         <header
-            className={`sticky top-0 z-50 border-b border-[hsl(var(--color-neutral-800))] bg-[hsl(var(--color-neutral-900))]/95 backdrop-blur-md`}
+            className={`sticky top-0 z-50 border-b border-[hsl(var(--color-neutral-800))] bg-[hsl(var(--color-neutral-900))]/95 backdrop-blur-md transition-shadow duration-300 ${scrolled ? 'shadow-[0_8px_30px_-12px_rgb(0_0_0/0.6)]' : ''}`}
         >
-            <div className="container mx-auto flex h-20 items-center justify-between px-4">
+            <div className={`container mx-auto flex items-center justify-between px-4 transition-[height] duration-300 ease-out ${scrolled ? 'h-16' : 'h-20'}`}>
                 <Logo />
 
                 {/* Desktop nav */}
                 <nav className="hidden h-full items-center gap-8 lg:flex">
                     {platformLinks.map((link) => {
-                        const active = pathname === link.href
+                        const active = isActive(pathname, link.href)
                         return (
                             <Link
                                 key={link.label}
                                 href={link.href}
-                                className={`flex h-full items-center border-b-2 text-sm font-medium transition-colors ${
+                                aria-current={active ? 'page' : undefined}
+                                className={`relative flex h-full items-center text-sm font-medium transition-colors after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:origin-left after:rounded-full after:bg-[hsl(25_95%_53%)] after:transition-transform after:duration-300 after:ease-out ${
                                     active
-                                        ? 'border-[hsl(25_95%_53%)] text-[hsl(var(--color-neutral-50))]'
-                                        : 'border-transparent text-[hsl(var(--color-neutral-300))] hover:border-[hsl(var(--color-neutral-700))] hover:text-[hsl(25_95%_53%)]'
+                                        ? 'text-[hsl(var(--color-neutral-50))] after:scale-x-100'
+                                        : 'text-[hsl(var(--color-neutral-300))] after:scale-x-0 hover:text-[hsl(25_95%_53%)] hover:after:scale-x-100'
                                 }`}
                             >
                                 {link.label}
@@ -151,11 +177,20 @@ export default function Header() {
             </div>
 
             {/* Mobile menu panel */}
+            <AnimatePresence initial={false}>
             {mobileOpen && (
-                <div className="border-t border-[hsl(var(--color-neutral-800))] bg-[hsl(var(--color-neutral-900))] px-4 py-6 lg:hidden">
+                <motion.div
+                    key="mobile-menu"
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                    className="overflow-hidden border-t border-[hsl(var(--color-neutral-800))] bg-[hsl(var(--color-neutral-900))] lg:hidden"
+                >
+                <div className="px-4 py-6">
                     <nav className="flex flex-col">
                         {platformLinks.map((link) => {
-                            const active = pathname === link.href
+                            const active = isActive(pathname, link.href)
                             return (
                                 <Link
                                     key={link.label}
@@ -198,7 +233,9 @@ export default function Header() {
                         Track Business
                     </Link>
                 </div>
+                </motion.div>
             )}
+            </AnimatePresence>
         </header>
     )
 }

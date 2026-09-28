@@ -12,6 +12,7 @@ import { useOpportunitiesQuery } from '@/hooks/repository/use-opportunities'
 import { OpportunityCard } from '@/app/(web)/opportunities/_components/opportunity-card'
 import { DeadlineFilter, DeadlineRange } from '@/app/(web)/opportunities/_components/deadline-filter'
 import SelectFilter from '@/app/(web)/opportunities/_components/select-filter'
+import { staggerStyle } from '@/lib/motion'
 
 const ALL_LOCATIONS = 'All locations'
 
@@ -178,8 +179,10 @@ export default function OpportunityEventsPage() {
                                 Showing <span className="font-semibold text-foreground">{visibleEvents.length}</span> event{visibleEvents.length === 1 ? '' : 's'}
                             </p>
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-                                {visibleEvents.map((opp) => (
-                                    <OpportunityCard key={opp.id} opp={opp} />
+                                {visibleEvents.map((opp, i) => (
+                                    <div key={opp.id} className="animate-stagger-in" style={staggerStyle(i, 8)}>
+                                        <OpportunityCard opp={opp} />
+                                    </div>
                                 ))}
                             </div>
                             {hasNextPage && (

@@ -60,6 +60,10 @@ export const ideaSubmissionSchema = z.object({
     estimatedJobsCreated: z.string().max(500, "Max length is 500 characters").optional(),
     growthPlan: z.string().max(2000, "Max length is 2000 characters").optional(),
     whySelected: z.string().max(2000, "Max length is 2000 characters").optional(),
+
+    // Also create a NaWeHub account (credentials are emailed) so the submitter can follow the
+    // idea from the Entrepreneur Portal. Not part of the idea itself.
+    createNawehubAccount: z.boolean(),
 });
 
 export type IdeaSubmissionForm = z.infer<typeof ideaSubmissionSchema>;
@@ -77,6 +81,7 @@ export const ideaSubmissionDefaults: Partial<IdeaSubmissionForm> = {
     stage: "", testedWithCustomers: false, testingLearnings: "", existingResources: "",
     challengesAndRisks: "", riskMitigationPlan: "",
     socialImpact: "", environmentalImpact: "", estimatedJobsCreated: "", growthPlan: "", whySelected: "",
+    createNawehubAccount: false,
 };
 
 export const IDEA_WIZARD_STEPS = [
@@ -88,10 +93,28 @@ export const IDEA_WIZARD_STEPS = [
     { id: "review", title: "Review & Submit", description: "Check everything before you submit", icon: Send },
 ] as const;
 
-/** Mirrors IdeaModel.IdeaSummary as returned by a successful create. */
-export interface IdeaSubmissionResponse {
-    id: string;
+/** Mirrors IdeaModel.IdeaTrackingSummary on web-api-gateway - what a tracking ID reveals. */
+export interface IdeaTrackingSummary {
+    trackingId: string;
     ideaName: string;
+    oneLineDescription: string;
+    applicantName: string;
+    stage: string;
+    /** PENDING, PUBLISHED, IN_REVIEW, APPROVED or DECLINED */
     status: string;
+    declineReason: string | null;
+    supportingMaterialTypes: string[];
+    /** Set once approved - the idea's public page is /next-big-idea/{publicIdeaId}. */
+    publicIdeaId: string | null;
     createTime: string;
+    updateTime: string;
+}
+
+/** Mirrors IdeaModel.IdeaSubmissionResult - the response to a public submission. */
+export interface IdeaSubmissionResponse {
+    idea: IdeaTrackingSummary;
+    /** A NaWeHub account was created and its credentials emailed. */
+    accountCreated: boolean;
+    /** null when no file was sent; false when the file couldn't be attached (the idea still went through). */
+    materialAttached: boolean | null;
 }

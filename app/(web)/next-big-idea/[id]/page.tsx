@@ -17,6 +17,7 @@ import { useBigIdeaQuery } from '@/hooks/repository/use-big-ideas'
 import { toNextBigIdea } from '@/lib/services/big-ideas'
 import { STAGE_COLORS } from '@/types/next-big-idea'
 import { cn } from '@/lib/utils'
+import { Reveal } from '@/components/motion/reveal'
 
 export default function NextBigIdeaDetailPage() {
     const params = useParams()
@@ -75,7 +76,7 @@ export default function NextBigIdeaDetailPage() {
                     <img
                         src={idea.coverImage}
                         alt={idea.title}
-                        className="h-full w-full object-cover"
+                        className="animate-hero-zoom h-full w-full object-cover"
                         onError={(e) => {
                             ;(e.target as HTMLImageElement).src = '/placeholder.jpg'
                         }}
@@ -116,7 +117,7 @@ export default function NextBigIdeaDetailPage() {
                     {idea.description}
                 </p>
 
-                <div className="mt-8 rounded-2xl border bg-card p-6">
+                <Reveal className="mt-8 rounded-2xl border bg-card p-6">
                     <h2 className="font-semibold [font-family:var(--font-display)]">Idea Snapshot</h2>
                     <div className="mt-5 grid gap-5 sm:grid-cols-2">
                         <Snapshot icon={<Layers />} label="Stage" value={idea.stage} />
@@ -143,9 +144,9 @@ export default function NextBigIdeaDetailPage() {
                             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{idea.growthPlan}</p>
                         </div>
                     )}
-                </div>
+                </Reveal>
 
-                <div className="mt-8 rounded-2xl border border-dashed bg-muted/30 p-6 text-center">
+                <Reveal className="mt-8 rounded-2xl border border-dashed bg-muted/30 p-6 text-center">
                     <p className="text-sm text-muted-foreground">
                         This is a promising innovation showcased on NaWeHub. Contributions are
                         made to the Next Big Idea pool — not directly to individual ideas.
@@ -163,7 +164,7 @@ export default function NextBigIdeaDetailPage() {
                             </Link>
                         </Button>
                     </div>
-                </div>
+                </Reveal>
             </main>
         </div>
     )

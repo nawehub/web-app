@@ -10,13 +10,13 @@ interface IdeaCardProps {
 
 export function IdeaCard({ idea }: IdeaCardProps) {
     return (
-        <article className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-[var(--shadow-sm)] transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-lg)]">
-            <div className="relative h-44 bg-muted">
+        <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-[var(--shadow-sm)] transition-all duration-300 ease-out hover:-translate-y-1 hover:border-primary/40 hover:shadow-[var(--shadow-lg)]">
+            <div className="relative h-44 overflow-hidden bg-muted">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                     src={idea.coverImage}
                     alt={idea.title}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                     onError={(e) => {
                         ;(e.target as HTMLImageElement).src = '/placeholder.jpg'
                     }}

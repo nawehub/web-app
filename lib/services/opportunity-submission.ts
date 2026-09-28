@@ -20,7 +20,8 @@ function toFormData(data: OpportunitySubmissionForm, flier: File | null): FormDa
         targetBeneficiaries: data.targetBeneficiaries,
         targetBeneficiaryOther: data.targetBeneficiaryOther || undefined,
         eligibilityCriteria: data.eligibilityCriteria || undefined,
-        deadline: format(data.deadline, ISO_DATE),
+        // The deadline is the last day to apply - send the end of that day as an ISO instant.
+        deadline: `${format(data.deadline, ISO_DATE)}T23:59:59Z`,
         applicationLink: data.applicationLink,
         contactInfo: {
             email: data.contactEmail,

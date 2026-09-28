@@ -479,17 +479,13 @@ export default function PrivacyPolicyPage() {
                                 business growth and community development.
                             </p>
                             <div className="flex flex-col justify-center gap-4 sm:flex-row">
-                                <Link href="/register">
-                                    <button className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-8 py-3 font-semibold text-accent-foreground transition-colors hover:bg-[hsl(var(--color-secondary-400))] sm:w-auto">
+                                <Link href="https://app.nawehub.com/register" className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-8 py-3 font-semibold text-accent-foreground transition-colors hover:bg-[hsl(var(--color-secondary-400))] sm:w-auto">
                                         Get Started Today
                                         <ArrowRight className="h-5 w-5" />
-                                    </button>
-                                </Link>
-                                <Link href="/contact">
-                                    <button className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[hsl(var(--color-neutral-700))] px-8 py-3 font-semibold text-[hsl(var(--color-neutral-50))] transition-colors hover:border-accent hover:text-accent sm:w-auto">
+                                    </Link>
+                                <Link href="/contact" className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[hsl(var(--color-neutral-700))] px-8 py-3 font-semibold text-[hsl(var(--color-neutral-50))] transition-colors hover:border-accent hover:text-accent sm:w-auto">
                                         Contact Support
-                                    </button>
-                                </Link>
+                                    </Link>
                             </div>
                         </div>
                         <ClothBorder tone="hsl(60 9% 98%)" />

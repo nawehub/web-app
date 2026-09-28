@@ -33,14 +33,18 @@ export default function TrackForm() {
             <form onSubmit={handleSubmit} className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-sm)] sm:p-8">
                 <Label htmlFor="trackingId">Tracking ID</Label>
                 <div className="mt-2 flex flex-col gap-3 sm:flex-row">
-                    <Input
-                        id="trackingId"
-                        value={trackingId}
-                        onChange={(e) => setTrackingId(e.target.value)}
-                        placeholder="e.g. BIZ-2026-000123"
-                        className="h-12 flex-1 font-mono"
-                        autoFocus
-                    />
+                    {/* Input renders inside its own wrapper div - size the wrapper, not the input. */}
+                    <div className="flex-1">
+                        <Input
+                            id="trackingId"
+                            value={trackingId}
+                            onChange={(e) => setTrackingId(e.target.value)}
+                            placeholder="e.g. 0123456789"
+                            inputMode="numeric"
+                            className="h-12 w-full font-mono"
+                            autoFocus
+                        />
+                    </div>
                     <Button type="submit" disabled={track.isPending || !trackingId.trim()} className="h-12 gap-2 sm:min-w-[140px]">
                         {track.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
                         {track.isPending ? "Searching..." : "Track"}

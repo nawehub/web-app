@@ -30,6 +30,7 @@ import {
 } from '@/lib/data/next-big-idea'
 import { IDEA_STAGES } from '@/lib/gateway-enums'
 import { useBigIdeasQuery } from '@/hooks/repository/use-big-ideas'
+import { staggerStyle } from '@/lib/motion'
 
 const amountPresets = ['50', '100', '250', '500']
 
@@ -41,9 +42,10 @@ function ContributionCard() {
         method: 'mobile-money' as PaymentMethod,
     })
 
+    // There's no contribution/payment endpoint for the pool yet, so the form can't take money -
+    // it says so plainly instead of pretending to submit.
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
-        console.log('Contribution submitted', form)
     }
 
     return (
@@ -171,14 +173,16 @@ function ContributionCard() {
 
                 <button
                     type="submit"
-                    className="mt-1 inline-flex items-center justify-center gap-2 rounded-sm bg-accent py-3 text-sm font-semibold text-accent-foreground transition-colors hover:bg-[hsl(var(--color-secondary-400))]"
+                    disabled
+                    aria-describedby="contribution-status"
+                    className="mt-1 inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-sm bg-accent/60 py-3 text-sm font-semibold text-accent-foreground"
                 >
                     <Lock className="h-4 w-4" />
-                    Contribute Securely
+                    Contributions opening soon
                 </button>
 
-                <p className="text-center text-[11px] text-muted-foreground/70">
-                    Secured by NaWeHub&rsquo;s payment partners. No account needed.
+                <p id="contribution-status" className="text-center text-[11px] text-muted-foreground/80">
+                    Online contributions to the pool aren&rsquo;t open yet. Check back soon.
                 </p>
             </form>
         </div>
@@ -309,8 +313,8 @@ export default function NextBigIdeaPage() {
 
                         <div className="mt-7 flex flex-wrap gap-3">
                             <a
-                                href="#contribute"
-                                className="inline-flex items-center gap-2 rounded-sm bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition-colors hover:bg-[hsl(var(--color-secondary-400))]"
+                                href="#innovators"
+                                className="inline-flex items-center gap-2 rounded-sm bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition-all hover:-translate-y-0.5 hover:bg-[hsl(var(--color-secondary-400))]"
                             >
                                Explore ideas
                                 <ArrowUpRight className="h-4 w-4" />
@@ -321,6 +325,12 @@ export default function NextBigIdeaPage() {
                             >
                                 <Eye className="h-4 w-4" />
                                  Submit Your Ideas
+                            </Link>
+                            <Link
+                                href="/next-big-idea/track"
+                                className="inline-flex items-center gap-2 px-2 py-3 text-sm font-semibold text-muted-foreground transition-colors hover:text-accent"
+                            >
+                                Track a submission <ArrowUpRight className="h-4 w-4" />
                             </Link>
                         </div>
 
@@ -494,8 +504,10 @@ export default function NextBigIdeaPage() {
                     ) : (
                         <>
                             <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                                {items.map((idea) => (
-                                    <IdeaCard key={idea.id} idea={idea} />
+                                {items.map((idea, i) => (
+                                    <div key={idea.id} className="animate-stagger-in" style={staggerStyle(i, 9)}>
+                                        <IdeaCard idea={idea} />
+                                    </div>
                                 ))}
                             </div>
                             {hasNextPage && (
@@ -594,8 +606,8 @@ export default function NextBigIdeaPage() {
                         Together, We Can Build Sierra Leone&rsquo;s Innovation Future
                     </h2>
                     <p className="mx-auto mt-4 max-w-lg text-sm text-primary-foreground/80 sm:text-base">
-                        Have an idea worth sharing? You must be a registered NaWeHub
-                        user/entrepreneur to submit — vetting is not required to apply.
+                        Have an idea worth sharing? Submit it here - no account needed, and vetting isn&rsquo;t
+                        required. You&rsquo;ll get a tracking ID to follow its review.
                     </p>
                     <div className="mt-8 flex flex-wrap justify-center gap-4">
                         <a

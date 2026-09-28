@@ -10,6 +10,15 @@ import { Send } from "lucide-react";
 import React, { useState } from "react";
 import { toast } from "sonner";
 import { districts } from "@/types/demographs";
+import { appMetadata } from "@/utils/app-metadata";
+
+const CATEGORY_LABELS: Record<string, string> = {
+    entrepreneurship: "Entrepreneurship Support",
+    lyd: "Next Big Idea",
+    partnership: "Partnership Opportunities",
+    technical: "Technical Support",
+    general: "General Inquiry",
+};
 
 export default function ContactForm() {
     const [formData, setFormData] = useState({
@@ -27,27 +36,32 @@ export default function ContactForm() {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    // There's no messaging endpoint behind this site, so the form hands the message to the
+    // visitor's email app, pre-addressed and pre-filled - it actually reaches us, rather than
+    // showing a "sent" toast for a message that went nowhere.
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
 
-        // TODO: replace with your real submission endpoint
-        setTimeout(() => {
-            setIsSubmitting(false);
-            toast("Message sent successfully!", {
-                description: "We'll get back to you within 24 hours.",
-            });
+        const body = [
+            formData.message,
+            "",
+            "---",
+            `Name: ${formData.name}`,
+            `Email: ${formData.email}`,
+            formData.phone && `Phone: ${formData.phone}`,
+            formData.district && `District: ${formData.district}`,
+            formData.category && `Inquiry type: ${CATEGORY_LABELS[formData.category] ?? formData.category}`,
+        ].filter(Boolean).join("\n");
+        const subject = formData.category
+            ? `[${CATEGORY_LABELS[formData.category] ?? formData.category}] ${formData.subject}`
+            : formData.subject;
 
-            setFormData({
-                name: '',
-                email: '',
-                phone: '',
-                subject: '',
-                category: '',
-                message: '',
-                district: ''
-            });
-        }, 2000);
+        window.location.href = `mailto:${appMetadata.Authors.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        toast("Opening your email app…", {
+            description: `Your message is ready to send to ${appMetadata.Authors.email}.`,
+        });
+        setIsSubmitting(false);
     };
 
     return (
@@ -57,7 +71,7 @@ export default function ContactForm() {
                     Send Us a Message
                 </CardTitle>
                 <CardDescription className="text-base">
-                    Fill out the form below and we&apos;ll get back to you within 24 hours.
+                    Fill out the form below - it opens your email app with your message ready to send to us.
                 </CardDescription>
             </CardHeader>
             <CardContent>

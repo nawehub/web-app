@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { ArrowRight, ChevronDown, LifeBuoy, Search, Sparkles } from 'lucide-react'
+import { staggerStyle } from '@/lib/motion'
 
 type Category =
     | 'Getting Started'
@@ -136,18 +137,24 @@ function FaqAccordionItem({
                 type="button"
                 onClick={onToggle}
                 aria-expanded={isOpen}
-                className="flex w-full items-center justify-between gap-4 py-5 text-left"
+                className="group flex w-full items-center justify-between gap-4 py-5 text-left"
             >
-                <span className="font-medium text-foreground [font-family:var(--font-display)]">
+                <span className="font-medium text-foreground transition-colors [font-family:var(--font-display)] group-hover:text-primary">
                     {item.question}
                 </span>
                 <ChevronDown
-                    className={`h-5 w-5 shrink-0 text-muted-foreground transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                    className={`h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-300 ${isOpen ? 'rotate-180 text-primary' : ''}`}
                 />
             </button>
-            {isOpen && (
-                <p className="pb-5 leading-relaxed text-muted-foreground">{item.answer}</p>
-            )}
+            {/* Animates open/closed height via grid rows (0fr -> 1fr), no measuring needed. */}
+            <div
+                className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
+                aria-hidden={!isOpen}
+            >
+                <div className="overflow-hidden">
+                    <p className="pb-5 leading-relaxed text-muted-foreground">{item.answer}</p>
+                </div>
+            </div>
         </div>
     )
 }
@@ -228,15 +235,16 @@ export default function FaqPage() {
                         </div>
                     ) : (
                         <div className="rounded-2xl border border-border bg-card px-6 shadow-[var(--shadow-sm)]">
-                            {filtered.map((item) => (
-                                <FaqAccordionItem
-                                    key={item.question}
-                                    item={item}
-                                    isOpen={openQuestion === item.question}
-                                    onToggle={() =>
-                                        setOpenQuestion(openQuestion === item.question ? null : item.question)
-                                    }
-                                />
+                            {filtered.map((item, i) => (
+                                <div key={item.question} className="animate-stagger-in" style={staggerStyle(i)}>
+                                    <FaqAccordionItem
+                                        item={item}
+                                        isOpen={openQuestion === item.question}
+                                        onToggle={() =>
+                                            setOpenQuestion(openQuestion === item.question ? null : item.question)
+                                        }
+                                    />
+                                </div>
                             ))}
                         </div>
                     )}

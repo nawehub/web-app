@@ -11,6 +11,7 @@ import { useAllEntrepreneursQuery } from "@/hooks/repository/use-entrepreneurs";
 import { DISTRICT_OPTIONS, VettedEntrepreneursFilters } from "@/types/entrepreneurs";
 import { GENDER_OPTIONS, SKILL_OPTIONS, genderToParam } from "@/lib/gateway-enums";
 import { EntrepreneurCard } from "@/app/(web)/vetted-entrepreneurs/_components/entrepreneur-card";
+import { staggerStyle } from '@/lib/motion'
 
 const ALL_SKILLS = "All Skills";
 const ALL_DISTRICTS = DISTRICT_OPTIONS[0];
@@ -132,8 +133,10 @@ export default function AllVettedEntrepreneursPage() {
                 ) : (
                     <>
                         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                            {items.map((e) => (
-                                <EntrepreneurCard key={e.id} e={e} showFeaturedBadge={e.featured} />
+                            {items.map((e, i) => (
+                                <div key={e.id} className="animate-stagger-in" style={staggerStyle(i, 12)}>
+                                    <EntrepreneurCard e={e} showFeaturedBadge={e.featured} />
+                                </div>
                             ))}
                         </div>
                         {hasNextPage && (
