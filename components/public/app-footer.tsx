@@ -90,22 +90,31 @@ export default function Footer() {
                         <h3 className="[font-family:var(--font-mono)] text-[11px] font-medium uppercase tracking-[0.18em] text-[hsl(var(--color-neutral-400))]">
                             Track a Submission
                         </h3>
-                        <Link
-                            href="/register-business/track"
-                            className="mt-5 inline-flex items-center gap-2 rounded-sm border border-[hsl(var(--color-neutral-700))] px-4 py-2 text-sm font-semibold text-[hsl(var(--color-neutral-50))] transition-colors hover:border-[hsl(25_95%_53%)] hover:text-[hsl(25_95%_53%)]"
-                        >
-                            Track Business
-                            <ArrowUpRight className="h-3.5 w-3.5" />
-                        </Link>
-                        <Link
-                            href="/next-big-idea/track"
-                            className="ml-2 mt-5 inline-flex items-center gap-2 rounded-sm border border-[hsl(var(--color-neutral-700))] px-4 py-2 text-sm font-semibold text-[hsl(var(--color-neutral-50))] transition-colors hover:border-[hsl(25_95%_53%)] hover:text-[hsl(25_95%_53%)]"
-                        >
-                            Track Idea
-                            <ArrowUpRight className="h-3.5 w-3.5" />
-                        </Link>
+                        <div className="mt-5 flex flex-wrap gap-2">
+                            <Link
+                                href="/register-business/track"
+                                className="inline-flex items-center gap-2 rounded-sm border border-[hsl(var(--color-neutral-700))] px-4 py-2 text-sm font-semibold text-[hsl(var(--color-neutral-50))] transition-colors hover:border-[hsl(25_95%_53%)] hover:text-[hsl(25_95%_53%)]"
+                            >
+                                Track Business
+                                <ArrowUpRight className="h-3.5 w-3.5" />
+                            </Link>
+                            <Link
+                                href="/next-big-idea/track"
+                                className="inline-flex items-center gap-2 rounded-sm border border-[hsl(var(--color-neutral-700))] px-4 py-2 text-sm font-semibold text-[hsl(var(--color-neutral-50))] transition-colors hover:border-[hsl(25_95%_53%)] hover:text-[hsl(25_95%_53%)]"
+                            >
+                                Track Idea
+                                <ArrowUpRight className="h-3.5 w-3.5" />
+                            </Link>
+                            <Link
+                                href="/opportunities/track"
+                                className="inline-flex items-center gap-2 rounded-sm border border-[hsl(var(--color-neutral-700))] px-4 py-2 text-sm font-semibold text-[hsl(var(--color-neutral-50))] transition-colors hover:border-[hsl(25_95%_53%)] hover:text-[hsl(25_95%_53%)]"
+                            >
+                                Track Opportunity
+                                <ArrowUpRight className="h-3.5 w-3.5" />
+                            </Link>
+                        </div>
                         <p className="mt-4 max-w-[16rem] text-xs leading-relaxed text-[hsl(var(--color-neutral-500))]">
-                            Check the status of a business registration or Next Big Idea you&rsquo;ve submitted.
+                            Check the status of a business registration, Next Big Idea or opportunity you&rsquo;ve submitted.
                         </p>
                     </div>
                 </div>

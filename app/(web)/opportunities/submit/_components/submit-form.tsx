@@ -9,8 +9,12 @@ import {
     AlertCircle,
     ArrowLeft,
     CheckCircle2,
+    Copy,
+    Hash,
     ImagePlus,
+    SearchCheck,
     ShieldCheck,
+    Sparkles,
     X,
 } from "lucide-react"
 
@@ -178,7 +182,7 @@ const CONTACT_FIELDS = [
     "applicationLink", "contactEmail", "contactPhone", "additionalContact",
     "geographicScope", "geographicScopeOther",
 ] as const
-const MEDIA_FIELDS = ["submittedBy", "declared"] as const
+const MEDIA_FIELDS = ["submittedBy", "submitterEmail", "declared"] as const
 
 export default function SubmitOpportunityForm() {
     const wizard = useMultiStepForm(OPPORTUNITY_WIZARD_STEPS.length)
@@ -514,6 +518,21 @@ export default function SubmitOpportunityForm() {
                     />
 
                     <FormField
+                        name="submitterEmail"
+                        control={form.control}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Your Email *</FormLabel>
+                                <FormControl><Input {...field} type="email" placeholder="you@example.com" /></FormControl>
+                                <p className="text-xs text-muted-foreground">
+                                    We&rsquo;ll send your tracking ID and review updates here. It isn&rsquo;t shown publicly.
+                                </p>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
                         name="declared"
                         control={form.control}
                         render={({ field }) => (
@@ -573,6 +592,7 @@ export default function SubmitOpportunityForm() {
 
                         <ReviewSection title="Submitter">
                             <ReviewRow label="Submitted By" value={v.submittedBy} />
+                            <ReviewRow label="Your Email" value={v.submitterEmail} />
                             {flierPreviewUrl && (
                                 <div className="pt-3">
                                     <span className="text-sm text-muted-foreground">Banner Image</span>
@@ -583,6 +603,25 @@ export default function SubmitOpportunityForm() {
                                 </div>
                             )}
                         </ReviewSection>
+
+                        <FormField
+                            name="createNawehubAccount"
+                            control={form.control}
+                            render={({ field }) => (
+                                <div className="flex items-start gap-3 rounded-2xl border border-primary/30 bg-primary/5 p-4">
+                                    <Checkbox id="createNawehubAccount" checked={field.value} onCheckedChange={field.onChange} className="mt-0.5" />
+                                    <Label htmlFor="createNawehubAccount" className="cursor-pointer font-normal leading-snug">
+                                        <span className="flex items-center gap-1.5 font-medium text-foreground">
+                                            <Sparkles className="h-3.5 w-3.5 text-primary" /> Create a NaWeHub account for me
+                                        </span>
+                                        <span className="mt-0.5 block text-sm text-muted-foreground">
+                                            We&rsquo;ll email login details so you can manage your opportunities from the Entrepreneur Portal.
+                                            Either way, you&rsquo;ll get a tracking ID to check its status here.
+                                        </span>
+                                    </Label>
+                                </div>
+                            )}
+                        />
                     </div>
                 )
             })(),
@@ -590,9 +629,11 @@ export default function SubmitOpportunityForm() {
     ]
 
     if (result) {
+        const trackingId = result.opportunity.trackingId
+        const accountRequested = form.getValues("createNawehubAccount")
         return (
             <div className="mx-auto max-w-2xl px-4 py-24">
-                <Card className="border-primary/20">
+                <Card className="animate-scale-in border-primary/20">
                     <CardContent className="flex flex-col items-center gap-5 py-12 text-center">
                         <span className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/15 text-primary">
                             <CheckCircle2 className="h-8 w-8" />
@@ -602,18 +643,44 @@ export default function SubmitOpportunityForm() {
                                 Opportunity Submitted
                             </h2>
                             <p className="mt-2 max-w-md text-muted-foreground">
-                                Thank you for helping us connect opportunities with entrepreneurs and innovators across Sierra Leone.
-                                Our team will review &ldquo;{result.title}&rdquo; and get back to you shortly.
+                                Thank you for sharing &ldquo;{result.opportunity.title}&rdquo;. It&rsquo;s now waiting for review by the NaWeHub team,
+                                and we&rsquo;ve emailed your tracking ID to {form.getValues("submitterEmail")}.
+                                {result.accountCreated && " Login details for your new NaWeHub account are in the same email."}
+                                {accountRequested && !result.accountCreated &&
+                                    " We didn't create a new account - if you already have one with this email, sign in to NaWeHub as usual."}
                             </p>
                         </div>
+
+                        <button
+                            type="button"
+                            onClick={() => {
+                                navigator.clipboard?.writeText(trackingId)
+                                toast("Tracking ID copied")
+                            }}
+                            className="flex items-center gap-2 rounded-xl border border-border bg-muted/40 px-4 py-3 font-mono text-lg tracking-widest text-foreground transition-colors hover:border-primary/40"
+                        >
+                            <Hash className="h-4 w-4 text-primary" />
+                            {trackingId}
+                            <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+                        </button>
+                        <p className="text-xs text-muted-foreground">Save this tracking ID - you&rsquo;ll need it to check your opportunity&rsquo;s status.</p>
+
                         <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
-                            <Link href="/opportunities">
-                                <Button className="gap-2">
+                            <Button asChild className="gap-2">
+                                <Link href={`/opportunities/track?trackingId=${encodeURIComponent(trackingId)}`}>
+                                    <SearchCheck className="h-4 w-4" /> Track this opportunity
+                                </Link>
+                            </Button>
+                            <Button asChild variant="outline" className="gap-2">
+                                <Link href="/opportunities">
                                     <ArrowLeft className="h-4 w-4" /> Back to Opportunities
-                                </Button>
-                            </Link>
+                                </Link>
+                            </Button>
+                            {result.accountCreated && (
+                                <Button asChild variant="outline"><a href="https://app.nawehub.com/login">Sign in</a></Button>
+                            )}
                             <Button
-                                variant="outline"
+                                variant="ghost"
                                 onClick={() => {
                                     form.reset(opportunitySubmissionDefaults)
                                     setFlier(null)

@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import type { OpportunitySubmissionForm, OpportunitySubmissionResponse } from "@/types/opportunity-submission";
+import type { OpportunitySubmissionForm, OpportunitySubmissionResponse, OpportunityTrackingSummary } from "@/types/opportunity-submission";
 
 const ISO_DATE = "yyyy-MM-dd";
 
@@ -31,6 +31,8 @@ function toFormData(data: OpportunitySubmissionForm, flier: File | null): FormDa
         geographicScope: data.geographicScope,
         geographicScopeOther: data.geographicScopeOther || undefined,
         submittedBy: data.submittedBy,
+        submitterEmail: data.submitterEmail,
+        createNawehubAccount: data.createNawehubAccount,
     };
 
     const formData = new FormData();
@@ -48,6 +50,18 @@ export const opportunitySubmissionService = () => ({
         const body = await res.json();
         if (!res.ok) {
             throw new Error(body?.message || "Submission failed. Please check your details and try again.");
+        }
+        return body;
+    },
+    getByTrackingId: async (trackingId: string): Promise<OpportunityTrackingSummary> => {
+        const res = await fetch(`/api/opportunities/by-tracking-id/${encodeURIComponent(trackingId.trim())}`);
+        const body = await res.json().catch(() => null);
+        if (!res.ok) {
+            throw new Error(
+                res.status === 404 || res.status === 400
+                    ? "No opportunity matches that tracking ID. Please check it and try again."
+                    : body?.message || "Couldn't look up that tracking ID right now. Please try again.",
+            );
         }
         return body;
     },

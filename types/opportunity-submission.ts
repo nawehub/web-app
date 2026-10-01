@@ -32,6 +32,8 @@ export const opportunitySubmissionSchema = z
         geographicScopeOther: z.string().optional(),
 
         submittedBy: z.string({ message: "Your name is required" }).min(2, "Your name must be at least 2 characters").max(100, "Your name must be at most 100 characters"),
+        submitterEmail: z.string({ message: "Your email is required" }).email("Enter a valid email address"),
+        createNawehubAccount: z.boolean(),
         declared: z.boolean(),
     })
     .refine((data) => !data.categories.includes("OTHER") || !!data.categoryOther?.trim(), {
@@ -75,6 +77,8 @@ export const opportunitySubmissionDefaults: Partial<OpportunitySubmissionForm> =
     geographicScope: "",
     geographicScopeOther: "",
     submittedBy: "",
+    submitterEmail: "",
+    createNawehubAccount: false,
     declared: false,
 };
 
@@ -86,10 +90,25 @@ export const OPPORTUNITY_WIZARD_STEPS = [
     { id: "review", title: "Review & Submit", description: "Check everything before you submit", icon: Send },
 ] as const;
 
-/** Mirrors OpportunityModel.OpportunitySummary as returned by a successful create. */
-export interface OpportunitySubmissionResponse {
-    id: string;
+/** Mirrors OpportunityModel.OpportunityTrackingSummary on web-api-gateway - what a tracking ID reveals. */
+export interface OpportunityTrackingSummary {
+    trackingId: string;
     title: string;
+    organizationName: string;
+    categories: string[];
+    /** PENDING, IN_REVIEW, APPROVED or DECLINED (DRAFT only for portal-created opportunities) */
     status: string;
+    declineReason: string | null;
+    /** Set once approved - the opportunity's public page is /opportunities/{publicOpportunityId}. */
+    publicOpportunityId: string | null;
+    deadline: string | null;
     createTime: string;
+    updateTime: string;
+}
+
+/** Mirrors OpportunityModel.OpportunitySubmissionResult - the response to a public submission. */
+export interface OpportunitySubmissionResponse {
+    opportunity: OpportunityTrackingSummary;
+    /** A NaWeHub account was created and its credentials emailed. */
+    accountCreated: boolean;
 }
