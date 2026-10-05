@@ -19,7 +19,7 @@ import {
 } from 'lucide-react'
 import { PaymentMethod, paymentMethods } from '@/types/payment'
 import { IdeaCard } from '@/components/next-big-idea/idea-card'
-import { CompetitionsSection } from '@/components/next-big-idea/competitions/competitions-section'
+import { HeroCompetitions } from '@/components/next-big-idea/competitions/hero-competitions'
 import { ClothBorder } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -347,7 +347,7 @@ export default function NextBigIdeaPage() {
                             ))}
                         </div>
 
-                        <div className="mt-10 flex flex-wrap gap-x-8 gap-y-6 pb-14">
+                        <div className="mt-10 flex flex-wrap gap-x-8 gap-y-6">
                             {[
                                 { num: PLATFORM_STATS.totalRaisedDisplay, label: 'Total Raised' },
                                 {
@@ -372,6 +372,11 @@ export default function NextBigIdeaPage() {
                                     </span>
                                 </div>
                             ))}
+                        </div>
+
+                        {/* Competitions, below the stats */}
+                        <div className="mt-10 pb-14">
+                            <HeroCompetitions />
                         </div>
                     </div>
 
@@ -407,9 +412,6 @@ export default function NextBigIdeaPage() {
             <ClothBorder />
 
             <FundingProgressBar />
-
-            {/* Competitions: running ones with their announced shortlist / finalists / winners */}
-            <CompetitionsSection />
 
             {/* What your contribution supports */}
             <section className="container mx-auto px-4 py-16">
