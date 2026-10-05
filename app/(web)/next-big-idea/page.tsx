@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { PaymentMethod, paymentMethods } from '@/types/payment'
 import { IdeaCard } from '@/components/next-big-idea/idea-card'
+import { CompetitionsSection } from '@/components/next-big-idea/competitions/competitions-section'
 import { ClothBorder } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -406,6 +407,9 @@ export default function NextBigIdeaPage() {
             <ClothBorder />
 
             <FundingProgressBar />
+
+            {/* Competitions: running ones with their announced shortlist / finalists / winners */}
+            <CompetitionsSection />
 
             {/* What your contribution supports */}
             <section className="container mx-auto px-4 py-16">
