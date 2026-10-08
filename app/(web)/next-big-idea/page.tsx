@@ -7,17 +7,18 @@ import {
     Building2,
     CheckCircle2,
     Clock,
-    Coins,
     Eye,
+    Heart,
     Landmark,
     Lightbulb,
     Loader2,
-    Lock,
     ShieldCheck,
     Sparkles,
     Users,
 } from 'lucide-react'
-import { PaymentMethod, paymentMethods } from '@/types/payment'
+import { DonationCard } from '@/components/next-big-idea/donate/donation-card'
+import { formatAmount, type FundSummary } from '@/types/donation'
+import { useFundSummaryQuery } from '@/hooks/repository/use-donations'
 import { IdeaCard } from '@/components/next-big-idea/idea-card'
 import { HeroCompetitions } from '@/components/next-big-idea/competitions/hero-competitions'
 import { ClothBorder } from '@/components/icons'
@@ -33,168 +34,12 @@ import { IDEA_STAGES } from '@/lib/gateway-enums'
 import { useBigIdeasQuery } from '@/hooks/repository/use-big-ideas'
 import { staggerStyle } from '@/lib/motion'
 
-const amountPresets = ['50', '100', '250', '500']
-
-function ContributionCard() {
-    const [form, setForm] = useState({
-        name: '',
-        email: '',
-        amount: '100',
-        method: 'mobile-money' as PaymentMethod,
-    })
-
-    // There's no contribution/payment endpoint for the pool yet, so the form can't take money -
-    // it says so plainly instead of pretending to submit.
-    function handleSubmit(e: React.FormEvent) {
-        e.preventDefault()
-    }
-
-    return (
-        <div className="relative rounded-2xl border border-border bg-card p-6 text-card-foreground shadow-[var(--shadow-xl)] sm:p-7">
-            <div className="absolute -top-4 -right-4 -rotate-6">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-dashed border-[hsl(var(--color-secondary-700)/0.6)] bg-card">
-                    <Coins className="h-5 w-5 text-[hsl(var(--color-secondary-700))]" />
-                </div>
-            </div>
-
-            <span className="[font-family:var(--font-mono)] text-[10px] uppercase tracking-[0.18em] text-muted-foreground/70">
-                Make a Contribution
-            </span>
-            <h3 className="mt-1 text-xl font-semibold [font-family:var(--font-display)]">
-                Support the Next Big Idea pool
-            </h3>
-            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                Your contribution supports vetted entrepreneurs and innovation projects
-                across Sierra Leone — not a single idea directly.
-            </p>
-
-            <form onSubmit={handleSubmit} className="mt-5 flex flex-col gap-4">
-                <div className="flex flex-col gap-3">
-                    <div>
-                        <label
-                            htmlFor="contribution-name"
-                            className="mb-1.5 block text-xs font-medium text-muted-foreground"
-                        >
-                            Full name
-                        </label>
-                        <input
-                            id="contribution-name"
-                            type="text"
-                            required
-                            value={form.name}
-                            onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                            placeholder="Your name"
-                            className="w-full rounded-sm border border-input bg-background px-3 py-2 text-sm focus-visible:border-accent focus-visible:outline-none"
-                        />
-                    </div>
-                    <div>
-                        <label
-                            htmlFor="contribution-email"
-                            className="mb-1.5 block text-xs font-medium text-muted-foreground"
-                        >
-                            Email address
-                        </label>
-                        <input
-                            id="contribution-email"
-                            type="email"
-                            required
-                            value={form.email}
-                            onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                            placeholder="you@example.com"
-                            className="w-full rounded-sm border border-input bg-background px-3 py-2 text-sm focus-visible:border-accent focus-visible:outline-none"
-                        />
-                    </div>
-                </div>
-
-                <div>
-                    <span className="mb-2 block text-xs font-medium text-muted-foreground">
-                        Choose amount (SLE)
-                    </span>
-                    <div className="grid grid-cols-3 gap-2">
-                        {amountPresets.map((p) => (
-                            <button
-                                type="button"
-                                key={p}
-                                onClick={() => setForm((f) => ({ ...f, amount: p }))}
-                                className={`rounded-sm border px-2 py-2 [font-family:var(--font-mono)] text-xs transition-colors ${
-                                    form.amount === p
-                                        ? 'border-accent bg-accent text-accent-foreground'
-                                        : 'border-border text-muted-foreground hover:border-accent'
-                                }`}
-                            >
-                                SLE {p}
-                            </button>
-                        ))}
-                        <button
-                            type="button"
-                            onClick={() => setForm((f) => ({ ...f, amount: '' }))}
-                            className={`rounded-sm border px-2 py-2 text-xs transition-colors ${
-                                !amountPresets.includes(form.amount)
-                                    ? 'border-accent bg-accent text-accent-foreground'
-                                    : 'border-border text-muted-foreground hover:border-accent'
-                            }`}
-                        >
-                            Custom
-                        </button>
-                    </div>
-                    {!amountPresets.includes(form.amount) && (
-                        <input
-                            type="text"
-                            inputMode="numeric"
-                            value={form.amount}
-                            onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value }))}
-                            placeholder="Enter amount"
-                            className="mt-2 w-full rounded-sm border border-input bg-background px-3 py-2 text-sm [font-family:var(--font-mono)] focus-visible:border-accent"
-                        />
-                    )}
-                </div>
-
-                <div>
-                    <span className="mb-1.5 block text-xs font-medium text-muted-foreground">
-                        Payment method
-                    </span>
-                    <div className="grid grid-cols-3 gap-2">
-                        {paymentMethods.map(({ id, label, icon: Icon }) => (
-                            <button
-                                type="button"
-                                key={id}
-                                onClick={() => setForm((f) => ({ ...f, method: id }))}
-                                className={`flex flex-col items-center gap-1.5 rounded-sm border px-2 py-3 text-center transition-colors ${
-                                    form.method === id
-                                        ? 'border-primary bg-primary text-primary-foreground'
-                                        : 'border-border text-muted-foreground hover:border-primary'
-                                }`}
-                            >
-                                <Icon className="h-4 w-4" />
-                                <span className="text-[10px] leading-tight">{label}</span>
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
-                <button
-                    type="submit"
-                    disabled
-                    aria-describedby="contribution-status"
-                    className="mt-1 inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-sm bg-accent/60 py-3 text-sm font-semibold text-accent-foreground"
-                >
-                    <Lock className="h-4 w-4" />
-                    Contributions opening soon
-                </button>
-
-                <p id="contribution-status" className="text-center text-[11px] text-muted-foreground/80">
-                    Online contributions to the pool aren&rsquo;t open yet. Check back soon.
-                </p>
-            </form>
-        </div>
-    )
-}
-
+/** Live totals from the fund - everything donated so far against the campaign target. */
 function FundingProgressBar() {
-    const pct = Math.min(
-        100,
-        Math.round((PLATFORM_STATS.raisedSLE / PLATFORM_STATS.targetSLE) * 100),
-    )
+    const { data: summary } = useFundSummaryQuery(10)
+    const raised = summary?.raised.value ?? 0
+    const usd = usdRaised(summary)
+    const pct = Math.min(100, Math.round((raised / PLATFORM_STATS.targetSLE) * 100))
 
     return (
         <section className="bg-[hsl(var(--color-neutral-900))] text-[hsl(var(--color-neutral-50))]">
@@ -235,7 +80,8 @@ function FundingProgressBar() {
                     </div>
                     <div>
                         <p className="text-lg font-semibold [font-family:var(--font-display)]">
-                            {formatSLE(PLATFORM_STATS.raisedSLE)} Raised
+                            {summary ? formatSLE(raised) : '…'} Raised
+                            {usd > 0 && <span className="text-sm font-normal text-[hsl(var(--color-neutral-300))]"> + {formatAmount(usd, 'USD')} by card</span>}
                         </p>
                         <p className="text-sm text-[hsl(var(--color-neutral-300))]">
                             of {formatSLE(PLATFORM_STATS.targetSLE)} Target
@@ -251,7 +97,7 @@ function FundingProgressBar() {
 
                 <div className="flex flex-wrap justify-center gap-x-10 gap-y-4 lg:justify-end">
                     {[
-                        { icon: Users, value: PLATFORM_STATS.contributors, label: 'Contributors' },
+                        { icon: Users, value: summary ? summary.donationCount.toLocaleString('en-GB') : '…', label: 'Donations' },
                         {
                             icon: Lightbulb,
                             value: PLATFORM_STATS.projectsSupported,
@@ -277,8 +123,36 @@ function FundingProgressBar() {
                     ))}
                 </div>
             </div>
+            {summary && summary.recent.length > 0 && (
+                <div className="border-t border-white/10">
+                    <div className="container mx-auto flex items-center gap-3 overflow-hidden px-4 py-3 text-xs text-[hsl(var(--color-neutral-300))]">
+                        <Heart className="h-3.5 w-3.5 shrink-0 text-accent" />
+                        <span className="shrink-0 font-semibold text-[hsl(var(--color-neutral-50))]">Recent supporters</span>
+                        <ul className="flex min-w-0 gap-5 overflow-x-auto [scrollbar-width:none]" aria-label="Recent supporters">
+                            {summary.recent.map((r, i) => (
+                                <li key={i} className="shrink-0 whitespace-nowrap">
+                                    {r.donorName} <span className="[font-family:var(--font-mono)] text-accent">{formatAmount(r.amount.value, r.amount.currency)}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )}
         </section>
     )
+}
+
+/** Card donations are in dollars - kept apart from the leone total the target is set in. */
+function usdRaised(summary: FundSummary | undefined) {
+    return summary?.raisedByCurrency?.find((a) => a.currency === 'USD')?.value ?? 0
+}
+
+/** The hero's "Total Raised" figure, live. */
+function TotalRaised() {
+    const { data } = useFundSummaryQuery(10)
+    if (!data) return <>…</>
+    const usd = usdRaised(data)
+    return <>{formatSLE(data.raised.value)}{usd > 0 && <span className="text-[0.6em] font-normal"> + {formatAmount(usd, 'USD')}</span>}</>
 }
 
 export default function NextBigIdeaPage() {
@@ -349,7 +223,7 @@ export default function NextBigIdeaPage() {
 
                         <div className="mt-10 flex flex-wrap gap-x-8 gap-y-6">
                             {[
-                                { num: PLATFORM_STATS.totalRaisedDisplay, label: 'Total Raised' },
+                                { num: <TotalRaised />, label: 'Total Raised' },
                                 {
                                     num: PLATFORM_STATS.entrepreneursSupported,
                                     label: 'Entrepreneurs Supported',
@@ -381,7 +255,7 @@ export default function NextBigIdeaPage() {
                     </div>
 
                     <div id="contribute" className="pb-14 lg:pb-20">
-                        <ContributionCard />
+                        <DonationCard />
                         <div className="mt-4 flex gap-3 rounded-2xl border border-white/10 bg-[hsl(var(--color-neutral-900))] p-4 text-[hsl(var(--color-neutral-50))] shadow-xl">
                             <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/20 text-primary">
                                 <ShieldCheck className="h-5 w-5" />
