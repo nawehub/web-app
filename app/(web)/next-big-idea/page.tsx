@@ -173,18 +173,22 @@ export default function NextBigIdeaPage() {
                             NaWeHub &middot; Next Big Idea
                         </div>
 
-                        <h1 className="mt-6 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-foreground sm:text-5xl lg:text-[52px]">
-                            Support Sierra Leone&rsquo;s
-                            <br />
-                            <span className="text-primary">Next Big Idea</span>
+                        <h1 className="mt-6 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-foreground sm:text-5xl lg:text-[48px]">
+                            Apply for the{' '}
+                            <span className="text-primary">Next Big Idea Pitch Competition</span>{' '}
+                            <span aria-hidden="true">🚀</span>
                         </h1>
 
-                        <p className="mt-5 max-w-[520px] text-lg text-foreground/80">
-                            Help innovative entrepreneurs transform bold ideas into sustainable
-                            businesses, jobs, and community impact. Contributions go to the
-                            innovation pool — featured ideas show what could become the Next Big
-                            Idea at any time.
-                        </p>
+                        <div className="mt-5 max-w-[540px] space-y-3 text-lg text-foreground/80">
+                            <p>
+                                Have a brilliant idea that could transform Sierra Leone and beyond? Your idea
+                                could be the Next Big Idea!
+                            </p>
+                            <p>Apply now. You can enter multiple competitions, but only one idea per competition.</p>
+                            <p className="font-medium text-foreground">
+                                Women and persons with disabilities are especially encouraged to apply.
+                            </p>
+                        </div>
 
                         <div className="mt-7 flex flex-wrap gap-3">
                             <a
