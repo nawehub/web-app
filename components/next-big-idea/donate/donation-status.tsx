@@ -47,6 +47,14 @@ function Burst() {
     )
 }
 
+/**
+ * Big enough to read at a glance, small enough that the whole code fits on one line of the card:
+ * a monospace character with wider tracking is about 0.66em, so share the box's width between them.
+ */
+function codeFontSize(code: string) {
+    return `min(1.875rem, ${(100 / (code.length * 0.66)).toFixed(2)}cqi)`
+}
+
 /** A USSD code as a tel: link - "#" has to be escaped or the dialler drops everything after it. */
 function telHref(code: string) {
     return `tel:${code.replace(/#/g, '%23')}`
@@ -99,8 +107,9 @@ export function DonationStatus({ donation, donorName, onRetry, onDonateAgain }: 
                             <div className="flex items-center gap-2 text-sm font-semibold">
                                 <Smartphone className="h-4 w-4 text-primary" /> Dial to pay {amount}
                             </div>
-                            <div className="rounded-xl bg-[hsl(var(--color-neutral-900))] p-4 text-center">
-                                <p className="select-all font-mono text-2xl font-bold tracking-widest text-white sm:text-3xl" aria-label="Payment code">
+                            <div className="rounded-xl bg-[hsl(var(--color-neutral-900))] p-4 text-center [container-type:inline-size]">
+                                <p className="select-all whitespace-nowrap font-mono font-bold tracking-wider text-white" aria-label="Payment code"
+                                    style={{ fontSize: codeFontSize(donation.ussdCode) }}>
                                     {donation.ussdCode}
                                 </p>
                                 <div className="mt-3 flex justify-center gap-2">
